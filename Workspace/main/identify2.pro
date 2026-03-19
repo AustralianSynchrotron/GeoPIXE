@@ -119,9 +119,14 @@ case tag_names( event,/structure) of
 					widget_control, (*pstate).help, set_value='Click on a line to mark it on the spectrum. ' + $
 							'Adjust lines visible with Threshold slider.'
 				endif else begin
-					widget_control, (*pstate).help, set_value='LEFT click an element to mark its lines on the spectrum. ' + $
+					if (*pstate).tiny then begin
+						widget_control, (*pstate).help, set_value='LEFT click element to mark lines on spectrum. ' + $
+							'RIGHT to enable element in "Fit". '
+					endif else begin
+						widget_control, (*pstate).help, set_value='LEFT click an element to mark its lines on the spectrum. ' + $
 							'Use "Filter", "Detector" to modify relative intensities. ' + $
 							'RIGHT click will enable the element in "X-ray Spectrum Fit". '
+					endelse
 				endelse
 			endelse
 		endif
@@ -135,75 +140,79 @@ endcase
 
 case !version.os_family of
 	'MacOS': begin
-		small_table_x = 199
-		small_table_y = 141				; 190
-		large_table_x = 428
-		large_table_y = 215				; 240
-		xoff = 12
-		yoff = 91						; 125
-		table_minx = 220
-		table_miny = 145
-		width_off = 10
-		height_off = 32					; 52
-		large_slider_width = 220
-		small_slider_width = 70
-		large_drop_width = 160
-		small_drop_width = 60
+		small_table_x = 190 *(*pstate).sxy
+		small_table_y = 141 *(*pstate).sxy				; 190
+		large_table_x = 450 *(*pstate).sxy
+		large_table_y = 215 *(*pstate).sxy				; 240
+		xoff = 12 *(*pstate).sxy
+		yoff = 91 *(*pstate).sxy						; 125
+		table_minx = 220 *(*pstate).sxy
+		table_miny = 145 *(*pstate).sxy
+		width_off = 10 *(*pstate).sxy
+		height_off = 32 *(*pstate).sxy					; 52
+		large_slider_width = 220 *(*pstate).sxy
+		small_slider_width = 70 *(*pstate).sxy
+		large_drop_width = 160 *(*pstate).sxy
+		small_drop_width = 60 *(*pstate).sxy
 		end
 	'unix': begin
-		small_table_x = 199
-		small_table_y = 95				; 144
-		large_table_x = 428
-		large_table_y = 195				; 220
-		xoff = 12
-		yoff = 106						; 140
-		table_minx = 190
-		table_miny = 145
-		width_off = 10
-		height_off = 43					; 63
-		large_slider_width = 220
-		small_slider_width = 70
-		large_drop_width = 160
-		small_drop_width = 60
+		small_table_x = 170 *(*pstate).sxy
+		small_table_y = 146 *(*pstate).sxy				; 144
+		large_table_x = 411 *(*pstate).sxy
+		large_table_y = 186 *(*pstate).sxy				; 220
+		xoff = 13 *(*pstate).sxy
+		yoff = 106 *(*pstate).sxy						; 140
+		table_minx = 250 *(*pstate).sxy
+		table_miny = 145 *(*pstate).sxy
+		width_off = 10 *(*pstate).sxy
+		height_off = 30 *(*pstate).sxy					; 30
+		large_slider_width = 220 *(*pstate).sxy
+		small_slider_width = 70 *(*pstate).sxy
+		large_drop_width = 155 *(*pstate).sxy
+		small_drop_width = 60 *(*pstate).sxy
 		end
 	else: begin
-		small_table_x = 199
-		small_table_y = 141				; 190
-		large_table_x = 428
-		large_table_y = 215				; 240
-		xoff = 10
-		yoff = 91						; 125
-		table_minx = 220
-		table_miny = 145
-		width_off = 10
-		height_off = 32					; 52
-		large_slider_width = 220
-		small_slider_width = 70
-		large_drop_width = 160
-		small_drop_width = 60
+		small_table_x = 210 *(*pstate).sxy
+		small_table_y = 141 *(*pstate).sxy				; 190
+		large_table_x = 455*(*pstate).sxy
+		large_table_y = 207 *(*pstate).sxy				; 240
+		xoff = 12 *(*pstate).sxy
+		yoff = 85 *(*pstate).sxy						; 125
+		table_minx = 278 *(*pstate).sxy
+		table_miny = 177 *(*pstate).sxy
+		width_off = 10 *(*pstate).sxy
+		height_off = 26 *(*pstate).sxy					; 52
+		large_slider_width = 220 *(*pstate).sxy
+		small_slider_width = 70 *(*pstate).sxy
+		large_drop_width = 160 *(*pstate).sxy
+		small_drop_width = 60 *(*pstate).sxy
 		end
 endcase
 
 uname = widget_info( event.id, /uname)
 case uname of
 	'identify2_TLB': begin					; resize
-;		print,event.x,event.y
+		print,'event x,y=',event.x,event.y
 		if (*pstate).mode eq 0 then begin
 			w = (event.x - xoff) > table_minx
 			h = (event.y - yoff) > table_miny
-;			print,w,h
+			print,'Ident: w,h=',w,h
 			widget_control, (*pstate).list, scr_xsize=w, scr_ysize=h
-			widget_control, (*pstate).thresh, scr_xsize=w+12
-			widget_control, (*pstate).help, scr_xsize=w+6-25
-			(*pstate).whelp[0] = w+6
+			widget_control, (*pstate).thresh, scr_xsize=w + 12 *(*pstate).sxy
+			widget_control, (*pstate).help, scr_xsize=w + (6-25) *(*pstate).sxy
+			(*pstate).whelp[0] = w + 6 *(*pstate).sxy
 
 			widget_control, (*pstate).base1, scr_xsize=w+width_off
 			widget_control, (*pstate).base1, scr_ysize=h+height_off
 			(*pstate).base1_xsize = w+width_off
 			(*pstate).base1_ysize = h+height_off
 		endif else begin
-			w = (event.x - xoff) > table_minx
-			h = (event.y - yoff) > table_miny
+			w = (event.x - xoff)
+			h = (event.y - yoff)
+			if !version.os_family eq 'unix' then begin
+				w = w > table_minx		; these ">" force Tiny not to happen
+				h = h > table_miny		; as Linux has a bug that crops tables
+			endif
 			w2 = (*pstate).base2_xsize
 			h2 = (*pstate).base2_ysize
 			if (w gt (3*large_table_x)/4) then begin
@@ -214,7 +223,7 @@ case uname of
 					(*pstate).tiny = 0
 					widget_control, (*pstate).help, scr_xsize=w2
 					(*pstate).whelp[1] = w2
-					(*pstate).wslider = [large_slider_width,large_drop_width]
+					(*pstate).wslider = [large_slider_width, large_drop_width]
 					widget_control, (*pstate).filter_base, map=1, scr_ysize=(*pstate).filter_base_ysize
 				endif
 			endif
@@ -226,16 +235,17 @@ case uname of
 					(*pstate).tiny = 1
 					widget_control, (*pstate).help, scr_xsize=w2
 					(*pstate).whelp[1] = w2
-					(*pstate).wslider = [small_slider_width,small_drop_width]
+					(*pstate).wslider = [small_slider_width, small_drop_width]
 					widget_control, (*pstate).filter_base, map=0, scr_ysize=1
 				endif
 			endif
 ;			geom = widget_info((*pstate).base2,/geometry)
+			print,'Identify2: size=',[w2,h2]
 			widget_control, (*pstate).base2, scr_xsize=w2
 			widget_control, (*pstate).base2, scr_ysize=h2
-			widget_control, (*pstate).zslide, scr_xsize=(*pstate).wslider[1]
-			widget_control, (*pstate).filter_id, xsize=(*pstate).wslider[0]
-			widget_control, (*pstate).detector_id, xsize=(*pstate).wslider[0]
+			widget_control, (*pstate).zslide, scr_xsize=(*pstate).wslider[0]
+			widget_control, (*pstate).filter_id, scr_xsize=(*pstate).wslider[1]
+			widget_control, (*pstate).detector_id, scr_xsize=(*pstate).wslider[1]
 			(*pstate).base2_xsize = w2
 			(*pstate).base2_ysize = h2
 		endelse
@@ -260,8 +270,8 @@ case uname of
 		widget_control, b1, map = 0
 		widget_control, b2, map = 1
 
-		widget_control, b1, scr_xsize = 100
-		widget_control, b1, scr_ysize = 100
+		widget_control, b1, scr_xsize = 100 *(*pstate).sxy
+		widget_control, b1, scr_ysize = 100 *(*pstate).sxy
 		widget_control, b2, scr_xsize = x2
 		widget_control, b2, scr_ysize = y2
 		end
@@ -561,8 +571,23 @@ child = widget_info( top, /child)
 widget_control, child, get_uvalue=pstate
 
 geo = widget_info( (*pstate).base1, /geometry)
-(*pstate).base1_xsize = geo.xsize
-(*pstate).base1_ysize = geo.ysize
+(*pstate).base1_xsize = geo.scr_xsize
+(*pstate).base1_ysize = geo.scr_ysize
+print,'Base1=',[geo.scr_xsize,geo.scr_ysize]
+end
+
+;-----------------------------------------------------------
+
+pro OnRealize_identify2_base2, wWidget
+
+top = tlb_id( wWidget)
+child = widget_info( top, /child)
+widget_control, child, get_uvalue=pstate
+
+geo = widget_info( (*pstate).base2, /geometry)
+(*pstate).base2_xsize = geo.scr_xsize
+(*pstate).base2_ysize = geo.scr_ysize
+print,'Base2=',[geo.scr_xsize,geo.scr_ysize]
 end
 
 ;------------------------------------------------------------------------------------------
@@ -588,6 +613,7 @@ pro identify2, group_leader=group, TLB=tlb, _extra=extra, xoffset=xoffset, yoffs
 
 COMPILE_OPT STRICTARR
 common c_working_dir, geopixe_root
+common c_geopixe_scaling, sxy
 
 ErrorNo = 0
 common c_errors_1, catch_errors_on
@@ -625,47 +651,46 @@ detector = ptr_new( make_detector('U'))
 (*detector).crystal.Z[0] = 100
 detector_title = ['---   none   ---',detector_title]
 
+; Old scheme which uses 'sxy', See 'fit_setup' for better way ...
+
   case !version.os_family of
 	'MacOS': begin
 		fnt = 'COURIER*BOLD*10'
-		large_table_x = 453
-		large_table_y = 240
-		large_slider_width = 220
-		large_drop_width = 160
-		large_drop_width2 = 160
-		space5 = 2
-		space10 = 5
-		texty = 21
-		list_xsize = 280
-		xw = 0
+		large_table_x = 453 *sxy
+		large_table_y = 240 *sxy
+		large_slider_width = 220 *sxy
+		large_drop_width = 155 *sxy
+		space5 = 2 *sxy
+		space10 = 0 *sxy
+		texty = 21 *sxy
+		list_xsize = 280 *sxy
+		xw = 0 *sxy
 		ysize_help = 3
 		end
 	'unix': begin
 		fnt = '6x10'
-		large_table_x = 453
-		large_table_y = 220
-		large_slider_width = 220
-		large_drop_width = 160
-		large_drop_width2 = 170
-		space5 = 1
-		space10 = 0
-		texty = 29
-		list_xsize = 270
-		xw = 5
+		large_table_x = 411 *sxy
+		large_table_y = 186 *sxy
+		large_slider_width = 220 *sxy
+		large_drop_width = 155 *sxy
+		space5 = 1 *sxy
+		space10 = 0 *sxy
+		texty = 29 *sxy
+		list_xsize = 250 *sxy
+		xw = 5 *sxy
 		ysize_help = 3
 		end
 	else: begin
 		fnt = 'COURIER*10'
-		large_table_x = 453
-		large_table_y = 214
-		large_slider_width = 220
-		large_drop_width = 160
-		large_drop_width2 = 160
-		space5 = 5
-		space10 = 8
-		texty = 21
-		list_xsize = 281
-		xw = 0
+		large_table_x = 455 *sxy
+		large_table_y = 207 *sxy
+		large_slider_width = 220 *sxy
+		large_drop_width = 160 *sxy
+		space5 = 5 *sxy
+		space10 = 6 *sxy
+		texty = 15 *sxy
+		list_xsize = 278 *sxy
+		xw = 0 *sxy
 		ysize_help = 2
 		end
   endcase
@@ -684,90 +709,87 @@ endif
 screen = get_screen_size()
 if n_elements(xoffset) lt 1 then begin
 	screen = get_screen_size()
-	xoffset = ((xoff + w + xw) < (screen[0]-34 - 237)) > 0
+	xoffset = ((xoff + w + xw) < (screen[0]-34 - 237*sxy)) > 0
 endif
 if n_elements(yoffset) lt 1 then begin
 	screen = get_screen_size()
-	yoffset = ((yoff - 159) < (screen[1]-28 - 342)) > 0
+	yoffset = ((yoff - 159) < (screen[1]-28 - 342*sxy)) > 0
 endif
 
 tlb = widget_base( /column, title='Line Identification', /TLB_KILL_REQUEST_EVENTS, $
-					/TLB_SIZE_EVENTS, /base_align_center, xpad=0, ypad=0, space=0, $
+					/TLB_SIZE_EVENTS, /base_align_center, xpad=0, ypad=0, space=2, $
 					group_leader=group, _extra=extra, uname='identify2_TLB', xoffset=xoffset, yoffset=yoffset)
 tbase = widget_base( tlb, /column, xpad=0, ypad=0, space=0, /base_align_center)
 
 toggle = cw_bgroup2( tbase, ['Identify','Mark Element'], /row, $
 					/exclusive, /no_release, /return_index, /tracking, $
-					uname='TOGGLE', set_value=0, xpad=0, ypad=0, space=3, $
+					uname='TOGGLE', set_value=0, xpad=0, ypad=0, space=3 *sxy, $
 					uvalue='Select line identification or mark element lines')
-bbbase = widget_base( tlb, xpad=0, ypad=0, space=0)
 
+bbbase = widget_base( tlb, xpad=0, ypad=0)						; bulletin board base
 
-base1 = widget_base( bbbase, /column, map=1, /base_align_center, xpad=0, ypad=0, space=1, $
+base1 = widget_base( bbbase, /column, map=1, /base_align_center, xpad=0, ypad=0, space=1 *sxy, $
 				notify_realize='OnRealize_identify2_base1')
 
 s = xsort_list( 0.0001, list=xlist, /table)
 set_bin_search,  xlist
 
-;list = widget_list( base1, value=s, uname='LIST', /tracking, $
-;					uvalue='Sorted X-ray list (energy, Siegbahn/IUPAC id, relative intensity). Click a line to mark it on the spectrum.', $
-;					font=fnt, scr_xsize=list_xsize, scr_ysize=200)
-
 list = Widget_Table( base1, UNAME='LIST', /all_events, value=s, Notify_Realize='OnRealize_identify2_Table', $
-					/no_row_headers, column_widths=[9,4,7,8,9] * !d.x_ch_size, $
+					/no_row_headers, column_widths=[9,4,7,8,9] * !d.x_ch_size *sxy, $
 					column_labels=['Energy','El','Line','Rel. Int','IUPAC'], $
-					/RESIZEABLE_COLUMNS, alignment=2, /tracking, scr_xsize=list_xsize, scr_ysize=300, $
-;					X_SCROLL_SIZE=7, Y_SCROLL_SIZE=6,	$		;	, font=fnt, $
+					/RESIZEABLE_COLUMNS, alignment=2, /tracking, scr_xsize=list_xsize, scr_ysize=300 *sxy, $
 					uvalue='Sorted X-ray table (energy, element, relative intensity, Siegbahn/IUPAC labels).' )
 
 
 thresh = cw_fslider2( base1, format='(f6.4)', minimum=0.0001, maximum=0.5, layout=1, $
-				value=0.0001, uname='THRESHOLD', xsize=list_xsize-58, /tracking, /edit, $
+				value=0.0001, uname='THRESHOLD', xsize=list_xsize-58 *sxy, /tracking, /edit, $
 				uvalue='Display only X-ray relative intensities above this level.')
 
 
-base2 = widget_base( bbbase, /column, map=0, xpad=1, ypad=0, space=1, /base_align_center)
+base2 = widget_base( bbbase, /column, map=0, xpad=1 *sxy, ypad=0, space=1 *sxy, /base_align_center, $
+				notify_realize='OnRealize_identify2_base2')
 
 ptable = periodic_table( base2, uname='PERIODIC', /tracking, /exclusive, n_states=2, /start_Li, $
 				uvalue='Periodic Table. Click on an element to view its markers on the spectrum.')
 
-check_base = widget_base( base2, xpad=2, ypad=0, space=5, /row, /base_align_bottom)
+check_base = widget_base( base2, xpad=1 *sxy, ypad=0, space=2 *sxy, /row, /base_align_center)
 zslide = widget_slider( check_base, minimum=1, maximum=103, /drag, /tracking, xsize=large_slider_width, $
 				uvalue='Select element X-ray lines by Z using this slider.', uname='ZSLIDE')
-element = widget_text( check_base, xsize=2, scr_ysize=texty, /editable, uname='ELEMENT', /tracking, $
+element = widget_text( check_base, xsize=2 *sxy, scr_ysize=texty, /editable, uname='ELEMENT', /tracking, frame=0, $
 			uvalue='Currently marked element. Type a new one to mark lines.')
 lab = widget_label(check_base, value=' ')
 options = cw_bgroup2( check_base, ['K','L','M'], /row, set_value=[1,1,0], $
 				/return_index, uname='OPTIONS',/ nonexclusive, /tracking, $
-				uvalue='Enable X-ray lines by shell.', xpad=0, ypad=0, space=1)
+				uvalue='Enable X-ray lines by shell.', xpad=0, ypad=0, space=0)
 
 filter_base = widget_base( base2, /row, map=1, /base_align_center, notify_realize='OnRealize_identify2_filter_base', $
 				ypad=0, xpad=0, space=space10)
 lab = widget_label( filter_base, value='Filter:')
 filter_mode = widget_combobox( filter_base, value=filter_title, uname='filter-mode', /tracking, $
 					uvalue='Select the filter to use to modify X-ray relative intensities.', $
-					xsize=large_drop_width)
+					scr_xsize=large_drop_width)
 
 lab = widget_label( filter_base, value=' Detector:')
 detector_mode = widget_combobox( filter_base, value=detector_title, uname='detector-mode', /tracking, $
-					uvalue='Select the detector calibration to use to modify X-ray relative intensities.', xsize=large_drop_width2)
+					uvalue='Select the detector calibration to use to modify X-ray relative intensities.', scr_xsize=large_drop_width)
 
 
-Help_Base = Widget_Base(tlb, UNAME='Help_Base', SPACE=1, XPAD=2, YPAD=0, /ROW, /base_align_center)
+Help_Base = Widget_Base(tlb, UNAME='Help_Base', SPACE=1 *sxy, XPAD=2 *sxy, YPAD=0, /ROW, /base_align_center)
 
-help = widget_text( Help_Base, scr_xsize=list_xsize-26, ysize=ysize_help, /wrap, uname='HELP', /tracking, $
+help = widget_text( Help_Base, scr_xsize=list_xsize-28 *sxy, ysize=ysize_help, /wrap, uname='HELP', /tracking, $
 				uvalue='Help window. Displays info about widgets.',frame=0)
 
-query_button = Widget_Button(Help_Base, UNAME='query-button', xsize=15, ysize=20,  $
+query_button = Widget_Button(Help_Base, UNAME='query-button', xsize=15 *sxy, ysize=20 *sxy,  $
       /ALIGN_CENTER ,VALUE='?', /tracking_events, uvalue='Jump to the help on this window in the GeoPIXE Users Guide.')
 
 state = { element:	element, $
 	base1:			base1, $				; ident list map base ID
 	base2:			base2, $				; periodic table map base ID
 	base1_xsize:	0, $					; X sizes of map bases
-	base2_xsize:	large_table_x, $		; X sizes of map bases
+	base2_xsize:	0, $					; X sizes of map bases
 	base1_ysize:	0, $					; Y sizes of map bases
-	base2_ysize:	large_table_y, $		; Y sizes of map bases
+	base2_ysize:	0, $					; Y sizes of map bases
+	sxy:			sxy, $					; font scaling factor
 	toggle:			toggle, $				; mode toggle ID - line versus periodic table
 	mode:			0, $					; mode (0:list, 1:periodic table)
 	ptable:			ptable, $				; periodic table ID
@@ -795,17 +817,21 @@ state = { element:	element, $
 	pz:				ptr_new({z:0, e:ptr_new([0.0]), rel:ptr_new([0.0]) , shell:ptr_new([0]) }), $ ; pointer to lines for notify
 	shells:			[1,1,0] }				; shells on/off
 
-widget_control, base2, scr_xsize = 100
-widget_control, base2, scr_ysize = 100
+;widget_control, base2, scr_xsize = 100 *sxy, scr_ysize = 100 *sxy
 
 child = widget_info( tlb, /child)
-widget_control, child, set_uvalue=ptr_new(state, /no_copy)
+pstate = ptr_new(state, /no_copy)
+widget_control, child, set_uvalue=pstate
 widget_control, tlb, /realize
+
+widget_control, base2, scr_xsize = (*pstate).base1_xsize
 
 register_notify, tlb, ['identify-e','identify-element','identify-line'], from=group
 register_notify, tlb, ['new-detectors','new-filters']
 
 xmanager, 'identify2', tlb, /no_block
 
+wset, -1
+help, !d
 return
 end
