@@ -31,6 +31,12 @@ but will then create one for you in your \[home]/.geopixe directory. For Linux, 
 script in the 'Workspace/geopixe/bin/' directory to launch GeoPIXE. Just add this 'bin' to your path.
 After downloading, you will need to enable execution of these scripts (chmod a+x bin/\*).
 
+
+
+Some plugins and devices may be not loaded by default. These are in the folder “geopixe/off/plugins/”. To use them in GeoPIXE, simply move the needed sav file(s) to “geopixe/plugins/”.
+
+
+
 It helps to have a working understanding of the *Fundamental Parameter* approach as used for
 quantitative analysis in the workflow through GeoPIXE, and some experience with the *Demo data*.
 See the GeoPIXE Users Guide and the **GeoPIXE Worked Examples PDF** for worked examples with

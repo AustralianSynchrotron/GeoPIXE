@@ -216,6 +216,7 @@ if catch_errors_on then begin
        return
     endif
 endif else on_error,0
+sxy = geopixe_scale()
 
 child = widget_info( id, /child)
 widget_control, child, get_uvalue=pstate
@@ -238,6 +239,7 @@ case !version.os_family of
 	   cthick = (*pstate).cthick
        end
 endcase
+csize = csize*sxy
 
 x1 = 1							; 2
 x2 = (*pstate).xsize - 2
@@ -300,7 +302,7 @@ endif
 ;device, set_font='Helvetica Bold', /tt_font
 
 x = (xs+1)/2.
-y = ys/2. - (*pstate).yoff
+y = ys/2. - (*pstate).yoff *sxy
 
 ;c = (*pstate).colours[0]
 ;if ((*pstate).select ge (*pstate).n_states) or (*pstate).alt then c=(*pstate).colours[3]

@@ -21,7 +21,8 @@ if catch_errors_on then begin
 		goto, kill
 	endif
 endif
-  widget_control, hourglass=0
+sxy = geopixe_scale()
+widget_control, hourglass=0
 
 child = widget_info( event.top, /child)
 widget_control, child, get_uvalue=pstate
@@ -265,7 +266,8 @@ case uname of
 			x2 = (*pstate).base1_xsize
 			y2 = (*pstate).base1_ysize
 		endelse
-		widget_control, (*pstate).help, scr_xsize=(*pstate).whelp[(*pstate).mode]
+;		widget_control, (*pstate).help, scr_xsize=(*pstate).whelp[(*pstate).mode]
+		widget_control, (*pstate).help, scr_xsize=x2 -20 *sxy
 		widget_control, (*pstate).thresh, scr_xsize=(*pstate).whelp[(*pstate).mode] + 6
 		widget_control, b1, map = 0
 		widget_control, b2, map = 1
@@ -613,7 +615,7 @@ pro identify2, group_leader=group, TLB=tlb, _extra=extra, xoffset=xoffset, yoffs
 
 COMPILE_OPT STRICTARR
 common c_working_dir, geopixe_root
-common c_geopixe_scaling, sxy
+sxy = geopixe_scale()
 
 ErrorNo = 0
 common c_errors_1, catch_errors_on
@@ -691,7 +693,7 @@ detector_title = ['---   none   ---',detector_title]
 		texty = 15 *sxy
 		list_xsize = 278 *sxy
 		xw = 0 *sxy
-		ysize_help = 2
+		ysize_help = 3
 		end
   endcase
 
@@ -806,7 +808,7 @@ state = { element:	element, $
 	xlist:			ptr_new(xlist), $		; pointer to line list
 	pe:				ptr_new( {e:0.0, units:''}), $		; pointer to E for notify
 	help:			help, $					; help text ID
-	whelp:			[list_xsize-5,447], $			; help width
+	whelp:			[list_xsize-28 *sxy, 447], $			; help width (not really used anymore)
 	wslider:		[large_drop_width,large_slider_width], $				; width of the sliders
 	filter_mode:	0, $					; current filter
 	filters:		filters, $				; filters
