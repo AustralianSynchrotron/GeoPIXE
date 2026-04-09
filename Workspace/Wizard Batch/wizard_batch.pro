@@ -113,7 +113,33 @@ case tag_names( event,/structure) of
 ;			'path': begin
 ;				if ptr_valid( event.pointer) then begin
 ;					*(*pstate).path = (*event.pointer)
+;					s = build_output_path( *(*pstate).dpath, *(*pstate).path, (*pstate).root, /set)
+;					if lenchr(s) gt 0 then *(*pstate).path = s
 ;				endif
+;				goto, finish
+;				end
+;			'dpath': begin
+;				if ptr_valid( event.pointer) then begin
+;					*(*pstate).dpath = (*event.pointer)
+;					s = build_output_path( *(*pstate).dpath, *(*pstate).path, (*pstate).root, /set)
+;					if lenchr(s) gt 0 then *(*pstate).path = s
+;				endif
+;				goto, finish
+;				end
+;			'root': begin
+;				if ptr_valid( event.pointer) then begin
+;					*(*pstate).root = (*event.pointer)
+;				endif
+;
+;				r = dialog_message( ['Use new path assignment to correct all output paths in Batch Sort?', $
+;							'', 'Only enabled runs will be corrected.', '', $
+;							'Make sure in/out paths in Sort EVT window make sense.', $
+;							'All runs will inherit the same path remapping rules.'], /question, $
+;							title='Correct Batch output paths')
+;				if r eq 'Yes' then begin
+;					wizard_batch_correct_output, pstate, error=error
+;				endif
+;				wizard_batch_update_table, pstate
 ;				goto, finish
 ;				end
 			'new-detectors': begin
@@ -259,6 +285,7 @@ case uname of
 			*(*pstate).dpath = F[0]
 			set_widget_text, (*pstate).blog_dir_text, (*pstate).blog_dir
 			s = build_output_path( (*pstate).blog_dir, (*pstate).output_dir, (*pstate).root, /set)
+			print,'Batch Wizard: new output path: '+s
 			if lenchr(s) gt 0 then begin
 				(*pstate).output_dir = s
 				set_widget_text, (*pstate).output_dir_text, s
@@ -276,15 +303,18 @@ case uname of
 		(*pstate).blog_dir = s
 		if lenchr(s) gt 0 then begin
 			*(*pstate).dpath = s
-			s = build_output_path( (*pstate).blog_dir, (*pstate).output_dir, (*pstate).root, /set)
-			(*pstate).output_dir = s
-			set_widget_text, (*pstate).output_dir_text, s
 			notify, 'dpath', (*pstate).dpath, from=event.top
-			*p = 0												; clear processing table
-			wizard_batch_update_table, pstate
-			(*pstate).sel.top = -1
-			(*pstate).sel.bottom = -1
+			s = build_output_path( (*pstate).blog_dir, (*pstate).output_dir, (*pstate).root, /set)
+			print,'Batch Wizard: new output path: '+s
+			if lenchr(s) gt 0 then begin
+				(*pstate).output_dir = s
+				set_widget_text, (*pstate).output_dir_text, s
+			endif
 		endif
+		*p = 0												; clear processing table
+		wizard_batch_update_table, pstate
+		(*pstate).sel.top = -1
+		(*pstate).sel.bottom = -1
 		end
 					
 	'energy-cal-file-button': begin
@@ -308,6 +338,7 @@ case uname of
 			(*pstate).output_dir = F[0]
 			set_widget_text, (*pstate).output_dir_text, (*pstate).output_dir 
 			s = build_output_path( (*pstate).blog_dir, (*pstate).output_dir, (*pstate).root, /set)
+			print,'Batch Wizard: new output path: '+s
 			*(*pstate).path = (*pstate).output_dir 
 			notify, 'path', (*pstate).path, from=event.top
 			*p = 0												; clear processing table
@@ -323,11 +354,11 @@ case uname of
 		if lenchr(s) gt 0 then begin
 			*(*pstate).path = (*pstate).output_dir 
 			notify, 'path', (*pstate).path, from=event.top
-			*p = 0												; clear processing table
-			wizard_batch_update_table, pstate
-			(*pstate).sel.top = -1
-			(*pstate).sel.bottom = -1
 		endif
+		*p = 0												; clear processing table
+		wizard_batch_update_table, pstate
+		(*pstate).sel.top = -1
+		(*pstate).sel.bottom = -1
 		end
 				
 	'same-dir-button': begin
@@ -335,6 +366,11 @@ case uname of
 		set_widget_text, (*pstate).output_dir_text, (*pstate).output_dir 
 		s = build_output_path( (*pstate).blog_dir, (*pstate).output_dir, (*pstate).root, /set)
 		*(*pstate).path = (*pstate).output_dir 
+		notify, 'path', (*pstate).path, from=event.top
+		*p = 0													; clear processing table
+		wizard_batch_update_table, pstate
+		(*pstate).sel.top = -1
+		(*pstate).sel.bottom = -1
 		end
 
 	'template-sort-button': begin
@@ -1353,6 +1389,48 @@ end
 
 ;--------------------------------------------------------------------------
 
+pro wizard_batch_correct_output, pstate, error=error
+
+	COMPILE_OPT STRICTARR
+	if ptr_good(pstate) eq 0 then return
+	error = 1
+
+	Catch, ErrorNo
+	if (ErrorNo ne 0) then begin
+		Catch, /cancel
+		on_error, 1
+		message, /RESET
+		return
+	endif
+
+	p = (*pstate).presults
+
+	for j=0,n_elements(*p)-1 do begin
+		if (*(*p)[j]).on eq 1 then begin
+			s = build_output_path( (*(*p)[j]).file, (*(*p)[j]).output, (*pstate).root)
+			T = strip_file_ext( strip_path((*(*p)[j]).file))
+			if (*pstate).DevObj->multi_files() and ((*pstate).DevObj->multi_char() ne '.') then begin
+				T = strip_file_m( T, ending=(*pstate).DevObj->multi_char() + ((adc_offset_device((*pstate).DevObj) eq -1) ? '0' : '1'))
+			endif
+			if (*pstate).DevObj->embed_detector() then begin
+				k = locate_last( "_", T)								; det # is before the multifile char
+				q = where( k ge 0, nq)
+				if nq ge 1 then T[q] = strmid2( T[q], 0,k[q])
+			endif
+			if ((*pstate).mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
+			if ((*pstate).mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+			f = s + T + '.dai'
+			print, ' Corrected output path = '+ f
+			if lenchr(s) gt 0 then (*(*p)[j]).output = f
+		endif
+	endfor
+
+	error = 0
+	return
+end
+
+;-----------------------------------------------------------------
+
 function wizard_batch_output_file, pstate, blog, error=err
 	
 ; Determine the matching output file or path appropriate for 'blog'.
@@ -1500,6 +1578,10 @@ endif
 if n_elements(silent) eq 0 then silent=0
 
 	error = 1
+	widget_control, (*pstate).blog_dir_text, get_value=s
+	(*pstate).blog_dir = s
+	widget_control, (*pstate).output_dir_text, get_value=s
+	(*pstate).output_dir = s
 
 	drop = ['Use all event/ run files','Filter numeric event file (run) names']
 	help_drop = 'For numeric event file names, using run numbers, you can choose a range within min/max run numbers.'
@@ -2629,6 +2711,7 @@ end
 ;       return
 ;    endif
 ;endif
+;sxy = geopixe_scale()
 ;
 ;	no_data = 1
 ;	p = (*pstate).presults
@@ -2658,7 +2741,7 @@ end
 ;	rows = string(indgen(n>1))
 ;	headings = ['#', 'Raw','Name','Serial', 'Energy','El', 'Mean','Error','Std.Dev','SD/Error']
 ;	nc = n_elements(headings)
-;	widths = [3, 7,5,9, 7,4, replicate(10,nc-6)] * !d.x_ch_size * ch_scale
+;	widths = [3, 7,5,9, 7,4, replicate(10,nc-6)] * !d.x_ch_size * ch_scale *sxy
 ;	t = strarr(nc,256)
 ;	
 ;	if no_data eq 0 then begin
@@ -2731,6 +2814,7 @@ if catch_errors_on then begin
        return
     endif
 endif
+sxy = geopixe_scale()
 
 	no_data = 1
 	p = (*pstate).pcorr
@@ -2760,7 +2844,7 @@ endcase
 	rows = string(indgen(n>1))
 	headings = ['#', 'El', 'History', 'Bottom', 'Top', 'Log']
 	nc = n_elements(headings)
-	widths = [4,9, 40, 9,9,5] * !d.x_ch_size * ch_scale
+	widths = [4,9, 40, 9,9,5] * !d.x_ch_size * ch_scale *sxy
 	t = strarr(nc,256)
 	toggle_modes = ['Off', 'On', 'Done', 'Error']
 
@@ -2842,6 +2926,7 @@ if catch_errors_on then begin
        return
     endif
 endif
+sxy = geopixe_scale()
 
 	no_data = 1
 	p = (*pstate).prgb
@@ -2871,7 +2956,7 @@ endcase
 	rows = string(indgen(n>1))
 	headings = ['#', 'R', 'G', 'B', 'Zoom']
 	nc = n_elements(headings)
-	widths = [4, replicate(10,4)] * !d.x_ch_size * ch_scale
+	widths = [4, replicate(10,4)] * !d.x_ch_size * ch_scale *sxy
 	t = strarr(nc,256)
 	toggle_modes = ['Off', 'On', 'Done', 'Error']
 
@@ -2953,6 +3038,7 @@ if catch_errors_on then begin
        return
     endif
 endif
+sxy = geopixe_scale()
 
 	no_data = 1
 	p = (*pstate).presults
@@ -2981,7 +3067,7 @@ endcase
 
 	rows = string(indgen(n>1))
 	headings = ['#','On', 'Raw', 'Xpixels','Ypixels','Xsize','Ysize', 'Charge', 'Output', 'Pileup','Throttle','Linear']
-	widths = [3,5, 12, replicate(7,2),replicate(7,2), 8, 41, replicate(20,3)] * !d.x_ch_size * ch_scale
+	widths = [3,5, 12, replicate(7,2),replicate(7,2), 8, 41, replicate(20,3)] * !d.x_ch_size * ch_scale *sxy
 	nc = n_elements(headings)
 	t = strarr(nc,256)
 	toggle_modes = ['Off', 'On', 'Done', 'Error']
@@ -3344,8 +3430,9 @@ common c_errors_1, catch_errors_on
 if n_elements(debug) lt 1 then debug=0
 catch_errors_on = 1							; enable error CATCHing
 if debug then catch_errors_on = 0			; disable error CATCHing
+sxy = geopixe_scale()						; scale all if system font changes
 
-wversion = '8.9r'							; wizard version
+wversion = '8.9t'							; wizard version
 
 ; Each wizard sav loads routines from GeoPIXE.sav, if GeoPIXE is not running.
 ; The GeoPIXE routines are NOT to be compiled into each wizard sav file.
@@ -3409,6 +3496,11 @@ default = geopixe_defaults(source='wizard_batch')
 config = default.path.config
 detector_update, list=detector_list, title=detector_title
 
+dpath = default.path.data
+path = default.path.analysis
+proot = ptr_new({strip:0, path:''})
+path = build_output_path( dpath, path, proot, /set)
+
 ; List the names of the windows needed, in the format of their 'wizard-action' Notify
 ; window name. The "open-test" Notify message will be sent to these windows periodically
 ; to check on their 'open' status. They MUST make a copy of the Notify pointer contents,
@@ -3420,61 +3512,61 @@ case !version.os_family of
 	'MacOS': begin
 		space1 = 1
 		space2 = 2
-		space5 = 5
-		space10 = 10
-		space15 = 15
-		left_xsize = 700
-		left_ysize = 600
-		right_xsize = 400
-		right_ysize = left_ysize + 36
-		right_ylines = 28
-		text_xsize = 580
-		button_xsize = 100
-		button_xsize1 = 50
-		button_xsize2 = 170
-		help_xsize = left_xsize + right_xsize + 55
+		space5 = 5*sxy
+		space10 = 10*sxy
+		space15 = 15*sxy
+		left_xsize = 700*sxy
+		left_ysize = 600*sxy
+		right_xsize = 400*sxy
+		right_ysize = left_ysize + 36*sxy
+		right_ylines = 28*sxy
+		text_xsize = 580*sxy
+		button_xsize = 100*sxy
+		button_xsize1 = 50*sxy
+		button_xsize2 = 170*sxy
+		help_xsize = left_xsize + right_xsize + 55*sxy
 		ch_scale = 1.2
-		yoff_table = 232
+		yoff_table = 232*sxy
 		retain = 2
 		end
 	'unix': begin
 		space1 = 1
 		space2 = 2
-		space5 = 5
-		space10 = 10
-		space15 = 15
-		left_xsize = 800
-		left_ysize = 700
-		right_xsize = 400
-		right_ysize = left_ysize + 36
-		right_ylines = 28
-		text_xsize = 670
-		button_xsize = 100
-		button_xsize1 = 50
-		button_xsize2 = 170
-		help_xsize = left_xsize + right_xsize + 55
+		space5 = 5*sxy
+		space10 = 10*sxy
+		space15 = 15*sxy
+		left_xsize = 800*sxy
+		left_ysize = 700*sxy
+		right_xsize = 400*sxy
+		right_ysize = left_ysize + 36*sxy
+		right_ylines = 28*sxy
+		text_xsize = 670*sxy
+		button_xsize = 100*sxy
+		button_xsize1 = 50*sxy
+		button_xsize2 = 170*sxy
+		help_xsize = left_xsize + right_xsize + 55*sxy
 		ch_scale = 1.25
-		yoff_table = 185
+		yoff_table = 185*sxy
 		retain = 2
 		end
 	else: begin
 		space1 = 1
 		space2 = 2
-		space5 = 5
-		space10 = 10
-		space15 = 15
-		left_xsize = 700
-		left_ysize = 600
-		right_xsize = 310
-		right_ysize = left_ysize + 36
-		right_ylines = 28
-		text_xsize = 600
-		button_xsize = 70
-		button_xsize1 = 50
-		button_xsize2 = 170
-		help_xsize = left_xsize + right_xsize + 55
+		space5 = 5*sxy
+		space10 = 10*sxy
+		space15 = 15*sxy
+		left_xsize = 700*sxy
+		left_ysize = 600*sxy
+		right_xsize = 310*sxy
+		right_ysize = left_ysize + 36*sxy
+		right_ylines = 28*sxy
+		text_xsize = 600*sxy
+		button_xsize = 70*sxy
+		button_xsize1 = 50*sxy
+		button_xsize2 = 170*sxy
+		help_xsize = left_xsize + right_xsize + 55*sxy
 		ch_scale = 1.0
-		yoff_table = 175
+		yoff_table = 175*sxy
 		retain = 1
 		end
 endcase
@@ -3519,7 +3611,7 @@ tab_names = ['input','corrections','rgb','options','table']
 ; Files and paths -----------------------------------------
 
 file_base = widget_base( tab_panel, title=' 1. User Input  ', /column, xpad=1, ypad=1, space=5, $
-					/align_center, /base_align_center, scr_xsize=left_xsize+20, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
+					/align_center, /base_align_center, scr_xsize=left_xsize+20*sxy, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
 label = widget_label( file_base, value='Select raw data directory')
 text = widget_text( file_base, scr_xsize=left_xsize, ysize=5, /wrap, uname='curve-explanation', tracking=tracking, $
 				value=['Select the data directory to scan for all raw data. Select an output path, and select a template DAI image file to set initial sort parameters. ' + $
@@ -3612,12 +3704,12 @@ ctable1_base = widget_base( ctable_base1, title='   Corrections Table    ', /col
 
 cheadings = strarr(6)					; dummy values (see 'wizard_batch_update_ctable' for actual headings)
 ncc = n_elements(cheadings)
-widths = replicate(6,ncc) * !d.x_ch_size * ch_scale
+widths = replicate(6,ncc) * !d.x_ch_size * ch_scale *sxy
 t = strarr(ncc,256)
 
-print,'table Y size = ', left_ysize-yoff_table-170
+;print,'table Y size = ', left_ysize-yoff_table-45*sxy
 ctable = Widget_Table(ctable1_base, UNAME='corrections-table', /all_events, /editable, /scroll, $ Y_SCROLL_SIZE=12, $	;, X_SCROLL_SIZE=8, $
-				value=t, /RESIZEABLE_COLUMNS, alignment=2, scr_xsize=left_xsize, scr_ysize=left_ysize-yoff_table-45, /no_row_headers, $
+				value=t, /RESIZEABLE_COLUMNS, alignment=2, scr_xsize=left_xsize, scr_ysize=left_ysize-yoff_table-45*sxy, /no_row_headers, $
 				tracking=tracking, uvalue={xresize:left_resize,yresize:1, help:'The table shows all element image corrections from the template DAI file. ' + $
 				'Operations that effect ALL planes (shown with a "*") are only shown againt the element selected to guide that operation. ' + $
 				'Corrections can be deleted or more added. The "Log" column shows display mode: Linear (0), LOG (1), SQRT (2).'}, $
@@ -3657,7 +3749,7 @@ button = widget_button( ctable_base2b, value='Apply', uname='display-apply-butto
 ; Template RGB exports table  -----------------------------------------
 
 rgbtable_base = widget_base( tab_panel, title=' 3. RGB Exports  ', /column, xpad=1, ypad=1, space=5, $
-					/align_center, /base_align_center, scr_xsize=left_xsize+20, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
+					/align_center, /base_align_center, scr_xsize=left_xsize+20*sxy, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
 label = widget_label( rgbtable_base, value='Table of RGB export options')
 text = widget_text( rgbtable_base, scr_xsize=left_xsize, ysize=5, /wrap, uname='rgbtable-explanation', tracking=tracking, $
 				value=['Table showing selected RGB images/plots to export. The table can be set from a "Learn" RGB.csv file created in the RGB Image window ' + $
@@ -3678,11 +3770,11 @@ rgbtable1_base = widget_base( rgbtable_base1, title='   RGB Export list Table   
 
 rgb_headings = strarr(12)			; dummy values (see 'wizard_batch_update_rgbtable' for actual headings)
 ncr = n_elements(rgb_headings)
-widths = replicate(6,ncr) * !d.x_ch_size * ch_scale
+widths = replicate(6,ncr) * !d.x_ch_size * ch_scale *sxy
 t = strarr(ncr,256)
 
 rgbtable = Widget_Table(rgbtable1_base, UNAME='rgb-table', /all_events, /editable, Y_SCROLL_SIZE=13, $	;, X_SCROLL_SIZE=8, $
-				value=t, /RESIZEABLE_COLUMNS, alignment=2, scr_xsize=left_xsize, scr_ysize=left_ysize-yoff_table-15, /no_row_headers, $
+				value=t, /RESIZEABLE_COLUMNS, alignment=2, scr_xsize=left_xsize, scr_ysize=left_ysize-yoff_table-15*sxy, /no_row_headers, $
 				tracking=tracking, uvalue={xresize:left_resize,yresize:1, help:'The table shows selected RGB export combinations to export for each processed image ' + $
 				'using the selected Zoom factor.'}, column_labels=headings, column_widths=widths, NOTIFY_REALIZE='OnRealize_wizard_batch_rgbtable')
 			
@@ -3716,7 +3808,7 @@ button = widget_button( rgbtable_base2, value='Save', uname='rgb-save-button', t
 ; Processing and save/export options  -----------------------------------------
 
 options_base = widget_base( tab_panel, title=' 4. Options  ', /column, xpad=1, ypad=1, space=5, $
-					/align_center, /base_align_center, scr_xsize=left_xsize+20, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
+					/align_center, /base_align_center, scr_xsize=left_xsize+20*sxy, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
 label = widget_label( options_base, value='Processing, Save & Export Options')
 text = widget_text( options_base, scr_xsize=left_xsize, ysize=5, /wrap, uname='options-explanation', tracking=tracking, $
 				value=['Tab showing a selection of processing and output/export options. The image corrections options are setup on tab 2 (Corrections). ' + $
@@ -3767,7 +3859,7 @@ options_export_id = cw_bgroup2( options_base3c, ['Save images as colour PNG to H
 ; Results table  -----------------------------------------
 
 table_base = widget_base( tab_panel, title=' 5. Processing Table  ', /column, xpad=1, ypad=1, space=5, $
-					/align_center, /base_align_center, scr_xsize=left_xsize+20, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
+					/align_center, /base_align_center, scr_xsize=left_xsize+20*sxy, scr_ysize=left_ysize, uvalue={xresize:left_resize,yresize:1})
 label = widget_label( table_base, value='Work Table and Processing Progress')
 results_text = widget_text( table_base, scr_xsize=left_xsize, ysize=5, /wrap, uname='table-explanation', tracking=tracking, $
 				value=['Scan for the details of the raw files (set raw path on tab 1). ' + $
@@ -3790,15 +3882,14 @@ table1_base = widget_base( table_base1, title='  Results Table    ', /column, xp
 
 headings = strarr(12)			; dummy values (see 'wizard_batch_update_table' for actual headings)
 nc = n_elements(headings)
-widths = replicate(6,nc) * !d.x_ch_size * ch_scale
+widths = replicate(6,nc) * !d.x_ch_size * ch_scale *sxy
 t = strarr(nc,256)
 
 results_table = Widget_Table(table1_base, UNAME='results-table', /all_events, /editable, Y_SCROLL_SIZE=13, $	;, X_SCROLL_SIZE=8, $
 				value=t, /RESIZEABLE_COLUMNS, alignment=2, scr_xsize=left_xsize, scr_ysize=left_ysize-yoff_table, /no_row_headers, $
 				tracking=tracking, uvalue={xresize:left_resize,yresize:1, help:'The table shows the raw data to process and tracks processing progress. ' + $
 				'You may need to enter "Charge" for those device raw data sets that do not supply it.'}, $
-				column_labels=headings, column_widths=widths, $
-				NOTIFY_REALIZE='OnRealize_wizard_batch_results_table')
+				column_labels=headings, column_widths=widths, NOTIFY_REALIZE='OnRealize_wizard_batch_results_table')
 			
 table_base2 = widget_base( table_base, /row, xpad=1, ypad=0, space=2, /align_center, /base_align_center)
 
@@ -3847,6 +3938,7 @@ endif else help=0L
 state = { $
 		path:					ptr_new(path), $				; pointer to current path
 		dpath:					ptr_new(dpath), $				; pointer to current dpath
+		root:					ptr_new(*proot), $				; storage for 'build_output_path' root path
 		tracking:				tracking, $						; tracking mode
 		tab:					0, $							; current Tab selected
 		tab_names:				tab_names, $					; tab names
@@ -3890,7 +3982,6 @@ state = { $
 		template_sort_dai:		'', $							; template DAI for sorting
 		template_corrections_dai:	'', $						; template DAI for corrections
 		template_rgb_export:		'', $						; template RGB.csv for RGB export
-		root:					ptr_new(/allocate_heap), $		; storage foor 'build_output_path' root path
 
 ;		pconfig:				ptr_new(/allocate_heap), $		; room for standards.csv config table
 		first:					0, $							; first run to process
@@ -3990,6 +4081,8 @@ geom = widget_info( tlb, /geometry)
 
 register_notify, tlb, ['wizard-return', $				; returns from GeoPIXE windows
 				'path', $								; new paths
+				'root', $								; input/output path root details struct
+				'dpath', $								; new data path
 				'new-detectors']						; detectors changed
 xmanager, 'wizard_batch', tlb, /no_block
 

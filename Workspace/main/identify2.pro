@@ -21,7 +21,7 @@ if catch_errors_on then begin
 		goto, kill
 	endif
 endif
-sxy = geopixe_scale()
+sxy = geopixe_scale( relative=0)
 widget_control, hourglass=0
 
 child = widget_info( event.top, /child)

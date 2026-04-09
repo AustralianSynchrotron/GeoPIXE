@@ -24,7 +24,8 @@ if catch_errors_on then begin
 		goto, kill
 	endif
 endif
-  widget_control, hourglass=0
+widget_control, hourglass=0
+sxy = geopixe_scale()
 
 child = widget_info( event.top, /child)
 widget_control, child, get_uvalue=pstate
@@ -38,16 +39,16 @@ if size(*p,/tname) ne 'STRUCT' then goto, bad_ptr
 
   case !version.os_family of
 	'MacOS': begin
-		xoff = 414
-		yoff = 22
+		xoff = 414*sxy
+		yoff = 22*sxy
 		end
 	'unix': begin
-		xoff = 444
-		yoff = 20
+		xoff = 444*sxy
+		yoff = 20*sxy
 		end
 	else: begin
-		xoff = 414
-		yoff = 22
+		xoff = 414*sxy
+		yoff = 22*sxy
  		end
   endcase
 drag = 0
@@ -100,8 +101,8 @@ case uname of
 
 	'detector_TLB': begin
 		if tag_names(event,/structure_name) eq 'WIDGET_BASE' then begin
-			w = (event.x - xoff) > 400
-			h = (event.y - yoff) > 580
+			w = (event.x - xoff) > 400*sxy
+			h = (event.y - yoff) > 580*sxy
 			widget_control, (*pstate).draw, draw_xsize=w, draw_ysize=h
 			(*pstate).width = w
 			(*pstate).height = h
@@ -1370,6 +1371,7 @@ COMPILE_OPT STRICTARR
 common c_geopixe_vm, geopixe_enable_vm
 if n_elements(geopixe_enable_vm) lt 1 then geopixe_enable_vm=1
 startupp
+sxy = geopixe_scale()
 
 ErrorNo = 0
 common c_errors_1, catch_errors_on
@@ -1399,55 +1401,58 @@ if n_elements(path) lt 1 then path=''
 		symbol = 'SYMBOL*12'
 		large_font = 'Arial*12'
 ;@2		widget_control, default_font='Geneva*10'		; set font for all windows
-		help_xsize = 88
-		mode_xsize = 68
-		spc_filters = 2
-		xsize_nfilters = 90
-		xsize_deffilter= 90
-		xsize_atomic = 130
-		col_widths = 110
-		special_xsize = 157
-		formula_xsize = 193
+		help_xsize = 88*sxy
+		mode_xsize = 68*sxy
+		spc_filters = 2*sxy
+		xsize_nfilters = 90*sxy
+		xsize_deffilter= 90*sxy
+		xsize_atomic = 130*sxy
+		col_widths = 110*sxy
+		special_xsize = 157*sxy
+		formula_xsize = 193*sxy
 		retain = 1
-		draw_xsize = 480
-		draw_ysize = 533
-		yw = 400
+		draw_xsize = 480*sxy
+		draw_ysize = 533*sxy
+		yw = 400*sxy
+		lframe = 0
 		end
 	'unix': begin
 		symbol = '-adobe-symbol-medium-r-normal--0-0-100-100-p-0-adobe-fontspecific'
 		large_font = '10x20'
 ;@2		widget_control, default_font='6x13'				; set font for all windows
-		help_xsize = 42
-		mode_xsize = 50
-		spc_filters = 5
-		xsize_nfilters = 90
-		xsize_deffilter= 90
-		xsize_atomic = 144
-		col_widths = 88
-		special_xsize = 140
-		formula_xsize = 180
+		help_xsize = 42*sxy
+		mode_xsize = 50*sxy
+		spc_filters = 5*sxy
+		xsize_nfilters = 90*sxy
+		xsize_deffilter= 90*sxy
+		xsize_atomic = 144*sxy
+		col_widths = 88*sxy
+		special_xsize = 140*sxy
+		formula_xsize = 180*sxy
 		retain = 2
-		draw_xsize = 480
-		draw_ysize = 640
-		yw = 620
+		draw_xsize = 480*sxy
+		draw_ysize = 640*sxy
+		yw = 620*sxy
+		lframe = 0
 		end
 	else: begin
 		symbol = 'SYMBOL*BOLD*14'
 		large_font = 'COURIER*BOLD*10'
 ;		widget_control, default_font='Arial*14'				; set font for all windows
-		help_xsize = 42
-		mode_xsize = 50
-		spc_filters = 5
-		xsize_nfilters = 90
-		xsize_deffilter= 90
-		xsize_atomic = 120
-		col_widths = 88
-		special_xsize = 157
-		formula_xsize = 193
+		help_xsize = 42*sxy
+		mode_xsize = 50*sxy
+		spc_filters = 5*sxy
+		xsize_nfilters = 90*sxy
+		xsize_deffilter= 90*sxy
+		xsize_atomic = 120*sxy
+		col_widths = 88*sxy
+		special_xsize = 157*sxy
+		formula_xsize = 193*sxy
 		retain = 1
-		draw_xsize = 480
-		draw_ysize = 580
-		yw = 400
+		draw_xsize = 480*sxy
+		draw_ysize = 580*sxy
+		yw = 400*sxy
+		lframe = 1
  		end
   endcase
 
@@ -1465,11 +1470,11 @@ endif
 screen = get_screen_size()
 if n_elements(xoffset) lt 1 then begin
 	screen = get_screen_size()
-	xoffset = ((xoff - 402) < (screen[0]-34 - 402)) > 0
+	xoffset = ((xoff - 402*sxy) < (screen[0]-34*sxy - 402*sxy)) > 0
 endif
 if n_elements(yoffset) lt 1 then begin
 	screen = get_screen_size()
-	yoffset = ((yoff - yw+h) < (screen[1]-28 - yw)) > 0
+	yoffset = ((yoff - yw+h) < (screen[1]-28*sxy - yw)) > 0
 endif
 
 p = bad_pars_struct( p, make_pars=make_p)
@@ -1527,17 +1532,17 @@ tbase = widget_base( rbase, /column, xpad=0, ypad=0, space=5, /base_align_center
 
 sbase = widget_base( tbase, /row, /base_align_center, ypad=1, xpad=0, space=5, /align_right)
 lab = widget_label( sbase, value='File:')
-detector_file = widget_text( sbase, value=(*p).detector_file, uname='detector-file', /tracking, /editable, $
-					uvalue='Enter the name of a detector file to retrieve retrieve and edit.',scr_xsize=243)
+detector_file = widget_text( sbase, value=(*p).detector_file, uname='detector-file', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the name of a detector file to retrieve retrieve and edit.',scr_xsize=243*sxy)
 load_setup_button = widget_button( sbase, value='Load', uname='load-detector-button', /tracking, $
-					uvalue='Load detector parameters from a previous detector file.', scr_xsize=38)
+					uvalue='Load detector parameters from a previous detector file.', scr_xsize=38*sxy)
 save_setup_button = widget_button( sbase, value='Save', uname='save-detector-button', /tracking, $
-					uvalue='Save detector parameters to a detector file.', scr_xsize=38)
+					uvalue='Save detector parameters to a detector file.', scr_xsize=38*sxy)
 
 titlebase = widget_base( tbase, /row, /base_align_center, ypad=0, xpad=0, space=5, /align_right)
 lab = widget_label( titlebase, value='Title:')
-title_text = widget_text( titlebase, value=(*p).title, uname='title-text', /tracking, /editable, $
-					uvalue='Enter a title descriptor for this composite detector.',scr_xsize=333)
+title_text = widget_text( titlebase, value=(*p).title, uname='title-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter a title descriptor for this composite detector.',scr_xsize=333*sxy)
 
 ; detector mode
 
@@ -1545,12 +1550,12 @@ dbase1 = widget_base( tbase, /row, /base_align_center, ypad=0, xpad=0, space=5, 
 lab = widget_label( dbase1, value='Material:')
 crystal_mode = widget_combobox( dbase1, value=[' Si  (Si(Li) or Si drift)',' Ge  (intrinsic Ge)'], uname='crystal-mode', /tracking, $
 					notify_realize='OnRealize_detector_crystal_mode', $
-					uvalue='Select the type of detector crystal.', xsize=141)
+					uvalue='Select the type of detector crystal.', xsize=141*sxy)
 
 lab = widget_label( dbase1, value='  Model:')
 detector_model = widget_combobox( dbase1, value=[' X-ray detector model',' Exponential poly fit'], uname='detector-mode', /tracking, $
 					notify_realize='OnRealize_detector_model_mode', $
-					uvalue='Select the type of detector calibration model.', xsize=141)
+					uvalue='Select the type of detector calibration model.', xsize=141*sxy)
 
 map_base = widget_base( tbase, /base_align_center, ypad=0, xpad=0, space=0)
 map_base0 = widget_base( map_base, /column, /base_align_center, ypad=0, xpad=0, space=5, map=1, /align_right)
@@ -1563,42 +1568,42 @@ pars_xpad = 1
 dbase2a = widget_base( map_base0, column=3, /base_align_right, ypad=0, xpad=0, space=3, /align_right)
 dbase2 = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase2, value='Diameter:')
-diameter_text = widget_text( dbase2, value=str_tidy((*p).diameter), uname='diameter-text', /tracking, /editable, $
+diameter_text = widget_text( dbase2, value=str_tidy((*p).diameter), uname='diameter-text', /tracking, /editable, frame = lframe, $
 					uvalue='Enter the detector diameter (mm); this will update area and solid-angle (hit <return>). ' + $
 					'Note that aperture "pin-hole filters" inside the detector may reduce this. ' + $
 					'For array detectors, individual dimensions come from the layout file.', scr_xsize=pars_xsize)
 
 dbase3 = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase3, value='Area:')
-area_text = widget_text( dbase3, value=str_tidy((*p).area), uname='area-text', /tracking, /editable, $
+area_text = widget_text( dbase3, value=str_tidy((*p).area), uname='area-text', /tracking, /editable, frame = lframe, $
 					uvalue='Enter the detector area (mm^2); this will update diameter and solid-angle (hit <return> to update others). Alternatively, enter the diameter (mm) above. ' + $
 					'Note that aperture "pin-hole filters" inside the detector may reduce this.', scr_xsize=pars_xsize)
 
 dbase5c = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase5c, value='Tilt Angle:')
-detector_tilt_text = widget_text( dbase5c, value=str_tidy((*p).tilt), uname='detector-tilt', /tracking, /editable, $
+detector_tilt_text = widget_text( dbase5c, value=str_tidy((*p).tilt), uname='detector-tilt', /tracking, /editable, frame = lframe, $
 					uvalue='Enter the detector global tilt angle, for the detector or array, away from pointing directly at target (degrees). At zero tilt angle, the detector points at the focussed beam-spot.',scr_xsize=pars_xsize)
 
 dbase4 = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase4, value='Distance:')
-distance_text = widget_text( dbase4, value=str_tidy((*p).distance), uname='distance-text', /tracking, /editable, $
+distance_text = widget_text( dbase4, value=str_tidy((*p).distance), uname='distance-text', /tracking, /editable, frame = lframe, $
 					uvalue='Enter the distance from target to the front-face of the active volume of the detector crystal; this will update solid-angle (hit <return> to update it). ' + $
 					'(There is commonly ~5 mm from detector crystal to window face.)',scr_xsize=pars_xsize)
 
 dbase5b = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase5b, value='Solid Angle:')
-detector_solid_text = widget_text( dbase5b, value=str_tidy((*p).thick), uname='detector-solid-text', /tracking, $
+detector_solid_text = widget_text( dbase5b, value=str_tidy((*p).thick), uname='detector-solid-text', /tracking, frame = lframe, $
 					uvalue='Solid-angle of the detector or total for the active (not bad or vetoed) elements of the array (msr), as read from the layout file. ' + $
 					'Note that aperture "pin-hole filters" inside the detector may reduce this.',scr_xsize=pars_xsize)
 
 dbase5 = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase5, value='Thickness:')
-detector_thick_text = widget_text( dbase5, value=str_tidy((*p).thick), uname='detector-thick-text', /tracking, /editable, $
+detector_thick_text = widget_text( dbase5, value=str_tidy((*p).thick), uname='detector-thick-text', /tracking, /editable, frame = lframe, $
 					uvalue='Enter the thickness of the active volume of the detector (mm).',scr_xsize=pars_xsize)
 
 dbase6 = widget_base( dbase2a, /row, /base_align_center, ypad=0, xpad=pars_xpad, space=5)
 lab = widget_label( dbase6, value='Resolution:')
-resolution_text = widget_text( dbase6, value=str_tidy((*p).resolution), uname='resolution-text', /tracking, /editable, $
+resolution_text = widget_text( dbase6, value=str_tidy((*p).resolution), uname='resolution-text', /tracking, /editable, frame = lframe, $
 					uvalue='Enter the detector working resolution (keV). This is defined at 5.895 keV for X-rays and at 1.332 MeV for gamma-rays.',scr_xsize=pars_xsize)
 
 ; detector array?
@@ -1607,28 +1612,28 @@ dbase6 = widget_base( map_base0, /row, /base_align_center, ypad=0, xpad=0, space
 lab = widget_label( dbase6, value='Shape:')
 shape_mode = widget_combobox( dbase6, value=[' Round, Circular ',' Square, Rectangular '], uname='crystal-shape', /tracking, $
 					notify_realize='OnRealize_detector_crystal_shape', $
-					uvalue='Select the shape of each detector crystal.', xsize=141, sensitive=(*p).array_mode eq 0)
+					uvalue='Select the shape of each detector crystal.', xsize=141*sxy, sensitive=(*p).array_mode eq 0)
 
 lab = widget_label( dbase6, value='   Array:')
 array_mode = widget_combobox( dbase6, value=[' Single detector',' Array detector'], uname='array-mode', /tracking, $
 					notify_realize='OnRealize_detector_array_mode', $
-					uvalue='Select single detector or detector array. The latter will bring up detector layout specification options.', xsize=141)
+					uvalue='Select single detector or detector array. The latter will bring up detector layout specification options.', xsize=141*sxy)
 
 ; layout file buttons
 
 layout_base = widget_base( map_base0, /row, /base_align_center, ypad=0, xpad=0, space=5, /align_right, map=(*p).array_mode)
 lab = widget_label( layout_base, value='Layout:')
-layout_file = widget_text( layout_base, value=(*p).layout_file, uname='layout-file', /tracking, /editable, $
-					uvalue='Enter the name of a detector layout CSV file that specifies the position, size, etc. of detector elements in an array.',scr_xsize=262)
+layout_file = widget_text( layout_base, value=(*p).layout_file, uname='layout-file', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the name of a detector layout CSV file that specifies the position, size, etc. of detector elements in an array.',scr_xsize=262*sxy)
 load_layout_button = widget_button( layout_base, value='Load', uname='load-layout-button', /tracking, $
-					uvalue='Load detector layout parameters from a layout CSV file that specifies the position, size, etc. of detector elements in an array.', scr_xsize=38)
+					uvalue='Load detector layout parameters from a layout CSV file that specifies the position, size, etc. of detector elements in an array.', scr_xsize=38*sxy)
 layout_popup_button = widget_button( layout_base, value='?', uname='detector-layout-popup', /tracking, $
-					uvalue='Open the detector layout window to view the layout representation.', scr_xsize=20)
+					uvalue='Open the detector layout window to view the layout representation.', scr_xsize=20*sxy)
 
 ; options
 
 obase = widget_base( map_base0, /row, /align_center, /base_align_left, ypad=0, xpad=0, space=3)
-options = cw_bgroup2( obase, ['Scale factor of Cohen et al.','Volume solid-angle correction'], /row, xpad=0, ypad=0, space=15, $
+options = cw_bgroup2( obase, ['Scale factor of Cohen et al.','Volume solid-angle correction'], /row, xpad=0, ypad=0, space=15*sxy, $
 					/return_index, /tracking, uname='options', set_value=[0,1], /nonexclusive, $
 					uvalue=['Check this option to enable the Cohen et al. detector efficiency multiplicative factor of 0.717.', $
 					'Enable correction for the effective solid-angle reduction through the volume of a thick detector for increasing energy X-rays.'])
@@ -1671,24 +1676,24 @@ for i=0L,n_filters_max-1 do begin
 
 	ll1base = widget_base( filter_base[i], /row, /base_align_center, ypad=0, xpad=0, space=2)
 	lab = widget_label( ll1base, value='Thick:')
-	thick_text[i] = widget_text( ll1base, value=str_tidy((*p).filter[i].thick), uname='thick-text', /tracking, /editable, $
-					uvalue=str_tidy(i)+'  Enter the thickness of the selected filter layer (in either mg/cm^2, microns or mm (for a Gas at NPT)).', scr_xsize=70)
+	thick_text[i] = widget_text( ll1base, value=str_tidy((*p).filter[i].thick), uname='thick-text', /tracking, /editable, frame = lframe, $
+					uvalue=str_tidy(i)+'  Enter the thickness of the selected filter layer (in either mg/cm^2, microns or mm (for a Gas at NPT)).', scr_xsize=70*sxy)
 	thick_mode[i] = widget_combobox( ll1base, value=[' mg/cm^2',' microns',' Gas (mm NPT)'], uname='thick-mode', /tracking, $
 					notify_realize='OnRealize_detector_thick_mode', $
 					uvalue=str_tidy(i)+'  Select filter layer thickness in "mg/cm^2", "microns" or "mm" (for a Gas at NPT). ' + $
 					'If microns is selected, a new box appears for entry of density of a compound. ' + $
-					'For a gas NPT conditions (P=1013.25 mbar, T=20C) are assumed; hit <return> on Formula or Thickness to calculate an ideal gas density.', xsize=120)
+					'For a gas NPT conditions (P=1013.25 mbar, T=20C) are assumed; hit <return> on Formula or Thickness to calculate an ideal gas density.', xsize=120*sxy)
 
 	density_base[i] = widget_base( ll1base, /row, map=(*p).filter[i].microns, /base_align_center, ypad=0, xpad=0, space=2)
 	lab = widget_label( density_base[i], value=' Density:')
-	density_text[i] = widget_text( density_base[i], value=str_tidy((*p).filter[i].density), uname='filter-density', /tracking, /editable, $
+	density_text[i] = widget_text( density_base[i], value=str_tidy((*p).filter[i].density), uname='filter-density', /tracking, /editable, frame = lframe, $
 					uvalue=str_tidy(i)+'  Enter the density of a compound composition filter layer (g/cm^3). '+ $
 					'For pure element filters the density will be obtained from the database automatically .' + $
-					'For a Gas, hit <return> on Formula or Thickness to calculate an ideal gas density; NPT conditions (P=1013.25 mbar, T=20C) are assumed.', scr_xsize=72)
+					'For a Gas, hit <return> on Formula or Thickness to calculate an ideal gas density; NPT conditions (P=1013.25 mbar, T=20C) are assumed.', scr_xsize=72*sxy)
 
 	ll2base = widget_base( filter_base[i], /row, /base_align_center, ypad=0, xpad=0, space=2)
 	lab = widget_label( ll2base, value='Formula:')
-	formula_text[i] = widget_text( ll2base, value=(*p).filter[i].formula, uname='filter-formula', /tracking, /editable, ysize=1,  $
+	formula_text[i] = widget_text( ll2base, value=(*p).filter[i].formula, uname='filter-formula', /tracking, /editable, ysize=1, frame = lframe,  $
 					uvalue=str_tidy(i)+'  Enter the chemical formula for the layer. ' + $
 					'Enclose radicals in brackets "( )", with optional multipliers in atomic fraction or weight %. ' + $
 					'e.g. Components in wt%: "(SiO2)18.3(MgO)34.3"; atomic proportions: "FeAsS". ' + $
@@ -1725,9 +1730,9 @@ for i=0L,n_filters_max-1 do begin
 ;	map_base = widget_base( ll3base, ypad=0, xpad=0)
 	ratio_base[i] = widget_base( ll3base, /row, map=map_pinhole, /base_align_center, ypad=0, xpad=0, space=2)
 	lab = widget_label( ratio_base[i], value=' Solid-angle ratio:')
-	ratio_text[i] = widget_text( ratio_base[i], value=str_tidy((*p).filter[i].pinratio), uname='filter-pinratio', /tracking, /editable, $
+	ratio_text[i] = widget_text( ratio_base[i], value=str_tidy((*p).filter[i].pinratio), uname='filter-pinratio', /tracking, /editable, frame = lframe, $
 					uvalue=str_tidy(i)+'  Enter the pin-hole filter solid-angle ratio. '+ $
-					'This is the ratio of the detector solid-angle divided by the hole solid-angle.', scr_xsize=70)
+					'This is the ratio of the detector solid-angle divided by the hole solid-angle.', scr_xsize=70*sxy)
 
 	bragg_base[i] = widget_base( map_base, /row, map=map_bragg, /base_align_center, /align_right, ypad=3, xpad=0, space=3)
 	bragg_button[i] = widget_button( bragg_base[i], value='      Edit Bragg     ', uname='bragg-button', /tracking, uvalue=str_tidy(i)+'  Open Bragg filter editor.')
@@ -1742,33 +1747,33 @@ lab = widget_label( map_base1, value='Enter coefficients of an exponential of a 
 pbase = widget_base( map_base1, column=2, /base_align_right, ypad=0, xpad=0, space=3)
 pbase1 = widget_base( pbase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( pbase1, value='A[0]:')
-a0_text = widget_text( pbase1, value=str_tidy((*p).diameter), uname='a0-text', /tracking, /editable, $
-					uvalue='Enter the exponential polynomial constant A[0].',scr_xsize=70)
+a0_text = widget_text( pbase1, value=str_tidy((*p).diameter), uname='a0-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the exponential polynomial constant A[0].',scr_xsize=70*sxy)
 
 pbase2 = widget_base( pbase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( pbase2, value='A[1]:')
-a1_text = widget_text( pbase2, value=str_tidy((*p).diameter), uname='a1-text', /tracking, /editable, $
-					uvalue='Enter the exponential polynomial log(E) constant A[1].',scr_xsize=70)
+a1_text = widget_text( pbase2, value=str_tidy((*p).diameter), uname='a1-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the exponential polynomial log(E) constant A[1].',scr_xsize=70*sxy)
 
 pbase3 = widget_base( pbase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( pbase3, value='A[2]:')
-a2_text = widget_text( pbase3, value=str_tidy((*p).diameter), uname='a2-text', /tracking, /editable, $
-					uvalue='Enter the exponential polynomial log(E)^2 constant A[2].',scr_xsize=70)
+a2_text = widget_text( pbase3, value=str_tidy((*p).diameter), uname='a2-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the exponential polynomial log(E)^2 constant A[2].',scr_xsize=70*sxy)
 
 pbase4 = widget_base( pbase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( pbase4, value='A[3]:')
-a3_text = widget_text( pbase4, value=str_tidy((*p).diameter), uname='a3-text', /tracking, /editable, $
-					uvalue='Enter the optional exponential polynomial log(E)^3 constant A[3].',scr_xsize=70)
+a3_text = widget_text( pbase4, value=str_tidy((*p).diameter), uname='a3-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the optional exponential polynomial log(E)^3 constant A[3].',scr_xsize=70*sxy)
 
 pbase5 = widget_base( pbase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( pbase5, value='A[4]:')
-a4_text = widget_text( pbase5, value=str_tidy((*p).diameter), uname='a4-text', /tracking, /editable, $
-					uvalue='Enter the optional exponential polynomial log(E)^4 constant A[4].',scr_xsize=70)
+a4_text = widget_text( pbase5, value=str_tidy((*p).diameter), uname='a4-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the optional exponential polynomial log(E)^4 constant A[4].',scr_xsize=70*sxy)
 
 pbase6 = widget_base( pbase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( pbase6, value='A[5]:')
-a5_text = widget_text( pbase6, value=str_tidy((*p).diameter), uname='a5-text', /tracking, /editable, $
-					uvalue='Enter the optional exponential polynomial log(E)^5 constant A[5].',scr_xsize=70)
+a5_text = widget_text( pbase6, value=str_tidy((*p).diameter), uname='a5-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the optional exponential polynomial log(E)^5 constant A[5].',scr_xsize=70*sxy)
 
 ; Applicable energy range
 
@@ -1778,13 +1783,13 @@ lab = widget_label( map_base1, value='Enter the energy range of applicability of
 ebase = widget_base( map_base1, column=2, /base_align_right, ypad=0, xpad=0, space=3)
 ebase1 = widget_base( ebase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( ebase1, value='E min:')
-e_low_text = widget_text( ebase1, value=str_tidy((*p).e_low), uname='e_low-text', /tracking, /editable, $
-					uvalue='Enter the lowest energy (keV) of applicability of this calibration polynomial.',scr_xsize=70)
+e_low_text = widget_text( ebase1, value=str_tidy((*p).e_low), uname='e_low-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the lowest energy (keV) of applicability of this calibration polynomial.',scr_xsize=70*sxy)
 
 ebase2 = widget_base( ebase, /row, /base_align_center, ypad=0, xpad=10, space=5)
 lab = widget_label( ebase2, value='E max:')
-e_high_text = widget_text( ebase2, value=str_tidy((*p).e_high), uname='e_high-text', /tracking, /editable, $
-					uvalue='Enter the highest energy (keV) of applicability of this calibration polynomial.',scr_xsize=70)
+e_high_text = widget_text( ebase2, value=str_tidy((*p).e_high), uname='e_high-text', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the highest energy (keV) of applicability of this calibration polynomial.',scr_xsize=70*sxy)
 
 draw = widget_draw( rbase, uname='draw', xsize=draw_xsize, ysize=draw_ysize, notify_realize='OnRealize_Detector', $
 			retain=retain, /button_events)
@@ -1804,40 +1809,40 @@ draw = widget_draw( rbase, uname='draw', xsize=draw_xsize, ysize=draw_ysize, not
 t2base = widget_base( tbase, /column, xpad=0, ypad=2, space=1, /base_align_center, /align_center)
 cursor_base = widget_base( t2base, /row, /base_align_center, /align_right, ypad=0, xpad=0, space=3)
 lab = widget_label( cursor_base, value='Cursor:')
-cursor_text = widget_text( cursor_base, value=' ', uname='cursor-text', /tracking, /editable, $
-				uvalue='Enter the Energy (keV) for the cursor to display corresponding efficiency, or drag the energy cursor on the plot, or click line energy in X-ray Identification window.', scr_xsize=70)
+cursor_text = widget_text( cursor_base, value=' ', uname='cursor-text', /tracking, /editable, frame = lframe, $
+				uvalue='Enter the Energy (keV) for the cursor to display corresponding efficiency, or drag the energy cursor on the plot, or click line energy in X-ray Identification window.', scr_xsize=70*sxy)
 lab = widget_label( cursor_base, value=' Efficiency:')
-efficiency_text = widget_text( cursor_base, value=' ', uname='efficiency-text', /tracking, $
+efficiency_text = widget_text( cursor_base, value=' ', uname='efficiency-text', /tracking, frame = lframe, $
 				uvalue='Shows detector efficiency (intrinsic for X-ray, total for gamma-ray model) at the cursor energy. ' + $
-				'Enter the Energy (keV) for the cursor in the left widget, or drag the cursor energy, or click line energy in X-ray Identification window.', scr_xsize=80)
+				'Enter the Energy (keV) for the cursor in the left widget, or drag the cursor energy, or click line energy in X-ray Identification window.', scr_xsize=80*sxy)
 lab = widget_label( cursor_base, value='    Total:')
-total_text = widget_text( cursor_base, value=' ', uname='total-text', /tracking, $
+total_text = widget_text( cursor_base, value=' ', uname='total-text', /tracking, frame = lframe,  $
 				uvalue='Shows detector total efficiency (including solid-angle effect) at the cursor energy. ' + $
-				'Enter the Energy (keV) for the cursor in the left widget, or drag the cursor energy, or click line energy in X-ray Identification window.', scr_xsize=80)
+				'Enter the Energy (keV) for the cursor in the left widget, or drag the cursor energy, or click line energy in X-ray Identification window.', scr_xsize=80*sxy)
 
 overlay_base = widget_base( t2base, /row, /base_align_center, /align_right, ypad=0, xpad=0, space=3)
 lab = widget_label( overlay_base, value='Relative to overlay:')
 lab = widget_label( overlay_base, value='    Rel-Eff:')
-overlay_efficiency_text = widget_text( overlay_base, value=' ', uname='overlay-efficiency-text', /tracking, $
-				uvalue='Shows detector efficiency (intrinsic for X-ray, total for gamma-ray model) at the cursor energy, relative to the overlay. ', scr_xsize=80)
+overlay_efficiency_text = widget_text( overlay_base, value=' ', uname='overlay-efficiency-text', /tracking, frame = lframe, $
+				uvalue='Shows detector efficiency (intrinsic for X-ray, total for gamma-ray model) at the cursor energy, relative to the overlay. ', scr_xsize=80*sxy)
 lab = widget_label( overlay_base, value=' Rel-Tot:')
-overlay_total_text = widget_text( overlay_base, value=' ', uname='overlay-total-text', /tracking, $
-				uvalue='Shows detector total efficiency (including solid-angle effect) at the cursor energy, relative to the overlay. ', scr_xsize=80)
+overlay_total_text = widget_text( overlay_base, value=' ', uname='overlay-total-text', /tracking, frame = lframe, $
+				uvalue='Shows detector total efficiency (including solid-angle effect) at the cursor energy, relative to the overlay. ', scr_xsize=80*sxy)
 
 obase = widget_base( t2base, /row, /base_align_center, ypad=0, xpad=0, space=5, /align_right)
 lab = widget_label( obase, value='Overlay:')
-overlay_text = widget_text( obase, value='', uname='load-detector-overlay', /tracking, /editable, $
-					uvalue='Enter the name of a detector file to retrieve and overlay on graph; main detector in "green", overlay in "red", ratio of total efficiency to overlay in "violet" (x0.1).',scr_xsize=288)
+overlay_text = widget_text( obase, value='', uname='load-detector-overlay', /tracking, /editable, frame = lframe, $
+					uvalue='Enter the name of a detector file to retrieve and overlay on graph; main detector in "green", overlay in "red", ratio of total efficiency to overlay in "violet" (x0.1).',scr_xsize=288*sxy)
 load_overlay_button = widget_button( obase, value='Load', uname='load-detector-overlay', /tracking, $
-					uvalue='Load detector parameters from a previous detector file to overlay on graph; main detector in "green", overlay in "red", ratio of total efficiency to overlay in "violet" (x0.1).', scr_xsize=38)
+					uvalue='Load detector parameters from a previous detector file to overlay on graph; main detector in "green", overlay in "red", ratio of total efficiency to overlay in "violet" (x0.1).', scr_xsize=38*sxy)
 
 Help_Base = Widget_Base(tbase, UNAME='Help_Base', SPACE=1, XPAD=0, YPAD=0, /ROW, /base_align_center)
 
-help = widget_text( Help_Base, scr_xsize=392-22, ysize=4, /wrap, uname='help', /tracking, $
+help = widget_text( Help_Base, scr_xsize=392*sxy-22*sxy, ysize=4, /wrap, uname='help', /tracking, $
 				uvalue='Help window. Displays context-sensitive information and tips about widgets.', $
 				frame=0)
 
-query_button = Widget_Button(Help_Base, UNAME='query-button', xsize=15, ysize=20,  $
+query_button = Widget_Button(Help_Base, UNAME='query-button', xsize=15*sxy, ysize=20*sxy,  $
       /ALIGN_CENTER ,VALUE='?', /tracking_events, uvalue='Jump to the help on this window in the GeoPIXE Users Guide.')
 
 state = {	$
