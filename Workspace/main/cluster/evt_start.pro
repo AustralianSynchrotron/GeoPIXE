@@ -653,6 +653,8 @@ start_more:
 ;									endif
 									if ptr_good((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -822,6 +824,8 @@ start_more:
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -906,6 +910,8 @@ start_more:
 										(*p).yorigin = yorigin
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
+
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
 
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
@@ -1065,6 +1071,8 @@ start_more:
 ;									endif
 									if ptr_good((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -1222,6 +1230,8 @@ start_more:
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -1319,6 +1329,8 @@ start_more:
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -1399,6 +1411,8 @@ start_more:
 										(*p).ysize = scany
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
+
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
 
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
@@ -1481,6 +1495,8 @@ start_more:
 										(*p).ysize = scany
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
+
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
 
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
@@ -1578,6 +1594,8 @@ start_more:
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=string((*p).charge)
 
@@ -1656,6 +1674,8 @@ start_more:
 										(*p).ysize = scany
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
+
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
 
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=string((*p).charge)
@@ -1736,6 +1756,8 @@ start_more:
 										(*p).ysize = scany
 ;									endif
 									if ptr_valid((*pp).flux) then (*p).flux = total( *(*pp).flux)
+
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
 
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=string((*p).charge)
@@ -2044,6 +2066,8 @@ start_more:
 ;									endif
 									if ptr_good((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -2224,6 +2248,8 @@ start_more:
 ;									endif
 									if ptr_good((*pp).flux) then (*p).flux = total( *(*pp).flux)
 
+									(*pp).energy_cal_file = (*p).energy_cal_file	; update energy cal filename
+
 									if notify then begin
 										widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
 										widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
@@ -2306,6 +2332,7 @@ start_more:
 								if ((*pstate).pspec ne pp) and ((*pstate).local_spectra eq 1) then free_spectra, (*pstate).pspec
 							endif
 							(*p).charge = charge
+
 							if notify then begin
 								widget_control, (*pstate).charge, set_value=string((*p).charge)
 

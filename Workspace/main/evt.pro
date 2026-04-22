@@ -461,9 +461,9 @@ endcase
 
 ;	device =		new device index
 ;
-;	sort_mode = 	0	images
+;	sort_mode = 	0	2D images
 ;					1	EXAFS spectrum	
-;					2	XANES stack
+;					2	XANES stack / tomo
 ;
 ;	xy_mode = 		0	Normal XY scan
 ;					1	X step scan
@@ -738,6 +738,8 @@ case uname of
 			mode = (*img).mode
 			if strlowcase(extract_extension((*img).matrix.file)) eq 'mpdam' then mode=3
 			if (mode eq 3) or (mode eq 4) then widget_control, (*pstate).da_xanes_base1b, map=0
+
+			(*p).energy_cal_file = (*img).energy_cal_file
 
 			if (*p).array eq 1 then begin
 				chan = *(*img).pactive
@@ -1104,6 +1106,8 @@ case uname of
 			if enable_cluster eq 0 then (*p).cluster = 0
 			cluster_OK = ((*p).sort_mode eq 0) or (((*p).sort_mode eq 2) and (((*p).xy_mode eq 0) or ((*p).xy_mode eq 4)))
 			widget_control, (*pstate).cluster_id, sensitive=enable_cluster and cluster_OK
+
+			(*p).energy_cal_file = (*img).energy_cal_file
 
 			mode = (*img).mode
 			if (*p).array eq 1 then begin
@@ -1841,7 +1845,7 @@ case uname of
 		end
 	'getcal_button': begin
 		path = *(*pstate).path
-		F = file_requester( /read, filter = '*.spec', path=path, group=event.top, $
+		F = file_requester( /read, filter = '*.spec', path=path, file=(*p).energy_cal_file, group=event.top, $
 					title='Load spectrum calibration from a SPEC file', fix_filter=0, preview_routine='spectrum_preview')
 		if F ne '' then begin
 			evt_getcal, pstate, F
@@ -2339,6 +2343,8 @@ endif
 	pp = read_spec(F)
 	npp = n_elements(pp)
 	if npp eq 0 then return
+	(*p).energy_cal_file = F[0]
+
 	n = intarr(npp)
 	for j=0L,npp-1 do begin
 		if ptr_good(pp[j]) then n[j] = (*pp[j]).station + adc_offset_device((*pp[j]).DevObj)
@@ -4350,6 +4356,7 @@ if make_p then begin
 		energy_proxy_axis: 0, $						; axis controlling energy index (0=none, 1=X, 2=Y) in 2D (xanes=0) mode 
 		el_select: '', $							; selected XANES element
 		linearize_file: '', $						; linearization file name (if used)
+		energy_cal_file: '', $						; energy cal filename (all channels)
 		output_file: '', $							; Output file name
 		root:		ptr_new( /allocate_heap), $		; root info for paths
 		sample:		'', $							; sample
@@ -5156,7 +5163,7 @@ state = {  $
 		dwell_base:		dwell_base, $		; dwell base ID
 		flatten_id:		flatten_id, $		; flatten toggle ID
 		update_button:	update_button, $	; update button ID
-				
+
 		station:		station, $			; station droplist ID
 		device_option_mode_base:	device_option_mode_base, $	; device options map base ID
 		device_option_mode_base_ysize: 0, $	; device_base Y size 

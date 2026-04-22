@@ -225,6 +225,7 @@ def_struct = { $
 		throttle:'', $						; throttle factors file
 		pileup: '', $						; pileup limits file
 		linearize: '', $					; linearization function file
+		energy_cal_file: '', $				; energy cal file (for all detector channels)
 
 		version: 0L, $						; version of read in DAI file.
 		file:'', $							; image file name
@@ -414,6 +415,7 @@ def_struct = {	source:		'', $			; first DAI file in set
 		throttle:	'', $					; throttle factors file
 		pileup: 	'', $					; pileup limits file
 		linearize: 	'', $					; linearization function file
+		energy_cal_file: '', $				; energy cal file (for all detector channels)
 
 		DevObj: 	obj_new(), $			; device object
 		version: 	0L, $					; version of read in DAI file.
