@@ -601,751 +601,753 @@ case uname of
 
 	'template_button': begin
 		widget_control_update, event.top, /save
-	  if ((*p).sort_mode eq 0) then begin
-		path = *(*pstate).path
-		F = file_requester( filter = ['*.dai','*.dai.*'], path=path, group=event.top, $
-			title='Load image parameters from a .DAI file', fix_filter=0, /image, preview_routine='image_geopixe_preview')
-		if F eq '' then goto, finish
+
+		if ((*p).sort_mode eq 0) then begin							; 2D scan
+			path = *(*pstate).path
+			F = file_requester( filter = ['*.dai','*.dai.*'], path=path, group=event.top, $
+				title='Load image parameters from a .DAI file', fix_filter=0, /image, preview_routine='image_geopixe_preview')
+			if F eq '' then goto, finish
 		
-		; This will also apply "set_options" on device parameters ...
-		img = read_geopixe_image(F, /header, error=error)
+;			This will also apply "set_options" on device parameters ...
+			img = read_geopixe_image(F, /header, error=error)
 		
-		if error then goto, finish
-		if ptr_valid(img) then begin
-			widget_control, hourglass=1
-			*(*pstate).path = extract_path(F)
+			if error then goto, finish
+			if ptr_valid(img) then begin
+				widget_control, hourglass=1
+				*(*pstate).path = extract_path(F)
 			
-			i = find_device( (*img).DevObj->name(), objects=*(*p).pDevObjList)
-			if i ge 0 then begin
-				DevObj = (*(*p).pDevObjList)[i]					; current device object
+				i = find_device( (*img).DevObj->name(), objects=*(*p).pDevObjList)
+				if i ge 0 then begin
+					DevObj = (*(*p).pDevObjList)[i]					; current device object
 
-				options = (*img).DevObj->get_options(error=error)
-				if error eq 0 then DevObj->set_options, options
-				head = (*img).DevObj->show_header(error=error)	; will not work unless a full get_header_info has been done
-				if error eq 0 then DevObj->set_header, head
-			endif
-			(*p).device = i > 0
-			*(*pstate).pdev = DevObj
-			notify, 'device', (*pstate).pdev, from=event.top
+					options = (*img).DevObj->get_options(error=error)
+					if error eq 0 then DevObj->set_options, options
+					head = (*img).DevObj->show_header(error=error)	; will not work unless a full get_header_info has been done
+					if error eq 0 then DevObj->set_header, head
+				endif
+				(*p).device = i > 0
+				*(*pstate).pdev = DevObj
+				notify, 'device', (*pstate).pdev, from=event.top
 
-			evt_set_array, pstate, (*img).array					; is it a detector array mode DAI
+				evt_set_array, pstate, (*img).array					; is it a detector array mode DAI
 
-			if DevObj->multi_files() then begin
-				widget_control, (*pstate).evt2_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).evt2_base2, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).evt_button, set_value='First'+((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
-			endif else begin
-				b = byte(DevObj->extension())
-				if n_elements(b) gt 1 then begin
-					t = string(b[1:*])
+				if DevObj->multi_files() then begin
+					widget_control, (*pstate).evt2_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).evt2_base2, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).evt_button, set_value='First'+((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
 				endif else begin
-					t = 'evt'
+					b = byte(DevObj->extension())
+					if n_elements(b) gt 1 then begin
+						t = string(b[1:*])
+					endif else begin
+						t = 'evt'
+					endelse
+					t = t + ((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
+					widget_control, (*pstate).evt2_base, map=0, scr_ysize=1
+					widget_control, (*pstate).evt2_base2, scr_ysize=1
+					widget_control, (*pstate).evt_button, set_value=t
 				endelse
-				t = t + ((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
-				widget_control, (*pstate).evt2_base, map=0, scr_ysize=1
-				widget_control, (*pstate).evt2_base2, scr_ysize=1
-				widget_control, (*pstate).evt_button, set_value=t
-			endelse
-			if DevObj->linear() then begin
-				widget_control, (*pstate).linearize_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).linearize_base2, scr_ysize=(*pstate).evt_base_ysize
-			endif else begin
-				widget_control, (*pstate).linearize_base, map=0, scr_ysize=1
-				widget_control, (*pstate).linearize_base2, scr_ysize=1
-			endelse
-			if DevObj->throttle() then begin
-				widget_control, (*pstate).throttle_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).throttle_base2, scr_ysize=(*pstate).evt_base_ysize
-			endif else begin
-				widget_control, (*pstate).throttle_base, map=0, scr_ysize=1
-				widget_control, (*pstate).throttle_base2, scr_ysize=1
-			endelse
-			if DevObj->pileup() then begin
-				widget_control, (*pstate).pileup_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).pileup_base2, scr_ysize=(*pstate).evt_base_ysize
-			endif else begin
-				widget_control, (*pstate).pileup_base, map=0, scr_ysize=1
-				widget_control, (*pstate).pileup_base2, scr_ysize=1
-			endelse
-			DevObj->render_options, (*pstate).device_option_mode_base
-			widget_control, (*pstate).device_option_mode_base, map=DevObj->show_sort_options(), scr_ysize=DevObj->get_sort_ysize()
+				if DevObj->linear() then begin
+					widget_control, (*pstate).linearize_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).linearize_base2, scr_ysize=(*pstate).evt_base_ysize
+				endif else begin
+					widget_control, (*pstate).linearize_base, map=0, scr_ysize=1
+					widget_control, (*pstate).linearize_base2, scr_ysize=1
+				endelse
+				if DevObj->throttle() then begin
+					widget_control, (*pstate).throttle_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).throttle_base2, scr_ysize=(*pstate).evt_base_ysize
+				endif else begin
+					widget_control, (*pstate).throttle_base, map=0, scr_ysize=1
+					widget_control, (*pstate).throttle_base2, scr_ysize=1
+				endelse
+				if DevObj->pileup() then begin
+					widget_control, (*pstate).pileup_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).pileup_base2, scr_ysize=(*pstate).evt_base_ysize
+				endif else begin
+					widget_control, (*pstate).pileup_base, map=0, scr_ysize=1
+					widget_control, (*pstate).pileup_base2, scr_ysize=1
+				endelse
+				DevObj->render_options, (*pstate).device_option_mode_base
+				widget_control, (*pstate).device_option_mode_base, map=DevObj->show_sort_options(), scr_ysize=DevObj->get_sort_ysize()
 
-			widget_control, (*pstate).station, set_combobox_select=(*p).station
-			widget_control, (*pstate).device_mode, set_combobox_select=(*p).device
+				widget_control, (*pstate).station, set_combobox_select=(*p).station
+				widget_control, (*pstate).device_mode, set_combobox_select=(*p).device
 			
-			(*p).energy_proxy_axis = (*img).energy_proxy_axis
-			(*p).xanes_energies_file = (*img).energies_file
-			widget_control, (*pstate).da_xanes_base1a, map=0
-			widget_control, (*pstate).proxy_axis, set_combobox_select=(*p).energy_proxy_axis
-			set_widget_text, (*pstate).energy_file_text, (*p).xanes_energies_file
+				(*p).energy_proxy_axis = (*img).energy_proxy_axis
+				(*p).xanes_energies_file = (*img).energies_file
+				widget_control, (*pstate).da_xanes_base1a, map=0
+				widget_control, (*pstate).proxy_axis, set_combobox_select=(*p).energy_proxy_axis
+				set_widget_text, (*pstate).energy_file_text, (*p).xanes_energies_file
 
-			if (*img).xstep_on eq 0 then begin
-				(*p).xy_mode = 0
+				if (*img).xstep_on eq 0 then begin
+					(*p).xy_mode = 0
+					(*p).step_mode = 0
+					widget_control, (*pstate).xy_mode, set_combobox_select=0
+					widget_control, (*pstate).stepmode_base, map=0, scr_ysize=1
+					widget_control, (*pstate).step_mode, set_combobox_select=0
+					widget_control, (*pstate).size_base, map=0
+					widget_control, (*pstate).da_xanes_base1b, map=1
+					widget_control, (*pstate).da_xanes_base2, map=((*p).energy_proxy_axis gt 0)
+				endif else begin
+					if (*img).step_toggle eq 1 then begin
+						(*p).xy_mode = 1
+						(*p).step_mode = 0
+						(*p).step_bit = where((*img).toggle_bit eq (*pstate).bit_numbers) > 0
+					endif else if (*img).step_events eq 1 then begin
+						(*p).xy_mode = 1
+						(*p).step_mode = 2
+					endif else begin
+						(*p).xy_mode = 1
+						(*p).step_mode = 1
+					endelse
+					if (*img).ystep then (*p).xy_mode=3
+					(*p).step_station = (*img).toggle_station
+					(*p).step_count = (*img).xstep
+					widget_control, (*pstate).size_base, map=1, scr_ysize=(*pstate).xybase_ysize
+
+					widget_control, (*pstate).xy_mode, set_combobox_select=(*p).xy_mode
+					widget_control, (*pstate).step_mode, set_combobox_select=(*p).step_mode
+					widget_control, (*pstate).step_count, set_value=str_tidy((*p).step_count)
+					widget_control, (*pstate).step_station, set_combobox_select=(*p).step_station
+					on_off = 0
+					if (*p).step_mode eq 0 then on_off=1
+					widget_control, (*pstate).stepbit_base, map=on_off
+					widget_control, (*pstate).stepcount_base, map=1-on_off
+;					geo = widget_info( (*pstate).stepmode_base, /geometry)
+					widget_control, (*pstate).stepmode_base, map=1, scr_ysize=(*pstate).stepmode_ysize
+					widget_control, (*pstate).size_base, map=1
+
+					widget_control, (*pstate).da_xanes_base1b, map=0
+					widget_control, (*pstate).da_xanes_base2, map=0
+				endelse
+
+				enable_cluster = DevObj->cluster()
+				if enable_cluster eq 0 then (*p).cluster = 0
+				cluster_OK = ((*p).sort_mode eq 0) or (((*p).sort_mode eq 2) and (((*p).xy_mode eq 0) or ((*p).xy_mode eq 4)))
+				widget_control, (*pstate).cluster_id, sensitive=enable_cluster and cluster_OK
+
+				(*p).station = (*img).channel
+				(*p).array = (*img).array
+				list = adc_list_device( DevObj, max_adcs = (*pstate).max_adcs)
+				widget_control, (*pstate).station, set_value=list, set_combobox_select=(*p).station
+				widget_control, (*pstate).array, set_combobox_select=(*p).array
+				widget_control, (*pstate).detector_layout_base, map=(*p).array
+
+				if (*img).array eq 1 then begin
+					(*p).enable[*] = 0
+					(*p).enable[ *(*img).pactive] = 1
+					widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=1
+				endif else begin
+					widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=0
+				endelse
+
+				mode = (*img).mode
+				if strlowcase(extract_extension((*img).matrix.file)) eq 'mpdam' then mode=3
+				if (mode eq 3) or (mode eq 4) then widget_control, (*pstate).da_xanes_base1b, map=0
+
+				(*p).energy_cal_file = (*img).energy_cal_file
+
+				if (*p).array eq 1 then begin
+					chan = *(*img).pactive
+					n_active = n_elements(chan)
+					for j=0L,n_active-1 do begin
+						i = chan[j]
+						cal_ab, (*(*img).pcal)[j], ca,cb,cu
+						(*p).cal_a[i] = ca
+						(*p).cal_b[i] = cb
+					endfor
+					widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[(*p).station], places=8)
+					widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[(*p).station])
+					for i=0L,(*pstate).max_adcs-1 do begin
+						(*p).ecompress[i] = (*img).ecompress
+						(*p).type[i] = (*img).detector
+						(*p).mode[i] = mode
+						(*p).file[i] = (*img).matrix.file
+					endfor
+					*(*pstate).pval = (*p).type[0]
+					notify, 'evt-type', (*pstate).pval, from=event.top
+					*(*pstate).pval2 = (*p).mode[0]
+					notify, 'evt-mode', (*pstate).pval2, from=event.top
+
+					widget_control, (*pstate).type, set_combobox_select=(*p).type[(*p).station]
+					widget_control, (*pstate).mode, set_combobox_select=(*p).mode[(*p).station]
+					widget_control, (*pstate).file, set_value=(*p).file[(*p).station]
+					widget_control, (*pstate).base_new_MPDA, map=(mode eq 3)
+					widget_control, (*pstate).base_export, map=(mode ne 3)
+					set_widget_text, (*pstate).file, (*p).file[(*p).station]
+				endif else begin
+					i = (*p).station
+					cal_ab, (*img).cal, ca,cb,cu
+					(*p).cal_a[i] = ca
+					(*p).cal_b[i] = cb
+					(*p).ecompress[i] = (*img).ecompress
+					(*p).type[i] = (*img).detector
+					(*p).mode[i] = mode
+					(*p).file[i] = (*img).matrix.file
+					*(*pstate).pval = (*p).type[i]
+					notify, 'evt-type', (*pstate).pval, from=event.top
+					*(*pstate).pval2 = (*p).mode[i]
+					notify, 'evt-mode', (*pstate).pval2, from=event.top
+
+					widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[i], places=8)
+					widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[i])
+					widget_control, (*pstate).type, set_combobox_select=(*p).type[i]
+					widget_control, (*pstate).mode, set_combobox_select=(*p).mode[i]
+					widget_control, (*pstate).file, set_value=(*p).file[i]
+					widget_control, (*pstate).base_new_MPDA, map=(mode eq 3)
+					widget_control, (*pstate).base_export, map=(mode ne 3)
+					set_widget_text, (*pstate).file, (*p).file[i]
+				endelse
+				widget_control, (*pstate).file, sensitive=(mode ne 4)
+
+				(*p).sample = (*img).sample
+				(*p).grain = (*img).grain
+				(*p).comment = (*img).comment
+				widget_control, (*pstate).sample, set_value=(*p).sample
+				widget_control, (*pstate).grain, set_value=(*p).grain
+				widget_control, (*pstate).comment, set_value=(*p).comment
+				(*p).facility = (*img).facility
+				(*p).endstation = (*img).endstation
+
+				(*p).evt_file = (*img).source
+				widget_control, (*pstate).evt_file, set_value=(*p).evt_file
+				set_widget_text, (*pstate).evt_file, (*p).evt_file
+
+				(*p).evt2_file = (*img).source2
+				widget_control, (*pstate).evt2_file, set_value=(*p).evt2_file
+				set_widget_text, (*pstate).evt2_file, (*p).evt2_file
+
+				(*p).throttle_file = (*img).throttle
+				widget_control, (*pstate).throttle_file, set_value=(*p).throttle_file
+				set_widget_text, (*pstate).throttle_file, (*p).throttle_file
+
+				(*p).pileup_file = (*img).pileup
+				widget_control, (*pstate).pileup_file, set_value=(*p).pileup_file
+				set_widget_text, (*pstate).pileup_file, (*p).pileup_file
+
+				(*p).linearize_file = (*img).linearize
+				widget_control, (*pstate).linearize_file, set_value=(*p).linearize_file
+				set_widget_text, (*pstate).linearize_file, (*p).linearize_file
+
+				active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
+
+				T = strip_file_ext((*img).file)
+				if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
+				if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+				(*p).output_file = T + '.'+ (*pstate).outputs[(*p).sort_mode]
+				set_widget_text, (*pstate).output_file, (*p).output_file
+
+				fi = find_file2((*p).evt_file)
+				if (fi[0] ne '') then begin
+					*(*pstate).dpath = extract_path( (*p).evt_file)
+					notify, 'dpath', (*pstate).dpath, from=event.top
+					*(*pstate).path = build_output_path( (*p).evt_file, (*p).output_file, (*p).root, /set)
+				endif
+				*(*pstate).path = extract_path( (*p).output_file)
+				notify, 'path', (*pstate).path, from=event.top
+				notify, 'root', (*p).root, from=event.top
+				(*p).xsize = (*img).scan.x * 1000.0
+				(*p).ysize = (*img).scan.y * 1000.0
+				(*p).xorigin = (*img).scan.origin.x
+				(*p).yorigin = (*img).scan.origin.y
+
+				(*p).xrange = (*img).original_xsize * (*img).xcompress
+				(*p).yrange = (*img).original_ysize * (*img).ycompress
+				(*p).xcompress = ((*img).xcompress - 1) > 0
+				(*p).ycompress = ((*img).ycompress - 1) > 0
+
+				(*p).image_mode = (*img).sub_region
+				(*p).xoffset = (*img).xoffset
+				(*p).yoffset = (*img).yoffset
+				if ((*p).xoffset ne 0) or ((*p).yoffset ne 0) then (*p).image_mode=1
+				(*p).x_sub_range = (*img).x_sub_range
+				(*p).y_sub_range = (*img).y_sub_range
+				if (*p).x_sub_range eq 0 then (*p).x_sub_range = (*img).xsize * (*p).xcompress
+				if (*p).y_sub_range eq 0 then (*p).y_sub_range = (*img).ysize * (*p).ycompress
+			
+				(*p).charge = (*img).charge
+				(*p).charge_mode = (*img).IC.mode
+				(*p).charge_conversion = (*img).IC.conversion
+				(*p).preamp.pv = (*img).IC.pv.name
+				(*p).preamp.val = (*img).IC.pv.val
+				(*p).preamp.unit = (*img).IC.pv.unit
+				if ptr_valid((*img).plist) then begin
+					if n_elements(*(*img).plist) gt 0 then begin
+						*(*p).pic_list = *(*img).plist
+						if (*p).preamp.pv eq '' then (*p).preamp.pv = (*(*p).pic_list)[0]
+					endif
+				endif
+				evt_check_pvlist, (*p).pic_list, DevObj
+
+				(*p).flux = 0.0
+				if ptr_valid( (*img).flux) and (*img).has_flux then begin
+					(*p).flux = total(*(*img).flux)
+					if (*p).flux gt 1.0e-10 then begin
+						if (*img).IC.mode gt 0 then begin
+							if (*img).charge eq 0.0 then begin
+								(*p).charge = (*p).flux * (*img).IC.conversion
+								print,'                 charge zero, set it to flux * conv = ',(*p).charge
+							endif else begin
+								if abs((*img).IC.conversion - (*img).charge / (*p).flux) gt 1.0e-9 then begin
+									(*p).charge_conversion = (*img).charge / (*p).flux
+									print,'                 set IC.conversion = image.charge / total_flux = ',(*img).IC.conversion
+								endif
+							endelse
+						endif
+					endif
+				endif else begin
+					(*p).flux = 0.0
+				endelse
+				aps_count_to_charge = (*p).charge_conversion
+				widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
+
+				(*p).dwell = (*img).dwell.val
+				(*p).use_dwell = (*img).dwell.on
+				(*p).flatten = (*img).flatten
+				case (*p).charge_mode of
+					0: begin
+						widget_control, (*pstate).ic_base, map=0
+						widget_control, (*pstate).scan_button, sensitive=0
+						widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
+						widget_control, (*pstate).ic_base2, scr_ysize=1
+						end
+					1: begin
+						widget_control, (*pstate).ic_base, map=1
+						widget_control, (*pstate).scan_button, sensitive=1
+						widget_control, (*pstate).ic_base1, map=1, scr_ysize=(*pstate).ic_base1_ysize
+						widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
+						end
+					2: begin
+						widget_control, (*pstate).ic_base, map=1
+						widget_control, (*pstate).scan_button, sensitive=0
+						widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
+						widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
+						end
+				endcase
+			
+				ionbeam = DevObj->ionbeam()
+				charge_gain_unit_lists, ic_vals, ic_units, ic_vunits, ionbeam=ionbeam
+				if ionbeam then begin
+					qmodes = ['Direct beam charge integration (Ion Beam)','Indirect using flux counter (with PV)','Indirect using flux counter (no PV)']
+					qhelp = "Choose between direct integration of beam charge as a flux measure (ion beam), or indirect integration using a charge counter (e.g. charge integrator or detector in beam). For the latter, " + $
+						"select a counter channel by name (e.g. using Epics PV) or not."
+				endif else begin
+					qmodes = ['Direct beam charge integration (Ion Beam)','Indirect using Ion Chamber (Synchrotron, with PV)','Indirect using Ion Chamber (Synchrotron, no EPICS PV)']
+					qhelp = "Chose between direct integration of beam charge as a flux measure (Ion Beam), or indirect integration using an Ion Chamber (Synchrotron X-ray beam). For the latter, " + $
+						"select using Epics PV in data or not."
+				endelse
+
+;				widget_control, (*pstate).ic_val_mode, set_value='   '+str_tidy(ic_vals)
+				widget_control, (*pstate).ic_unit_mode, set_value='   '+ic_units
+				widget_control, (*pstate).charge_mode, set_value=qmodes, set_uvalue=qhelp
+				widget_control, (*pstate).charge_mode, set_combobox_select=(*p).charge_mode
+
+				widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
+				widget_control, (*pstate).dwell_base, sensitive=(*p).use_dwell
+				widget_control, (*pstate).dwell_id, set_value=str_tidy((*p).dwell)
+				widget_control, (*pstate).ic_pv_mode, set_value='   '+*(*p).pic_list
+				q = where( (*p).preamp.pv eq *(*p).pic_list, nq)
+				widget_control, (*pstate).ic_pv_mode, set_combobox_select=(nq ne 0) ? q[0] : 0
+
+				l = locate('time', strlowcase((*p).preamp.pv))
+				val = (*p).preamp.val
+				unit = (*p).preamp.unit
+				ival = find_charge_val_unit_index( val, unit, iunit=iunit, time=(l ge 0), /write_back)
+				(*p).preamp.val = val
+				(*p).preamp.unit = unit
+				widget_control, (*pstate).ic_val_mode, set_combobox_select=ival
+				widget_control, (*pstate).ic_unit_mode, set_combobox_select=iunit
+				OK = (locate('.time',(*p).preamp.pv) lt 0)
+				widget_control, (*pstate).ic_val_mode, sensitive=OK
+				widget_control, (*pstate).ic_unit_mode, sensitive=OK
+
+				widget_control, (*pstate).flatten_id, set_value=(*p).flatten			
+				widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
+				widget_control, (*pstate).xrange, set_value=str_tidy((*p).xrange)
+				widget_control, (*pstate).yrange, set_value=str_tidy((*p).yrange)
+				widget_control, (*pstate).xcompress, set_combobox_select=(*p).xcompress
+				widget_control, (*pstate).ycompress, set_combobox_select=(*p).ycompress
+				widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
+				widget_control, (*pstate).ysize, set_value=str_tidy((*p).ysize)
+				widget_control, (*pstate).image_mode, set_combobox_select=(*p).image_mode
+				widget_control, (*pstate).xoffset, set_value=str_tidy((*p).xoffset)
+				widget_control, (*pstate).yoffset, set_value=str_tidy((*p).yoffset)
+				widget_control, (*pstate).x_sub_range, set_value=str_tidy((*p).x_sub_range)
+				widget_control, (*pstate).y_sub_range, set_value=str_tidy((*p).y_sub_range)
+				if (*p).image_mode ne 0 then begin
+					widget_control, (*pstate).offset_base, map=1, scr_ysize=(*pstate).offset_ysize
+				endif else begin
+					widget_control, (*pstate).offset_base, map=0, scr_ysize=1
+				endelse
+
+				if (*p).xy_mode ne 0 then begin
+					if ((*p).xy_mode eq 3) and ((*p).ysize gt 0.01) then begin
+						um_per_step = prefs_Resolution.Y
+						sy = (*p).ysize / float((*p).yrange)
+						ny = round( sy / um_per_step )
+						(*p).step_size_index = clip(ny-1,0,29)
+						(*p).step_size = um_per_step * float(ny)
+						widget_control, (*pstate).step_size_drop, set_combobox_select = (*p).step_size_index
+						widget_control, (*pstate).step_size, set_value=str_tidy((*p).step_size)
+					endif else if ((*p).xsize gt 0.01) then begin
+						um_per_step = prefs_Resolution.X
+						sx = (*p).xsize / float((*p).xrange)
+						nx = round( sx / um_per_step )
+						(*p).step_size_index = clip(nx-1,0,29)
+						(*p).step_size =  um_per_step * float(nx)
+						widget_control, (*pstate).step_size_drop, set_combobox_select = (*p).step_size_index
+						widget_control, (*pstate).step_size, set_value=str_tidy((*p).step_size)
+					endif
+				endif
+
+				free_images, img
+				notify, 'evt-load', from=event.top
+			endif
+
+	  	endif else if (*p).sort_mode eq 2 then begin				; 3D stack mode
+			path = *(*pstate).path
+			F = file_requester( filter = ['*.xan'], path=path, group=event.top, $
+				title='Load image parameters from a .XAN file', fix_filter=0, /image, preview_routine='image_geopixe_preview')
+			if F eq '' then goto, finish
+		
+;			This will also apply "set_options" on device parameters ...
+			img = read_geopixe_image(F, /xanes, /header, error=error)
+		
+			if error then goto, finish
+			if ptr_valid(img) then begin
+				widget_control, hourglass=1
+				*(*pstate).path = extract_path(F)
+			
+				i = find_device( (*img).DevObj->name(), objects=*(*p).pDevObjList)
+				if i ge 0 then begin
+					DevObj = (*(*p).pDevObjList)[i]					; current device object
+
+					options = (*img).DevObj->get_options(error=error)
+					if error eq 0 then DevObj->set_options, options
+					head = (*img).DevObj->show_header(error=error)
+					if error eq 0 then DevObj->set_header, head
+				endif
+				(*p).device = i > 0
+				*(*pstate).pdev = DevObj
+				notify, 'device', (*pstate).pdev, from=event.top
+
+				if DevObj->multi_files() then begin
+					widget_control, (*pstate).evt2_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).evt2_base2, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).evt_button, set_value='First'+((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
+				endif else begin
+					b = byte(DevObj->extension())
+					if n_elements(b) gt 1 then begin
+						t = string(b[1:*])
+					endif else begin
+						t = 'evt'
+					endelse
+					t = t + ((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
+					widget_control, (*pstate).evt2_base, map=0, scr_ysize=1
+					widget_control, (*pstate).evt2_base2, scr_ysize=1
+					widget_control, (*pstate).evt_button, set_value=t
+				endelse
+				if DevObj->linear() then begin
+					widget_control, (*pstate).linearize_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).linearize_base2, scr_ysize=(*pstate).evt_base_ysize
+				endif else begin
+					widget_control, (*pstate).linearize_base, map=0, scr_ysize=1
+					widget_control, (*pstate).linearize_base2, scr_ysize=1
+				endelse
+				if DevObj->throttle() then begin
+					widget_control, (*pstate).throttle_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).throttle_base2, scr_ysize=(*pstate).evt_base_ysize
+				endif else begin
+					widget_control, (*pstate).throttle_base, map=0, scr_ysize=1
+					widget_control, (*pstate).throttle_base2, scr_ysize=1
+				endelse
+				if DevObj->pileup() then begin
+					widget_control, (*pstate).pileup_base, map=1, scr_ysize=(*pstate).evt_base_ysize
+					widget_control, (*pstate).pileup_base2, scr_ysize=(*pstate).evt_base_ysize
+				endif else begin
+					widget_control, (*pstate).pileup_base, map=0, scr_ysize=1
+					widget_control, (*pstate).pileup_base2, scr_ysize=1
+				endelse
+				DevObj->render_options, (*pstate).device_option_mode_base
+				widget_control, (*pstate).device_option_mode_base, map=DevObj->show_sort_options(), scr_ysize=DevObj->get_sort_ysize()
+
+				widget_control, (*pstate).station, set_combobox_select=(*p).station
+				widget_control, (*pstate).device_mode, set_combobox_select=(*p).device
+			
+				(*p).xy_mode = ((*img).stack_type eq 1) ? 5 : 4
 				(*p).step_mode = 0
-				widget_control, (*pstate).xy_mode, set_combobox_select=0
+				widget_control, (*pstate).xy_mode, set_combobox_select=(*p).xy_mode
 				widget_control, (*pstate).stepmode_base, map=0, scr_ysize=1
 				widget_control, (*pstate).step_mode, set_combobox_select=0
 				widget_control, (*pstate).size_base, map=0
-				widget_control, (*pstate).da_xanes_base1b, map=1
-				widget_control, (*pstate).da_xanes_base2, map=((*p).energy_proxy_axis gt 0)
-			endif else begin
-				if (*img).step_toggle eq 1 then begin
-					(*p).xy_mode = 1
-					(*p).step_mode = 0
-					(*p).step_bit = where((*img).toggle_bit eq (*pstate).bit_numbers) > 0
-				endif else if (*img).step_events eq 1 then begin
-					(*p).xy_mode = 1
-					(*p).step_mode = 2
-				endif else begin
-					(*p).xy_mode = 1
-					(*p).step_mode = 1
-				endelse
-				if (*img).ystep then (*p).xy_mode=3
-				(*p).step_station = (*img).toggle_station
-				(*p).step_count = (*img).xstep
-				widget_control, (*pstate).size_base, map=1, scr_ysize=(*pstate).xybase_ysize
-
-				widget_control, (*pstate).xy_mode, set_combobox_select=(*p).xy_mode
-				widget_control, (*pstate).step_mode, set_combobox_select=(*p).step_mode
-				widget_control, (*pstate).step_count, set_value=str_tidy((*p).step_count)
-				widget_control, (*pstate).step_station, set_combobox_select=(*p).step_station
-				on_off = 0
-				if (*p).step_mode eq 0 then on_off=1
-				widget_control, (*pstate).stepbit_base, map=on_off
-				widget_control, (*pstate).stepcount_base, map=1-on_off
-;				geo = widget_info( (*pstate).stepmode_base, /geometry)
-				widget_control, (*pstate).stepmode_base, map=1, scr_ysize=(*pstate).stepmode_ysize
-				widget_control, (*pstate).size_base, map=1
-
 				widget_control, (*pstate).da_xanes_base1b, map=0
-				widget_control, (*pstate).da_xanes_base2, map=0
-			endelse
-
-			enable_cluster = DevObj->cluster()
-			if enable_cluster eq 0 then (*p).cluster = 0
-			cluster_OK = ((*p).sort_mode eq 0) or (((*p).sort_mode eq 2) and (((*p).xy_mode eq 0) or ((*p).xy_mode eq 4)))
-			widget_control, (*pstate).cluster_id, sensitive=enable_cluster and cluster_OK
-
-			(*p).station = (*img).channel
-			(*p).array = (*img).array
-			list = adc_list_device( DevObj, max_adcs = (*pstate).max_adcs)
-			widget_control, (*pstate).station, set_value=list, set_combobox_select=(*p).station
-			widget_control, (*pstate).array, set_combobox_select=(*p).array
-			widget_control, (*pstate).detector_layout_base, map=(*p).array
-
-			if (*img).array eq 1 then begin
-				(*p).enable[*] = 0
-				(*p).enable[ *(*img).pactive] = 1
-				widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=1
-			endif else begin
-				widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=0
-			endelse
-
-			mode = (*img).mode
-			if strlowcase(extract_extension((*img).matrix.file)) eq 'mpdam' then mode=3
-			if (mode eq 3) or (mode eq 4) then widget_control, (*pstate).da_xanes_base1b, map=0
-
-			(*p).energy_cal_file = (*img).energy_cal_file
-
-			if (*p).array eq 1 then begin
-				chan = *(*img).pactive
-				n_active = n_elements(chan)
-				for j=0L,n_active-1 do begin
-					i = chan[j]
-					cal_ab, (*(*img).pcal)[j], ca,cb,cu
-					(*p).cal_a[i] = ca
-					(*p).cal_b[i] = cb
-				endfor
-				widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[(*p).station], places=8)
-				widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[(*p).station])
-				for i=0L,(*pstate).max_adcs-1 do begin
-					(*p).ecompress[i] = (*img).ecompress
-					(*p).type[i] = (*img).detector
-					(*p).mode[i] = mode
-					(*p).file[i] = (*img).matrix.file
-				endfor
-				*(*pstate).pval = (*p).type[0]
-				notify, 'evt-type', (*pstate).pval, from=event.top
-				*(*pstate).pval2 = (*p).mode[0]
-				notify, 'evt-mode', (*pstate).pval2, from=event.top
-
-				widget_control, (*pstate).type, set_combobox_select=(*p).type[(*p).station]
-				widget_control, (*pstate).mode, set_combobox_select=(*p).mode[(*p).station]
-				widget_control, (*pstate).file, set_value=(*p).file[(*p).station]
-				widget_control, (*pstate).base_new_MPDA, map=(mode eq 3)
-				widget_control, (*pstate).base_export, map=(mode ne 3)
-				set_widget_text, (*pstate).file, (*p).file[(*p).station]
-			endif else begin
-				i = (*p).station
-				cal_ab, (*img).cal, ca,cb,cu
-				(*p).cal_a[i] = ca
-				(*p).cal_b[i] = cb
-				(*p).ecompress[i] = (*img).ecompress
-				(*p).type[i] = (*img).detector
-				(*p).mode[i] = mode
-				(*p).file[i] = (*img).matrix.file
-				*(*pstate).pval = (*p).type[i]
-				notify, 'evt-type', (*pstate).pval, from=event.top
-				*(*pstate).pval2 = (*p).mode[i]
-				notify, 'evt-mode', (*pstate).pval2, from=event.top
-
-				widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[i], places=8)
-				widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[i])
-				widget_control, (*pstate).type, set_combobox_select=(*p).type[i]
-				widget_control, (*pstate).mode, set_combobox_select=(*p).mode[i]
-				widget_control, (*pstate).file, set_value=(*p).file[i]
-				widget_control, (*pstate).base_new_MPDA, map=(mode eq 3)
-				widget_control, (*pstate).base_export, map=(mode ne 3)
-				set_widget_text, (*pstate).file, (*p).file[i]
-			endelse
-			widget_control, (*pstate).file, sensitive=(mode ne 4)
-
-			(*p).sample = (*img).sample
-			(*p).grain = (*img).grain
-			(*p).comment = (*img).comment
-			widget_control, (*pstate).sample, set_value=(*p).sample
-			widget_control, (*pstate).grain, set_value=(*p).grain
-			widget_control, (*pstate).comment, set_value=(*p).comment
-			(*p).facility = (*img).facility
-			(*p).endstation = (*img).endstation
-
-			(*p).evt_file = (*img).source
-			widget_control, (*pstate).evt_file, set_value=(*p).evt_file
-			set_widget_text, (*pstate).evt_file, (*p).evt_file
-
-			(*p).evt2_file = (*img).source2
-			widget_control, (*pstate).evt2_file, set_value=(*p).evt2_file
-			set_widget_text, (*pstate).evt2_file, (*p).evt2_file
-
-			(*p).throttle_file = (*img).throttle
-			widget_control, (*pstate).throttle_file, set_value=(*p).throttle_file
-			set_widget_text, (*pstate).throttle_file, (*p).throttle_file
-
-			(*p).pileup_file = (*img).pileup
-			widget_control, (*pstate).pileup_file, set_value=(*p).pileup_file
-			set_widget_text, (*pstate).pileup_file, (*p).pileup_file
-
-			(*p).linearize_file = (*img).linearize
-			widget_control, (*pstate).linearize_file, set_value=(*p).linearize_file
-			set_widget_text, (*pstate).linearize_file, (*p).linearize_file
-
-			active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
-
-			T = strip_file_ext((*img).file)
-			if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-			if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
-			(*p).output_file = T + '.'+ (*pstate).outputs[(*p).sort_mode]
-			set_widget_text, (*pstate).output_file, (*p).output_file
-
-			fi = find_file2((*p).evt_file)
-			if (fi[0] ne '') then begin
-				*(*pstate).dpath = extract_path( (*p).evt_file)
-				notify, 'dpath', (*pstate).dpath, from=event.top
-				*(*pstate).path = build_output_path( (*p).evt_file, (*p).output_file, (*p).root, /set)
-			endif
-			*(*pstate).path = extract_path( (*p).output_file)
-			notify, 'path', (*pstate).path, from=event.top
-			notify, 'root', (*p).root, from=event.top
-			(*p).xsize = (*img).scan.x * 1000.0
-			(*p).ysize = (*img).scan.y * 1000.0
-			(*p).xorigin = (*img).scan.origin.x
-			(*p).yorigin = (*img).scan.origin.y
-
-			(*p).xrange = (*img).original_xsize * (*img).xcompress
-			(*p).yrange = (*img).original_ysize * (*img).ycompress
-			(*p).xcompress = ((*img).xcompress - 1) > 0
-			(*p).ycompress = ((*img).ycompress - 1) > 0
-
-			(*p).image_mode = (*img).sub_region
-			(*p).xoffset = (*img).xoffset
-			(*p).yoffset = (*img).yoffset
-			if ((*p).xoffset ne 0) or ((*p).yoffset ne 0) then (*p).image_mode=1
-			(*p).x_sub_range = (*img).x_sub_range
-			(*p).y_sub_range = (*img).y_sub_range
-			if (*p).x_sub_range eq 0 then (*p).x_sub_range = (*img).xsize * (*p).xcompress
-			if (*p).y_sub_range eq 0 then (*p).y_sub_range = (*img).ysize * (*p).ycompress
-			
-			(*p).charge = (*img).charge
-			(*p).charge_mode = (*img).IC.mode
-			(*p).charge_conversion = (*img).IC.conversion
-			(*p).preamp.pv = (*img).IC.pv.name
-			(*p).preamp.val = (*img).IC.pv.val
-			(*p).preamp.unit = (*img).IC.pv.unit
-			if ptr_valid((*img).plist) then begin
-				if n_elements(*(*img).plist) gt 0 then begin
-					*(*p).pic_list = *(*img).plist
-					if (*p).preamp.pv eq '' then (*p).preamp.pv = (*(*p).pic_list)[0]
+				widget_control, (*pstate).proxy_axis, set_combobox_select=(*p).energy_proxy_axis
+				if (*p).xy_mode eq 4 then begin
+					widget_control, (*pstate).zorigin_base, map=1
+					widget_control, (*pstate).zcompress_base, map=0
+					widget_control, (*pstate).da_xanes_base1a, map=1
+					widget_control, (*pstate).da_xanes_base2, map=1
+				endif else if (*p).xy_mode eq 5 then begin
+					widget_control, (*pstate).zorigin_base, map=0
+					widget_control, (*pstate).zcompress_base, map=1
+					widget_control, (*pstate).da_xanes_base1a, map=0
+					widget_control, (*pstate).da_xanes_base2, map=0
 				endif
-			endif
-			evt_check_pvlist, (*p).pic_list, DevObj
 
-			(*p).flux = 0.0
-			if ptr_valid( (*img).flux) and (*img).has_flux then begin
-				(*p).flux = total(*(*img).flux)
-				if (*p).flux gt 1.0e-10 then begin
-					if (*img).IC.mode gt 0 then begin
-						if (*img).charge eq 0.0 then begin
-							(*p).charge = (*p).flux * (*img).IC.conversion
-							print,'                 charge zero, set it to flux * conv = ',(*p).charge
-						endif else begin
-							if abs((*img).IC.conversion - (*img).charge / (*p).flux) gt 1.0e-9 then begin
-								(*p).charge_conversion = (*img).charge / (*p).flux
-								print,'                 set IC.conversion = image.charge / total_flux = ',(*img).IC.conversion
-							endif
-						endelse
-					endif
-				endif
-			endif else begin
-				(*p).flux = 0.0
-			endelse
-			aps_count_to_charge = (*p).charge_conversion
-			widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
+				(*p).station = (*img).channel
+				(*p).array = (*img).array
+				list = adc_list_device( DevObj, max_adcs = (*pstate).max_adcs)
+				widget_control, (*pstate).station, set_value=list, set_combobox_select=(*p).station
+				widget_control, (*pstate).array, set_combobox_select=(*p).array
+				widget_control, (*pstate).detector_layout_base, map=(*p).array
 
-			(*p).dwell = (*img).dwell.val
-			(*p).use_dwell = (*img).dwell.on
-			(*p).flatten = (*img).flatten
-			case (*p).charge_mode of
-				0: begin
-					widget_control, (*pstate).ic_base, map=0
-					widget_control, (*pstate).scan_button, sensitive=0
-					widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
-					widget_control, (*pstate).ic_base2, scr_ysize=1
-					end
-				1: begin
-					widget_control, (*pstate).ic_base, map=1
-					widget_control, (*pstate).scan_button, sensitive=1
-					widget_control, (*pstate).ic_base1, map=1, scr_ysize=(*pstate).ic_base1_ysize
-					widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
-					end
-				2: begin
-					widget_control, (*pstate).ic_base, map=1
-					widget_control, (*pstate).scan_button, sensitive=0
-					widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
-					widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
-					end
-			endcase
-			
-			ionbeam = DevObj->ionbeam()
-			charge_gain_unit_lists, ic_vals, ic_units, ic_vunits, ionbeam=ionbeam
-			if ionbeam then begin
-				qmodes = ['Direct beam charge integration (Ion Beam)','Indirect using flux counter (with PV)','Indirect using flux counter (no PV)']
-				qhelp = "Choose between direct integration of beam charge as a flux measure (ion beam), or indirect integration using a charge counter (e.g. charge integrator or detector in beam). For the latter, " + $
-					"select a counter channel by name (e.g. using Epics PV) or not."
-			endif else begin
-				qmodes = ['Direct beam charge integration (Ion Beam)','Indirect using Ion Chamber (Synchrotron, with PV)','Indirect using Ion Chamber (Synchrotron, no EPICS PV)']
-				qhelp = "Chose between direct integration of beam charge as a flux measure (Ion Beam), or indirect integration using an Ion Chamber (Synchrotron X-ray beam). For the latter, " + $
-					"select using Epics PV in data or not."
-			endelse
-
-		;	widget_control, (*pstate).ic_val_mode, set_value='   '+str_tidy(ic_vals)
-			widget_control, (*pstate).ic_unit_mode, set_value='   '+ic_units
-			widget_control, (*pstate).charge_mode, set_value=qmodes, set_uvalue=qhelp
-			widget_control, (*pstate).charge_mode, set_combobox_select=(*p).charge_mode
-
-			widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
-			widget_control, (*pstate).dwell_base, sensitive=(*p).use_dwell
-			widget_control, (*pstate).dwell_id, set_value=str_tidy((*p).dwell)
-			widget_control, (*pstate).ic_pv_mode, set_value='   '+*(*p).pic_list
-			q = where( (*p).preamp.pv eq *(*p).pic_list, nq)
-			widget_control, (*pstate).ic_pv_mode, set_combobox_select=(nq ne 0) ? q[0] : 0
-
-			l = locate('time', strlowcase((*p).preamp.pv))
-			val = (*p).preamp.val
-			unit = (*p).preamp.unit
-			ival = find_charge_val_unit_index( val, unit, iunit=iunit, time=(l ge 0), /write_back)
-			(*p).preamp.val = val
-			(*p).preamp.unit = unit
-			widget_control, (*pstate).ic_val_mode, set_combobox_select=ival
-			widget_control, (*pstate).ic_unit_mode, set_combobox_select=iunit
-			OK = (locate('.time',(*p).preamp.pv) lt 0)
-			widget_control, (*pstate).ic_val_mode, sensitive=OK
-			widget_control, (*pstate).ic_unit_mode, sensitive=OK
-
-			widget_control, (*pstate).flatten_id, set_value=(*p).flatten			
-			widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
-			widget_control, (*pstate).xrange, set_value=str_tidy((*p).xrange)
-			widget_control, (*pstate).yrange, set_value=str_tidy((*p).yrange)
-			widget_control, (*pstate).xcompress, set_combobox_select=(*p).xcompress
-			widget_control, (*pstate).ycompress, set_combobox_select=(*p).ycompress
-			widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
-			widget_control, (*pstate).ysize, set_value=str_tidy((*p).ysize)
-			widget_control, (*pstate).image_mode, set_combobox_select=(*p).image_mode
-			widget_control, (*pstate).xoffset, set_value=str_tidy((*p).xoffset)
-			widget_control, (*pstate).yoffset, set_value=str_tidy((*p).yoffset)
-			widget_control, (*pstate).x_sub_range, set_value=str_tidy((*p).x_sub_range)
-			widget_control, (*pstate).y_sub_range, set_value=str_tidy((*p).y_sub_range)
-			if (*p).image_mode ne 0 then begin
-				widget_control, (*pstate).offset_base, map=1, scr_ysize=(*pstate).offset_ysize
-			endif else begin
-				widget_control, (*pstate).offset_base, map=0, scr_ysize=1
-			endelse
-
-			if (*p).xy_mode ne 0 then begin
-				if ((*p).xy_mode eq 3) and ((*p).ysize gt 0.01) then begin
-					um_per_step = prefs_Resolution.Y
-					sy = (*p).ysize / float((*p).yrange)
-					ny = round( sy / um_per_step )
-					(*p).step_size_index = clip(ny-1,0,29)
-					(*p).step_size = um_per_step * float(ny)
-					widget_control, (*pstate).step_size_drop, set_combobox_select = (*p).step_size_index
-					widget_control, (*pstate).step_size, set_value=str_tidy((*p).step_size)
-				endif else if ((*p).xsize gt 0.01) then begin
-					um_per_step = prefs_Resolution.X
-					sx = (*p).xsize / float((*p).xrange)
-					nx = round( sx / um_per_step )
-					(*p).step_size_index = clip(nx-1,0,29)
-					(*p).step_size =  um_per_step * float(nx)
-					widget_control, (*pstate).step_size_drop, set_combobox_select = (*p).step_size_index
-					widget_control, (*pstate).step_size, set_value=str_tidy((*p).step_size)
-				endif
-			endif
-
-			free_images, img
-			notify, 'evt-load', from=event.top
-		endif
-	  endif else if (*p).sort_mode eq 2 then begin
-		path = *(*pstate).path
-		F = file_requester( filter = ['*.xan'], path=path, group=event.top, $
-			title='Load image parameters from a .XAN file', fix_filter=0, /image, preview_routine='image_geopixe_preview')
-		if F eq '' then goto, finish
-		
-		; This will also apply "set_options" on device parameters ...
-		img = read_geopixe_image(F, /xanes, /header, error=error)
-		
-		if error then goto, finish
-		if ptr_valid(img) then begin
-			widget_control, hourglass=1
-			*(*pstate).path = extract_path(F)
-			
-			i = find_device( (*img).DevObj->name(), objects=*(*p).pDevObjList)
-			if i ge 0 then begin
-				DevObj = (*(*p).pDevObjList)[i]					; current device object
-
-				options = (*img).DevObj->get_options(error=error)
-				if error eq 0 then DevObj->set_options, options
-				head = (*img).DevObj->show_header(error=error)
-				if error eq 0 then DevObj->set_header, head
-			endif
-			(*p).device = i > 0
-			*(*pstate).pdev = DevObj
-			notify, 'device', (*pstate).pdev, from=event.top
-
-			if DevObj->multi_files() then begin
-				widget_control, (*pstate).evt2_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).evt2_base2, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).evt_button, set_value='First'+((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
-			endif else begin
-				b = byte(DevObj->extension())
-				if n_elements(b) gt 1 then begin
-					t = string(b[1:*])
+				if (*img).array eq 1 then begin
+					(*p).enable[*] = 0
+					(*p).enable[ *(*img).pactive] = 1
+					widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=1
 				endif else begin
-					t = 'evt'
+					widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=0
 				endelse
-				t = t + ((((*p).sort_mode eq 1) and (*p).XANES_dir)?' Dir':' File:')
-				widget_control, (*pstate).evt2_base, map=0, scr_ysize=1
-				widget_control, (*pstate).evt2_base2, scr_ysize=1
-				widget_control, (*pstate).evt_button, set_value=t
-			endelse
-			if DevObj->linear() then begin
-				widget_control, (*pstate).linearize_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).linearize_base2, scr_ysize=(*pstate).evt_base_ysize
-			endif else begin
-				widget_control, (*pstate).linearize_base, map=0, scr_ysize=1
-				widget_control, (*pstate).linearize_base2, scr_ysize=1
-			endelse
-			if DevObj->throttle() then begin
-				widget_control, (*pstate).throttle_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).throttle_base2, scr_ysize=(*pstate).evt_base_ysize
-			endif else begin
-				widget_control, (*pstate).throttle_base, map=0, scr_ysize=1
-				widget_control, (*pstate).throttle_base2, scr_ysize=1
-			endelse
-			if DevObj->pileup() then begin
-				widget_control, (*pstate).pileup_base, map=1, scr_ysize=(*pstate).evt_base_ysize
-				widget_control, (*pstate).pileup_base2, scr_ysize=(*pstate).evt_base_ysize
-			endif else begin
-				widget_control, (*pstate).pileup_base, map=0, scr_ysize=1
-				widget_control, (*pstate).pileup_base2, scr_ysize=1
-			endelse
-			DevObj->render_options, (*pstate).device_option_mode_base
-			widget_control, (*pstate).device_option_mode_base, map=DevObj->show_sort_options(), scr_ysize=DevObj->get_sort_ysize()
 
-			widget_control, (*pstate).station, set_combobox_select=(*p).station
-			widget_control, (*pstate).device_mode, set_combobox_select=(*p).device
-			
-			(*p).xy_mode = ((*img).stack_type eq 1) ? 5 : 4
-			(*p).step_mode = 0
-			widget_control, (*pstate).xy_mode, set_combobox_select=(*p).xy_mode
-			widget_control, (*pstate).stepmode_base, map=0, scr_ysize=1
-			widget_control, (*pstate).step_mode, set_combobox_select=0
-			widget_control, (*pstate).size_base, map=0
-			widget_control, (*pstate).da_xanes_base1b, map=0
-			widget_control, (*pstate).proxy_axis, set_combobox_select=(*p).energy_proxy_axis
-			if (*p).xy_mode eq 4 then begin
-				widget_control, (*pstate).zorigin_base, map=1
-				widget_control, (*pstate).zcompress_base, map=0
-				widget_control, (*pstate).da_xanes_base1a, map=1
-				widget_control, (*pstate).da_xanes_base2, map=1
-			endif else if (*p).xy_mode eq 5 then begin
-				widget_control, (*pstate).zorigin_base, map=0
-				widget_control, (*pstate).zcompress_base, map=1
-				widget_control, (*pstate).da_xanes_base1a, map=0
-				widget_control, (*pstate).da_xanes_base2, map=0
-			endif
+				enable_cluster = DevObj->cluster()
+				if enable_cluster eq 0 then (*p).cluster = 0
+				cluster_OK = ((*p).sort_mode eq 0) or (((*p).sort_mode eq 2) and (((*p).xy_mode eq 0) or ((*p).xy_mode eq 4)))
+				widget_control, (*pstate).cluster_id, sensitive=enable_cluster and cluster_OK
 
-			(*p).station = (*img).channel
-			(*p).array = (*img).array
-			list = adc_list_device( DevObj, max_adcs = (*pstate).max_adcs)
-			widget_control, (*pstate).station, set_value=list, set_combobox_select=(*p).station
-			widget_control, (*pstate).array, set_combobox_select=(*p).array
-			widget_control, (*pstate).detector_layout_base, map=(*p).array
+				(*p).energy_cal_file = (*img).energy_cal_file
 
-			if (*img).array eq 1 then begin
-				(*p).enable[*] = 0
-				(*p).enable[ *(*img).pactive] = 1
-				widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=1
-			endif else begin
-				widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station], sensitive=0
-			endelse
+				mode = (*img).mode
+				if (*p).array eq 1 then begin
+					chan = *(*img).pactive
+					n_active = n_elements(chan)
+					for j=0L,n_active-1 do begin
+						i = chan[j]
+						cal_ab, (*(*img).pcal)[j], ca,cb,cu
+						(*p).cal_a[i] = ca
+						(*p).cal_b[i] = cb
+					endfor
+					widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[(*p).station], places=8)
+					widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[(*p).station])
+					for i=0L,(*pstate).max_adcs-1 do begin
+						(*p).ecompress[i] = (*img).ecompress
+						(*p).type[i] = (*img).detector
+						(*p).mode[i] = mode
+						(*p).file[i] = (*img).matrix.file
+					endfor
+					*(*pstate).pval = (*p).type[0]
+					notify, 'evt-type', (*pstate).pval, from=event.top
+					*(*pstate).pval2 = (*p).mode[0]
+					notify, 'evt-mode', (*pstate).pval2, from=event.top
 
-			enable_cluster = DevObj->cluster()
-			if enable_cluster eq 0 then (*p).cluster = 0
-			cluster_OK = ((*p).sort_mode eq 0) or (((*p).sort_mode eq 2) and (((*p).xy_mode eq 0) or ((*p).xy_mode eq 4)))
-			widget_control, (*pstate).cluster_id, sensitive=enable_cluster and cluster_OK
-
-			(*p).energy_cal_file = (*img).energy_cal_file
-
-			mode = (*img).mode
-			if (*p).array eq 1 then begin
-				chan = *(*img).pactive
-				n_active = n_elements(chan)
-				for j=0L,n_active-1 do begin
-					i = chan[j]
-					cal_ab, (*(*img).pcal)[j], ca,cb,cu
+					widget_control, (*pstate).type, set_combobox_select=(*p).type[(*p).station]
+					widget_control, (*pstate).mode, set_combobox_select=(*p).mode[(*p).station]
+					widget_control, (*pstate).file, set_value=(*p).file[(*p).station]
+					set_widget_text, (*pstate).file, (*p).file[(*p).station]
+				endif else begin
+					i = (*p).station
+					cal_ab, (*img).cal, ca,cb,cu
 					(*p).cal_a[i] = ca
 					(*p).cal_b[i] = cb
-				endfor
-				widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[(*p).station], places=8)
-				widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[(*p).station])
-				for i=0L,(*pstate).max_adcs-1 do begin
 					(*p).ecompress[i] = (*img).ecompress
 					(*p).type[i] = (*img).detector
 					(*p).mode[i] = mode
 					(*p).file[i] = (*img).matrix.file
-				endfor
-				*(*pstate).pval = (*p).type[0]
-				notify, 'evt-type', (*pstate).pval, from=event.top
-				*(*pstate).pval2 = (*p).mode[0]
-				notify, 'evt-mode', (*pstate).pval2, from=event.top
+					*(*pstate).pval = (*p).type[i]
+					notify, 'evt-type', (*pstate).pval, from=event.top
+					*(*pstate).pval2 = (*p).mode[i]
+					notify, 'evt-mode', (*pstate).pval2, from=event.top
 
-				widget_control, (*pstate).type, set_combobox_select=(*p).type[(*p).station]
-				widget_control, (*pstate).mode, set_combobox_select=(*p).mode[(*p).station]
-				widget_control, (*pstate).file, set_value=(*p).file[(*p).station]
-				set_widget_text, (*pstate).file, (*p).file[(*p).station]
-			endif else begin
-				i = (*p).station
-				cal_ab, (*img).cal, ca,cb,cu
-				(*p).cal_a[i] = ca
-				(*p).cal_b[i] = cb
-				(*p).ecompress[i] = (*img).ecompress
-				(*p).type[i] = (*img).detector
-				(*p).mode[i] = mode
-				(*p).file[i] = (*img).matrix.file
-				*(*pstate).pval = (*p).type[i]
-				notify, 'evt-type', (*pstate).pval, from=event.top
-				*(*pstate).pval2 = (*p).mode[i]
-				notify, 'evt-mode', (*pstate).pval2, from=event.top
+					widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[i], places=8)
+					widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[i])
+					widget_control, (*pstate).type, set_combobox_select=(*p).type[i]
+					widget_control, (*pstate).mode, set_combobox_select=(*p).mode[i]
+					widget_control, (*pstate).file, set_value=(*p).file[i]
+					set_widget_text, (*pstate).file, (*p).file[i]
+				endelse
 
-				widget_control, (*pstate).cal_a, set_value=str_tidy((*p).cal_a[i], places=8)
-				widget_control, (*pstate).cal_b, set_value=str_tidy((*p).cal_b[i])
-				widget_control, (*pstate).type, set_combobox_select=(*p).type[i]
-				widget_control, (*pstate).mode, set_combobox_select=(*p).mode[i]
-				widget_control, (*pstate).file, set_value=(*p).file[i]
-				set_widget_text, (*pstate).file, (*p).file[i]
-			endelse
+				(*p).sample = (*img).sample
+				(*p).grain = (*img).grain
+				(*p).comment = (*img).comment
+				widget_control, (*pstate).sample, set_value=(*p).sample
+				widget_control, (*pstate).grain, set_value=(*p).grain
+				widget_control, (*pstate).comment, set_value=(*p).comment
 
-			(*p).sample = (*img).sample
-			(*p).grain = (*img).grain
-			(*p).comment = (*img).comment
-			widget_control, (*pstate).sample, set_value=(*p).sample
-			widget_control, (*pstate).grain, set_value=(*p).grain
-			widget_control, (*pstate).comment, set_value=(*p).comment
+				(*p).evt_file = (*img).source
+				widget_control, (*pstate).evt_file, set_value=(*p).evt_file
+				set_widget_text, (*pstate).evt_file, (*p).evt_file
 
-			(*p).evt_file = (*img).source
-			widget_control, (*pstate).evt_file, set_value=(*p).evt_file
-			set_widget_text, (*pstate).evt_file, (*p).evt_file
+				(*p).evt2_file = (*img).source2
+				widget_control, (*pstate).evt2_file, set_value=(*p).evt2_file
+				set_widget_text, (*pstate).evt2_file, (*p).evt2_file
 
-			(*p).evt2_file = (*img).source2
-			widget_control, (*pstate).evt2_file, set_value=(*p).evt2_file
-			set_widget_text, (*pstate).evt2_file, (*p).evt2_file
+				(*p).throttle_file = (*img).throttle
+				widget_control, (*pstate).throttle_file, set_value=(*p).throttle_file
+				set_widget_text, (*pstate).throttle_file, (*p).throttle_file
 
-			(*p).throttle_file = (*img).throttle
-			widget_control, (*pstate).throttle_file, set_value=(*p).throttle_file
-			set_widget_text, (*pstate).throttle_file, (*p).throttle_file
+				(*p).pileup_file = (*img).pileup
+				widget_control, (*pstate).pileup_file, set_value=(*p).pileup_file
+				set_widget_text, (*pstate).pileup_file, (*p).pileup_file
 
-			(*p).pileup_file = (*img).pileup
-			widget_control, (*pstate).pileup_file, set_value=(*p).pileup_file
-			set_widget_text, (*pstate).pileup_file, (*p).pileup_file
+				(*p).linearize_file = (*img).linearize
+				widget_control, (*pstate).linearize_file, set_value=(*p).linearize_file
+				set_widget_text, (*pstate).linearize_file, (*p).linearize_file
 
-			(*p).linearize_file = (*img).linearize
-			widget_control, (*pstate).linearize_file, set_value=(*p).linearize_file
-			set_widget_text, (*pstate).linearize_file, (*p).linearize_file
+				active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
+				
+				T = strip_file_ext((*img).file)
+				if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
+				if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+				(*p).output_file = T + '.'+ (*pstate).outputs[(*p).sort_mode]
+				set_widget_text, (*pstate).output_file, (*p).output_file
 
-			active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
-
-			T = strip_file_ext((*img).file)
-			if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-			if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
-			(*p).output_file = T + '.'+ (*pstate).outputs[(*p).sort_mode]
-			set_widget_text, (*pstate).output_file, (*p).output_file
-
-			fi = find_file2((*p).evt_file)
-			if (fi[0] ne '') then begin
-				*(*pstate).dpath = extract_path( (*p).evt_file)
-				notify, 'dpath', (*pstate).dpath, from=event.top
-				*(*pstate).path = build_output_path( (*p).evt_file, (*p).output_file, (*p).root, /set)
-			endif
-			*(*pstate).path = extract_path( (*p).output_file)
-			notify, 'path', (*pstate).path, from=event.top
-			notify, 'root', (*p).root, from=event.top
-			(*p).xsize = (*img).scan.x * 1000.0
-			(*p).ysize = (*img).scan.y * 1000.0
-			(*p).zsize = (*img).scan.z * 1000.0
-			(*p).xorigin = (*img).scan.origin.x
-			(*p).yorigin = (*img).scan.origin.y
-			(*p).zorigin = (*img).scan.origin.z
-
-			(*p).xrange = (*img).original_xsize * (*img).xcompress
-			(*p).yrange = (*img).original_ysize * (*img).ycompress
-			(*p).zrange = (*img).original_zsize * (*img).zcompress
-			(*p).xcompress = ((*img).xcompress - 1) > 0
-			(*p).ycompress = ((*img).ycompress - 1) > 0
-			(*p).zcompress = ((*img).zcompress - 1) > 0
-
-			(*p).xanes_energies_file = (*img).energies_file
-			(*p).el_select = (*img).el
-	
-			(*p).image_mode = (*img).sub_region
-			(*p).xoffset = (*img).xoffset
-			(*p).yoffset = (*img).yoffset
-			if ((*p).xoffset ne 0) or ((*p).yoffset ne 0) then (*p).image_mode=1
-			(*p).x_sub_range = (*img).x_sub_range
-			(*p).y_sub_range = (*img).y_sub_range
-			if (*p).x_sub_range eq 0 then (*p).x_sub_range = (*img).xsize * (*p).xcompress
-			if (*p).y_sub_range eq 0 then (*p).y_sub_range = (*img).ysize * (*p).ycompress
-			
-			(*p).charge = (*img).charge
-			(*p).charge_mode = (*img).IC.mode
-			(*p).charge_conversion = (*img).IC.conversion
-			(*p).preamp.pv = (*img).IC.pv.name
-			(*p).preamp.val = (*img).IC.pv.val
-			(*p).preamp.unit = (*img).IC.pv.unit
-			if ptr_valid((*img).plist) then begin
-				if n_elements(*(*img).plist) gt 0 then begin
-					*(*p).pic_list = *(*img).plist
-					if (*p).preamp.pv eq '' then (*p).preamp.pv = (*(*p).pic_list)[0]
+				fi = find_file2((*p).evt_file)
+				if (fi[0] ne '') then begin
+					*(*pstate).dpath = extract_path( (*p).evt_file)
+					notify, 'dpath', (*pstate).dpath, from=event.top
+					*(*pstate).path = build_output_path( (*p).evt_file, (*p).output_file, (*p).root, /set)
 				endif
-			endif
-			evt_check_pvlist, (*p).pic_list, DevObj
-
-			(*p).flux = 0.0
-			if ptr_valid( (*img).flux) and (*img).has_flux then begin
-				(*p).flux = total(*(*img).flux)
-				if (*p).flux gt 1.0e-10 then begin
-					if (*img).IC.mode gt 0 then begin
-						if (*img).charge eq 0.0 then begin
-							(*p).charge = (*p).flux * (*img).IC.conversion
-							print,'                 charge zero, set it to flux * conv = ',(*p).charge
-						endif else begin
-							if abs((*img).IC.conversion - (*img).charge / (*p).flux) gt 1.0e-9 then begin
-								(*p).charge_conversion = (*img).charge / (*p).flux
-								print,'                 set IC.conversion = image.charge / total_flux = ',(*img).IC.conversion
-							endif
-						endelse
+				*(*pstate).path = extract_path( (*p).output_file)
+				notify, 'path', (*pstate).path, from=event.top
+				notify, 'root', (*p).root, from=event.top
+				(*p).xsize = (*img).scan.x * 1000.0
+				(*p).ysize = (*img).scan.y * 1000.0
+				(*p).zsize = (*img).scan.z * 1000.0
+				(*p).xorigin = (*img).scan.origin.x
+				(*p).yorigin = (*img).scan.origin.y
+				(*p).zorigin = (*img).scan.origin.z
+	
+				(*p).xrange = (*img).original_xsize * (*img).xcompress
+				(*p).yrange = (*img).original_ysize * (*img).ycompress
+				(*p).zrange = (*img).original_zsize * (*img).zcompress
+				(*p).xcompress = ((*img).xcompress - 1) > 0
+				(*p).ycompress = ((*img).ycompress - 1) > 0
+				(*p).zcompress = ((*img).zcompress - 1) > 0
+	
+				(*p).xanes_energies_file = (*img).energies_file
+				(*p).el_select = (*img).el
+		
+				(*p).image_mode = (*img).sub_region
+				(*p).xoffset = (*img).xoffset
+				(*p).yoffset = (*img).yoffset
+				if ((*p).xoffset ne 0) or ((*p).yoffset ne 0) then (*p).image_mode=1
+				(*p).x_sub_range = (*img).x_sub_range
+				(*p).y_sub_range = (*img).y_sub_range
+				if (*p).x_sub_range eq 0 then (*p).x_sub_range = (*img).xsize * (*p).xcompress
+				if (*p).y_sub_range eq 0 then (*p).y_sub_range = (*img).ysize * (*p).ycompress
+			
+				(*p).charge = (*img).charge
+				(*p).charge_mode = (*img).IC.mode
+				(*p).charge_conversion = (*img).IC.conversion
+				(*p).preamp.pv = (*img).IC.pv.name
+				(*p).preamp.val = (*img).IC.pv.val
+				(*p).preamp.unit = (*img).IC.pv.unit
+				if ptr_valid((*img).plist) then begin
+					if n_elements(*(*img).plist) gt 0 then begin
+						*(*p).pic_list = *(*img).plist
+						if (*p).preamp.pv eq '' then (*p).preamp.pv = (*(*p).pic_list)[0]
 					endif
 				endif
-			endif else begin
+				evt_check_pvlist, (*p).pic_list, DevObj
+	
 				(*p).flux = 0.0
-			endelse
-			aps_count_to_charge = (*p).charge_conversion
-			widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
+				if ptr_valid( (*img).flux) and (*img).has_flux then begin
+					(*p).flux = total(*(*img).flux)
+					if (*p).flux gt 1.0e-10 then begin
+						if (*img).IC.mode gt 0 then begin
+							if (*img).charge eq 0.0 then begin
+								(*p).charge = (*p).flux * (*img).IC.conversion
+								print,'                 charge zero, set it to flux * conv = ',(*p).charge
+							endif else begin
+								if abs((*img).IC.conversion - (*img).charge / (*p).flux) gt 1.0e-9 then begin
+									(*p).charge_conversion = (*img).charge / (*p).flux
+									print,'                 set IC.conversion = image.charge / total_flux = ',(*img).IC.conversion
+								endif
+							endelse
+						endif
+					endif
+				endif else begin
+					(*p).flux = 0.0
+				endelse
+				aps_count_to_charge = (*p).charge_conversion
+				widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
+	
+				(*p).dwell = (*img).dwell.val
+				(*p).use_dwell = (*img).dwell.on
+				(*p).flatten = (*img).flatten
+				widget_control, (*pstate).charge_mode, set_combobox_select=(*p).charge_mode
+				case (*p).charge_mode of
+					0: begin
+						widget_control, (*pstate).ic_base, map=0
+						widget_control, (*pstate).scan_button, sensitive=0
+						widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
+						widget_control, (*pstate).ic_base2, scr_ysize=1
+						end
+					1: begin
+						widget_control, (*pstate).ic_base, map=1
+						widget_control, (*pstate).scan_button, sensitive=1
+						widget_control, (*pstate).ic_base1, map=1, scr_ysize=(*pstate).ic_base1_ysize
+						widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
+						end
+					2: begin
+						widget_control, (*pstate).ic_base, map=1
+						widget_control, (*pstate).scan_button, sensitive=0
+						widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
+						widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
+						end
+				endcase
+				widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
+				widget_control, (*pstate).dwell_base, sensitive=(*p).use_dwell
+				widget_control, (*pstate).dwell_id, set_value=str_tidy((*p).dwell)
+				widget_control, (*pstate).ic_pv_mode, set_value='   '+*(*p).pic_list
+				q = where( (*p).preamp.pv eq *(*p).pic_list, nq)
+				widget_control, (*pstate).ic_pv_mode, set_combobox_select=(nq ne 0) ? q[0] : 0
 
-			(*p).dwell = (*img).dwell.val
-			(*p).use_dwell = (*img).dwell.on
-			(*p).flatten = (*img).flatten
-			widget_control, (*pstate).charge_mode, set_combobox_select=(*p).charge_mode
-			case (*p).charge_mode of
-				0: begin
-					widget_control, (*pstate).ic_base, map=0
-					widget_control, (*pstate).scan_button, sensitive=0
-					widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
-					widget_control, (*pstate).ic_base2, scr_ysize=1
-					end
-				1: begin
-					widget_control, (*pstate).ic_base, map=1
-					widget_control, (*pstate).scan_button, sensitive=1
-					widget_control, (*pstate).ic_base1, map=1, scr_ysize=(*pstate).ic_base1_ysize
-					widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
-					end
-				2: begin
-					widget_control, (*pstate).ic_base, map=1
-					widget_control, (*pstate).scan_button, sensitive=0
-					widget_control, (*pstate).ic_base1, map=0, scr_ysize=1
-					widget_control, (*pstate).ic_base2, scr_ysize=(*pstate).ic_base2_ysize
-					end
-			endcase
-			widget_control, (*pstate).charge_conversion, set_value=str_tidy((*p).charge_conversion)
-			widget_control, (*pstate).dwell_base, sensitive=(*p).use_dwell
-			widget_control, (*pstate).dwell_id, set_value=str_tidy((*p).dwell)
-			widget_control, (*pstate).ic_pv_mode, set_value='   '+*(*p).pic_list
-			q = where( (*p).preamp.pv eq *(*p).pic_list, nq)
-			widget_control, (*pstate).ic_pv_mode, set_combobox_select=(nq ne 0) ? q[0] : 0
-
-			l = locate('time', strlowcase((*p).preamp.pv))
-			val = (*p).preamp.val
-			unit = (*p).preamp.unit
-			ival = find_charge_val_unit_index( val, unit, iunit=iunit, time=(l ge 0), /write_back)
-			(*p).preamp.val = val
-			(*p).preamp.unit = unit
-			widget_control, (*pstate).ic_val_mode, set_combobox_select=ival
-			widget_control, (*pstate).ic_unit_mode, set_combobox_select=iunit
-			OK = (locate('.time',(*p).preamp.pv) lt 0)
-			widget_control, (*pstate).ic_val_mode, sensitive=OK
-			widget_control, (*pstate).ic_unit_mode, sensitive=OK
-
-			widget_control, (*pstate).flatten_id, set_value=(*p).flatten			
-			widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
-			widget_control, (*pstate).xrange, set_value=str_tidy((*p).xrange)
-			widget_control, (*pstate).yrange, set_value=str_tidy((*p).yrange)
-			widget_control, (*pstate).xcompress, set_combobox_select=(*p).xcompress
-			widget_control, (*pstate).ycompress, set_combobox_select=(*p).ycompress
-			widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
-			widget_control, (*pstate).ysize, set_value=str_tidy((*p).ysize)
-
-			widget_control, (*pstate).zrange, set_value=str_tidy((*p).zrange)
-			widget_control, (*pstate).zcompress, set_combobox_select=(*p).zcompress
-			widget_control, (*pstate).zsize, set_value=str_tidy((*p).zsize)
-			widget_control, (*pstate).zorigin, set_value=str_tidy((*p).zorigin)
-			set_widget_text, (*pstate).energy_file_text, (*p).xanes_energies_file
-			set_widget_text, (*pstate).el_select_text, (*p).el_select
-			
-			widget_control, (*pstate).image_mode, set_combobox_select=(*p).image_mode
-			widget_control, (*pstate).xoffset, set_value=str_tidy((*p).xoffset)
-			widget_control, (*pstate).yoffset, set_value=str_tidy((*p).yoffset)
-			widget_control, (*pstate).x_sub_range, set_value=str_tidy((*p).x_sub_range)
-			widget_control, (*pstate).y_sub_range, set_value=str_tidy((*p).y_sub_range)
-			if (*p).image_mode ne 0 then begin
-				widget_control, (*pstate).offset_base, map=1, scr_ysize=(*pstate).offset_ysize
-			endif else begin
-				widget_control, (*pstate).offset_base, map=0, scr_ysize=1
-			endelse
-
-			free_images, img
-			notify, 'evt-load', from=event.top
+				l = locate('time', strlowcase((*p).preamp.pv))
+				val = (*p).preamp.val
+				unit = (*p).preamp.unit
+				ival = find_charge_val_unit_index( val, unit, iunit=iunit, time=(l ge 0), /write_back)
+				(*p).preamp.val = val
+				(*p).preamp.unit = unit
+				widget_control, (*pstate).ic_val_mode, set_combobox_select=ival
+				widget_control, (*pstate).ic_unit_mode, set_combobox_select=iunit
+				OK = (locate('.time',(*p).preamp.pv) lt 0)
+				widget_control, (*pstate).ic_val_mode, sensitive=OK
+				widget_control, (*pstate).ic_unit_mode, sensitive=OK
+	
+				widget_control, (*pstate).flatten_id, set_value=(*p).flatten			
+				widget_control, (*pstate).charge, set_value=str_tidy((*p).charge)
+				widget_control, (*pstate).xrange, set_value=str_tidy((*p).xrange)
+				widget_control, (*pstate).yrange, set_value=str_tidy((*p).yrange)
+				widget_control, (*pstate).xcompress, set_combobox_select=(*p).xcompress
+				widget_control, (*pstate).ycompress, set_combobox_select=(*p).ycompress
+				widget_control, (*pstate).xsize, set_value=str_tidy((*p).xsize)
+				widget_control, (*pstate).ysize, set_value=str_tidy((*p).ysize)
+	
+				widget_control, (*pstate).zrange, set_value=str_tidy((*p).zrange)
+				widget_control, (*pstate).zcompress, set_combobox_select=(*p).zcompress
+				widget_control, (*pstate).zsize, set_value=str_tidy((*p).zsize)
+				widget_control, (*pstate).zorigin, set_value=str_tidy((*p).zorigin)
+				set_widget_text, (*pstate).energy_file_text, (*p).xanes_energies_file
+				set_widget_text, (*pstate).el_select_text, (*p).el_select
+				
+				widget_control, (*pstate).image_mode, set_combobox_select=(*p).image_mode
+				widget_control, (*pstate).xoffset, set_value=str_tidy((*p).xoffset)
+				widget_control, (*pstate).yoffset, set_value=str_tidy((*p).yoffset)
+				widget_control, (*pstate).x_sub_range, set_value=str_tidy((*p).x_sub_range)
+				widget_control, (*pstate).y_sub_range, set_value=str_tidy((*p).y_sub_range)
+				if (*p).image_mode ne 0 then begin
+					widget_control, (*pstate).offset_base, map=1, scr_ysize=(*pstate).offset_ysize
+				endif else begin
+					widget_control, (*pstate).offset_base, map=0, scr_ysize=1
+				endelse
+	
+				free_images, img
+				notify, 'evt-load', from=event.top
+			endif
 		endif
-	  endif
-	  widget_control_update, event.top, /rest
-	  end
+		widget_control_update, event.top, /rest
+		end
 
 	'sort_mode': begin
 		evt_set_sort_mode, pstate, event.value, event.top
