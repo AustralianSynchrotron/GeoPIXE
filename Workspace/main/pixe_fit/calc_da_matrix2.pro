@@ -351,7 +351,7 @@ COMPILE_OPT STRICTARR
 	if label eq '' then label = (*pspec).label
 	if label eq '' then label = strip_path( (*pspec).file)
 	
-; N.B This has to match the form in 'calc_da_matrix2', 'read_da' and 'read_old_da'
+; N.B This has to match the form in 'calc_da_matrix2', 'read_da', 'read_da_matrix' and 'read_old_da'
 
 	da_matrix = { label: label, $						; label, name of source data
 			file:		'', $							; local file name

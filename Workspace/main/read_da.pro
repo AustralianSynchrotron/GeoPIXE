@@ -118,7 +118,7 @@ if version le -9 then begin
 	readu,lun, e_beam
 endif
 
-; N.B This has to match the form in 'calc_da_matrix2', 'read_da' and 'read_old_da'
+; N.B This has to match the form in 'calc_da_matrix2', 'read_da', 'read_da_matrix' and 'read_old_da'
 
 da = { label:		label, $			; label, name of source data
 		file:		'', $				; local file name
@@ -326,7 +326,7 @@ if mpda then begin
 		endfor
 	endif
 		
-; N.B This has to match the form in 'calc_da_matrix2', 'read_da_matrix' and 'read_old_da'
+; N.B This has to match the form in 'calc_da_matrix2', 'read_da', 'read_da_matrix' and 'read_old_da'
 
 	da = { label:	da1.label, $				; label, name of source data
 		file:		filename, $					; local file name
