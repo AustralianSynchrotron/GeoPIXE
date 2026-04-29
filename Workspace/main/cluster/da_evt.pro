@@ -11,7 +11,8 @@ pro da_evt, filei, files=files, matrix=matrix_file, xrange=xrange, yrange=yrange
           images=images, xorigin=xorigin, yorigin=yorigin, $
           xoffset=xoffset, yoffset=yoffset, x_sub_range=x_sub_range, y_sub_range=y_sub_range, $ 
           cluster_index=cluster_index, cluster_total=cluster_total, $
-          cluster_result=cluster_result, cluster_debug=cluster_debug
+          cluster_result=cluster_result, cluster_debug=cluster_debug, $
+		  energy_cal_file=energy_cal_file
           
 ;   file		list-mode file(s) to process (or specify using "files=" keyword).
 ;   matrix_file	load Dynamic Analysis Matrix from file 'matrix_file'
@@ -32,6 +33,7 @@ pro da_evt, filei, files=files, matrix=matrix_file, xrange=xrange, yrange=yrange
 ;   cal_a,cal_b	 the energy calibration (mandatory).
 ;   			These must be in 'keV' to match the DA matrix file.
 ;   			If these are vectors, then they will be indexed with the 'ste' channel returned.
+;	energy_cal_file	path/name of energy cal file
 ;
 ;	translate_file	file for table of energies (keV) for each proxy-axis (XANES energy) bin.
 ;	proxy_axis	axis to use as index into 'translate_file' list (e.g. for Line XANES)
@@ -158,6 +160,7 @@ if n_elements(charge) lt 1 then charge = 0.0
 if n_elements(ecompress) lt 1 then ecompress = 1
 if n_elements(xcompress) lt 1 then xcompress = 1
 if n_elements(ycompress) lt 1 then ycompress = 1
+if n_elements(energy_cal_file) lt 1 then energy_cal_file = ''
 if n_elements(events) lt 1 then events=0L
 if n_elements(scanx) lt 1 then scanx = 0.0
 if n_elements(scany) lt 1 then scany = 0.0
@@ -936,6 +939,7 @@ endif else begin
     img.pcal = ptr_new( cal )
 endelse
 img.ecompress = matrix.ecompress
+img.energy_cal_file = energy_cal_file
 
 live = 1.0
 if (obj->name() eq 'OM_DAQ_DEVICE') and (suppress eq 0) then begin

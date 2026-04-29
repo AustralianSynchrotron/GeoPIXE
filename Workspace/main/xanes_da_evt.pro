@@ -4,7 +4,8 @@ pro xanes_da_evt, dirfilei, matrix=matrix_file, charge=charge, xcompress=xcompre
           scanx=scanx, scany=scany, progress=do_progress, device=devicei, group=group, $
           throttle=throttle, pileup=pileup, linearize=linearize, $
           sample=sample, grain=grain, comment=comment, devpars=devpars, ic=flux_ic, $
-          pv_list=pv_list, flatten=flatten
+          pv_list=pv_list, flatten=flatten, $
+		  energy_cal_file=energy_cal_file
 
 ;	Quick hack to scan a series of directories for blog segments, and put the results
 ;	into separate XANES energy bins, one for each directory. Get energy from header info
@@ -27,6 +28,7 @@ pro xanes_da_evt, dirfilei, matrix=matrix_file, charge=charge, xcompress=xcompre
 ;   cal_a,cal_b	 the energy calibration (mandatory).
 ;   			These must be in 'keV' to match the DA matrix file.
 ;   			If these are vectors, then they will be indexed with the 'ste' channel returned.
+;	energy_cal_file	path/name of energy cal file
 ;   scanx,scany  are optional scan sizes (microns).
 ;
 ;   output		Output file, Write elemental images out as a .csv XANES file.
@@ -99,6 +101,7 @@ if n_elements(cal_a) lt 1 then cal_a = matrix.cal_orig.a
 if n_elements(cal_b) lt 1 then cal_b = matrix.cal_orig.b
 if n_elements(xcompress) lt 1 then xcompress = 1
 if n_elements(ycompress) lt 1 then ycompress = 1
+if n_elements(energy_cal_file) lt 1 then energy_cal_file = ''
 if n_elements(events) lt 1 then events=0L
 if n_elements(scanx) lt 1 then scanx = 0.0
 if n_elements(scany) lt 1 then scany = 0.0

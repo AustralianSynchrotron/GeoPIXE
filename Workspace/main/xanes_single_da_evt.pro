@@ -2,7 +2,8 @@ pro xanes_single_da_evt, filei, matrixi, charge=charge, $
           cal_a=cal_a, cal_b=cal_b, suppress=suppress, $
           output=outputi, events=events, channel=channeli, detector=detector, $
           progress=do_progress, device=devicei, group=group, cuts=use_cuts, $
-          throttle=throttle, pileup=pileup, linearize=linearize, energies=energies
+          throttle=throttle, pileup=pileup, linearize=linearize, energies=energies, $
+		  energy_cal_file=energy_cal_file
 
 ;	Quick hack to scan a single list of blog segments, and put the results
 ;	into separate XANES energy bins, based on its energy position in an energy list.
@@ -22,6 +23,7 @@ pro xanes_single_da_evt, filei, matrixi, charge=charge, $
 ;   cal_a,cal_b	 the energy calibration (mandatory).
 ;   			These must be in 'keV' to match the DA matrix file.
 ;   			If these are vectors, then they will be indexed with the 'ste' channel returned.
+;	energy_cal_file	path/name of energy cal file
 ;
 ;   output		Output file, Write elemental images out as a .csv XANES file.
 ;
@@ -129,6 +131,7 @@ if n_elements(channeli) lt 1 then channeli = 0L
 if n_elements(charge) lt 1 then charge = 0.0
 if n_elements(cal_a) lt 1 then cal_a = matrix.cal_orig.a
 if n_elements(cal_b) lt 1 then cal_b = matrix.cal_orig.b
+if n_elements(energy_cal_file) lt 1 then energy_cal_file = ''
 if n_elements(events) lt 1 then events=0L
 if n_elements(sample) lt 1 then sample = '?'
 if n_elements(grain) lt 1 then grain = '?'

@@ -730,6 +730,11 @@ if version le -55 then begin					; new device data place
 	obj->read_options, 1, error=err2
 	if err2 then goto, bad_obj_io	
 
+	if (version le -58) then begin				; energy cal filename
+		readu,1, energy_cal_file
+		image.energy_cal_file = energy_cal_file
+	endif
+
 	if header then goto, skip_for_header
 endif
 
@@ -895,11 +900,6 @@ endif else if (version le -29) and (version gt -35) then begin		; old Maia inter
 endif
 
 ;----------------------------------------------------------------
-
-if (version le -58) then begin				; energy cal filename
-	readu,1, energy_cal_file
-	image.energy_cal_file = energy_cal_file
-endif
 
 if header then goto, skip_for_header
 

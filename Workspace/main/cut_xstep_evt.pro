@@ -5,7 +5,8 @@ pro cut_xstep_evt, filei, pcuts, xstep_count, step_events=step_events, xrange=xr
           step_toggle=step_toggle, toggle_bit=toggle_bit, step_station=step_station, $
           scanx=scanx, scany=scany, sample=sample, grain=grain, comment=comment, $
           progress=do_progress, images=images, device=devicei, ystep=ystep, group=group, $
-         throttle=throttle, pileup=pileup, stim_mean=stim_mean, suppress=suppress
+         throttle=throttle, pileup=pileup, stim_mean=stim_mean, suppress=suppress, $
+		  energy_cal_file=energy_cal_file
 
 ;   Read an .evt file.
 ;   Analyze using cuts array pointed to by 'pcuts'.
@@ -33,6 +34,8 @@ pro cut_xstep_evt, filei, pcuts, xstep_count, step_events=step_events, xrange=xr
 ;   'cal_a', 'cal_b', are the energy calibration (mandatory).
 ;   The units are "keV" always, as in DA_EVT (must match CUTs to these units).
 ;   If these are vectors, then they will be indexed with the 'ste' channel returned.
+;
+;	energy_cal_file	path/name of energy cal file
 ;
 ;   Write elemental images out as a .dai DA image file.
 ;   Use filename 'output', if specified.
@@ -139,6 +142,7 @@ if n_elements(cal_b) lt 1 then cal_b = 0.0
 if n_elements(ecompress) lt 1 then ecompress = 1
 if n_elements(xcompress) lt 1 then xcompress = 1
 if n_elements(ycompress) lt 1 then ycompress = 1
+if n_elements(energy_cal_file) lt 1 then energy_cal_file = ''
 if n_elements(outputi) lt 1 then outputi=file[0]
 if n_elements(events) lt 1 then events=0L
 if n_elements(toggle_bit) lt 1 then toggle_bit = 12
@@ -537,6 +541,7 @@ endif else begin
     img.pcal = ptr_new( cal )
 endelse
 img.ecompress = ecompress
+img.energy_cal_file = energy_cal_file
 
 live = 1.0
 if (obj->name() eq 'OM_DAQ_DEVICE') and (suppress eq 0) then begin
