@@ -78,6 +78,7 @@ array = {on:on, n_det:n_det, rGamma:rGamma }
 
 da = { label:	label, $				; label, name of source data
 		file:	file, $					; local file name
+		spec_file:	'', $				; spec file fitted
 		cal_orig: cal_orig, $			; original spectrum cal
 		cal:	cal, $					; cal of DA matrix rows
 		station: 	station, $			; detector stattion number

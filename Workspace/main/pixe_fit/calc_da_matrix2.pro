@@ -355,6 +355,7 @@ COMPILE_OPT STRICTARR
 
 	da_matrix = { label: label, $						; label, name of source data
 			file:		'', $							; local file name
+			spec_file:	(*pspec).file, $				; spec file fitted
 			cal_orig: 	cal, $							; original spectrum cal
 			cal:		cal, $							; cal of DA matrix rows
 			station:	(*pspec).station, $				; detector station number

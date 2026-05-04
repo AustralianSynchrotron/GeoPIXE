@@ -98,15 +98,25 @@ ul
 
 <h3>New versions of files</h3>
 
-<p class=MsoNormal>A few files have new information added, such as DAI, … These
-cannot be read using older versions of GeoPIXE. This is largely why we have a
-fresh break to version 9.0 of GeoPIXE.</p>
+<p class=MsoNormal>A few files have new information added (images: .DAI, DA
+matrix: .DAMX). These cannot be read using older versions of GeoPIXE. This is
+largely why we have a fresh break to version 9.0 of GeoPIXE. However, the new
+version of GeoPIXE can still read all previous version files.</p>
 
 <h3>Energy cal file name</h3>
 
 <p class=MsoNormal>When an energy cal file is selected, using the “Get” button
-on the “DA/E.Cal” tab of <i>Sort EVT</i>, the filename gets saved in the returned
-image and the new DAI file. </p>
+on the “DA/E.Cal” tab of <i>Sort EVT</i>, the filename gets saved in the
+returned image and the new DAI file (now version -58). The energy cal filename
+can be seen in the <i>Image History</i> details and in the preview text in the <i>File
+Requester</i> (see the “Details” tab).</p>
+
+<h3>Fitted spectrum file name</h3>
+
+<p class=MsoNormal>The file name for the spectrum fitted to generate a DA
+matrix is now saved with the DA matrix (DA matrix file, e.g. “.damx”, are now
+version -10). This enables re-fitting this spectrum later to refine some
+aspects of the fit (e.g. add an element) and generate a new DA matrix.</p>
 
 <h2>Version 8.9t</h2>
 
@@ -140,7 +150,8 @@ for 32 bit Apple systems.</p>
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>Display issues remain on stock MAC systems, which require an
-upgrade of the <i>XQuartx</i> display system.</p>
+upgrade of the <i>XQuartx</i> display system. Even this does not solve many MAC
+issues. We have sought help from NV5, the developers of IDL.</p>
 
 <h2>Version 8.9n</h2>
 
