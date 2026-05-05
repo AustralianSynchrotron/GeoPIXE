@@ -2286,6 +2286,9 @@ loop:
 						(*(*pstate).pda).file = F
 						write_DA, (*pstate).pda, F
 						(*pstate).DAM_file = F
+
+						warning, 'fit_setup', ['Remember to save the fit-setup PCM file.', '', $
+								'Use the same name as the DA matrix, ','so they remain associated.'], /info
 					endif
 				endif
 			endif else begin
