@@ -1047,6 +1047,8 @@ endif
     register_notify, Spectrum_TLB, [update_notify, $	  ; spectra display parameters
                     'images', $          				 ; pass on notify of new images
                     'spectra', $         				 ; new spectra loaded
+					'spectrum-load', $					; load new spectra
+					'fit-setup-load', $					; load PCM (passed on to fit_setup)
                     'mark-e', $							; mark line energy from Identify (pass to setup-filter)
                     'image-region-select', $		    ; new region
 					'image-region-delete', $			; to delete a selected spectrum (region) row

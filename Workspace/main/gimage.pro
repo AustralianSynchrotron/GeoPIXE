@@ -972,6 +972,10 @@ endif
        Image_Process_Flux_apply, Event
        end
 
+    'Load_DA_spectrum_Menu': begin
+       Image_Load_DA_spectrum_refit, Event
+       end
+
     'Merge_Gamma_Menu': begin
        Image_Process_Merge_Gamma, Event
        end
@@ -2203,6 +2207,7 @@ if new_idl eq 0 then warning,'GeoPIXE',['Some features of GeoPIXE not supported'
   W_MENU_55 = Widget_Button(plugin_menus_root, UNAME='Undo_Menu', VALUE='Undo Operation', /separator )
 
   if (realtime eq 0) and (xanes eq 0) then begin
+  	W_MENU_54 = Widget_Button(plugin_menus_root, UNAME='Load_DA_spectrum_Menu', VALUE='Load DA spectrum for refit', /separator )
   	W_MENU_54 = Widget_Button(plugin_menus_root, UNAME='Merge_Gamma_Menu', VALUE='Merge PIGE', /separator )
   endif
 

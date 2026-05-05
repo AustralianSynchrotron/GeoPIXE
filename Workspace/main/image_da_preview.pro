@@ -37,7 +37,8 @@ define_devices
 	list = [list, 'Spec file: ' + (*p).spec_file]
 	list = [list, 'Version: ' + str_tidy(version)]
 
-	List = [list, '', '# elements: ' + str_tidy((*p).n_el), '' ]
+	List = [list, '', 'E Beam: ' + str_tidy((*p).e_beam) ]
+	List = [list, '# elements: ' + str_tidy((*p).n_el), '' ]
 
 	n = n_elements((*p).el)
 	i = 0

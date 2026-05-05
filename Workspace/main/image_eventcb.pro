@@ -1538,6 +1538,63 @@ end
 
 ;-----------------------------------------------------------------
 
+pro Image_Load_DA_spectrum_refit, Event
+
+	COMPILE_OPT STRICTARR
+	child = widget_info( event.top, /child)
+	widget_control, child, get_uvalue=pstate
+	p = (*pstate).p
+	if ptr_good( p) eq 0 then return
+	
+	if ptr_good( (*p).pda) eq 0 then begin
+		ext = extract_extension((*p).matrix.file)
+		dfile = file_requester( /read, /must_exist, filter='*.'+ext, group=(*pstate).tlb, $
+			title='Select original '+ext+' file to find spec', file=(*p).matrix.file, fix_filter=0, $
+			path=*(*pstate).path, /translate, updir=3, /skip_if_exists)
+		da = read_DA( dfile, error=err)
+		if err eq 0 then begin
+			(*p).matrix.file = dfile
+			(*p).pda = ptr_new( da, /no_copy)
+		endif
+	endif
+	spec_file = ptr_good((*p).pda) ? (*(*p).pda).spec_file : ''
+
+	if spec_file eq '' then begin
+		warning,'Image_Load_DA_spectrum_refit',['Selected DA matrix does not show the source spec file. ', $
+					'','Only the latest DA files save the source spec file for refit.', $
+					'Find the spec file name in the data analysis notes.']
+	endif
+
+	sfile = file_requester( /read, /must_exist, filter='*.spec', group=(*pstate).tlb, $
+			title='Select the source DA spectrum file for refit', file=spec_file, /fix_filter, $
+			path=*(*pstate).path, /translate, updir=3, /skip_if_exists, /image, preview_routine='spectrum_preview')
+	
+	if sfile eq '' then begin
+		warning,'Image_Load_DA_spectrum_refit',['No spectrum file found or selected.','Abort.']
+		return
+	endif
+	*(*pstate).pspec = sfile
+	Notify, 'spectrum-load', (*pstate).pspec, from=(*pstate).tlb
+
+	dpfile = file_requester( /read, /must_exist, filter='*.pcm', group=(*pstate).tlb, $
+			title='Select the PCM file for this DA matrix', file=strip_file_ext((*p).matrix.file) + '.pcm', /fix_filter, $
+			path=*(*pstate).path, /translate, updir=3, /skip_if_exists)
+	
+	if dpfile eq '' then begin
+		warning,'Image_Load_DA_spectrum_refit',['No PCM file found with same name as DA, or selected.','', $
+			'You will need to load the relevant PCM fit-setup file into "Xray Spectrum Fit".']
+		return
+	endif
+	*(*pstate).ppcm = dpfile
+	Notify, 'fit-setup-load', (*pstate).ppcm, from=(*pstate).tlb
+
+	warning,'Image_Load_DA_spectrum_refit',['Once the source spectrum file and PCM are loaded', $
+		'Make necessary changes to refine the fit, and "Fit: One".','Then "Generate DA matrix" and select this in "Sort EVT".'], /info
+	return
+end
+
+;-----------------------------------------------------------------
+
 function Image_Load_plugins, error=error
 
 	COMPILE_OPT STRICTARR
@@ -7224,7 +7281,7 @@ path = build_output_path( dpath, path, root, /set)
 
 max_set = 12                			    ; max marker types
 
-state = {	p:			pimage, $			; pointer to image pointer array
+state = {	p:			pimage, $			; pointer to image struct
 			local:		0, $				; flags local responsibiltiy for image data
 			xanes:		xanes, $			; 0 element images, 1 XANES stack
 
@@ -7267,6 +7324,8 @@ state = {	p:			pimage, $			; pointer to image pointer array
 			pq:			ptr_new(/allocate_heap), $ ; pointer to q parameters for notify 'image-analyze-q'
 			pstate:		ptr_new(), $		; pointer used for notify 'image'
 			pelement:	ptr_new(), $		; pointer used for notify 'image-show-element'
+			pspec	:	ptr_new(/allocate_heap), $	; pointer used for notify 'spectrum-load'
+			ppcm	:	ptr_new(/allocate_heap), $	; pointer used for notify 'fit-setup-load'
 
 			plugins:	plugins, $			; pointer to list of user plugins
 			plugin_menus: 0L, $				; plugin menus base menu widget ID
