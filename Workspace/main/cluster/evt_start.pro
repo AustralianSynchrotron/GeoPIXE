@@ -492,6 +492,7 @@ start_more:
 									'flatten=' + stringify( (cluster and not gencom) ? 0 : (*p).flatten), $	
 									'cal_a=' + stringify(cal_a), $	
 									'cal_b=' + stringify(cal_b), $	
+									'energy_cal_file=' + stringify( (*p).energy_cal_file), $	
 									'x_sub_range=' + stringify(x_sub_range), $
 									'y_sub_range=' + stringify(y_sub_range), $
 									'xoffset=' + stringify(xoffset), $
@@ -605,6 +606,7 @@ start_more:
 											flatten = (*p).flatten, $
 											cal_a = cal_a, $					; vector in "Multiple detector" mode
 											cal_b = cal_b, $					; vector in "Multiple detector" mode
+											energy_cal_file = (*p).energy_cal_file, $
 											xoffset = xoffset, $
 											yoffset = yoffset, $
 											x_sub_range = x_sub_range, $
@@ -701,6 +703,7 @@ start_more:
 										'flatten=' + stringify( (cluster and not gencom) ? 0 : (*p).flatten), $	
 										'cal_a=' + stringify(cal_a), $	
 										'cal_b=' + stringify(cal_b), $	
+										'energy_cal_file=' + stringify( (*p).energy_cal_file), $	
 										'x_sub_range=' + stringify(x_sub_range), $
 										'y_sub_range=' + stringify(y_sub_range), $
 										'ecompress=' + stringify(ecompress), $
@@ -774,6 +777,7 @@ start_more:
 										flatten = (*p).flatten, $
 										cal_a = cal_a, $
 										cal_b = cal_b, $
+										energy_cal_file = (*p).energy_cal_file, $
 										ecompress = ecompress, $
 										xoffset = xoffset, $
 										yoffset = yoffset, $
@@ -862,6 +866,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									ecompress = ecompress, $
 									xoffset = xoffset, $
 									yoffset = yoffset, $
@@ -941,6 +946,7 @@ start_more:
 									'flatten=' + stringify( (cluster and not gencom) ? 0 : (*p).flatten), $	
 									'cal_a=' + stringify(cal_a), $	
 									'cal_b=' + stringify(cal_b), $	
+									'energy_cal_file=' + stringify( (*p).energy_cal_file), $	
 									'x_sub_range=' + stringify(x_sub_range), $
 									'y_sub_range=' + stringify(y_sub_range), $
 									'xoffset=' + stringify(xoffset), $
@@ -1018,6 +1024,7 @@ start_more:
 										flatten = (*p).flatten, $
 										cal_a = cal_a, $					; vector in "Multiple detector" mode
 										cal_b = cal_b, $					; vector in "Multiple detector" mode
+										energy_cal_file = (*p).energy_cal_file, $
 										xoffset = xoffset, $
 										yoffset = yoffset, $
 										x_sub_range = x_sub_range, $
@@ -1101,6 +1108,7 @@ start_more:
 										'flatten=' + stringify( (cluster and not gencom) ? 0 : (*p).flatten), $	
 										'cal_a=' + stringify(cal_a), $	
 										'cal_b=' + stringify(cal_b), $	
+										'energy_cal_file=' + stringify( (*p).energy_cal_file), $	
 										'x_sub_range=' + stringify(x_sub_range), $
 										'y_sub_range=' + stringify(y_sub_range), $
 										'ecompress=' + stringify(ecompress), $
@@ -1174,6 +1182,7 @@ start_more:
 										flatten = (*p).flatten, $
 										cal_a = cal_a, $
 										cal_b = cal_b, $
+										energy_cal_file = (*p).energy_cal_file, $
 										ecompress = ecompress, $
 										xoffset = xoffset, $
 										yoffset = yoffset, $
@@ -1278,6 +1287,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									xoffset = xoffset, $
 									yoffset = yoffset, $
 									x_sub_range = x_sub_range, $
@@ -1358,6 +1368,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									ecompress = ecompress, $
 ;									xoffset = xoffset, $
 ;									yoffset = yoffset, $
@@ -1440,6 +1451,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									ecompress = ecompress, $
 ;									xoffset = xoffset, $
 ;									yoffset = yoffset, $
@@ -1537,6 +1549,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									xoffset = xoffset, $
 									yoffset = yoffset, $
 									x_sub_range = x_sub_range, $
@@ -1615,6 +1628,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									ecompress = ecompress, $
 ;									xoffset = xoffset, $
 ;									yoffset = yoffset, $
@@ -1695,6 +1709,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $
 									cal_b = cal_b, $
+									energy_cal_file = (*p).energy_cal_file, $
 									ecompress = ecompress, $
 ;									xoffset = xoffset, $
 ;									yoffset = yoffset, $
@@ -1799,6 +1814,7 @@ start_more:
 									flatten = (*p).flatten, $
 									cal_a = cal_a, $					; vector in "Multiple detector" mode
 									cal_b = cal_b, $					; vector in "Multiple detector" mode
+									energy_cal_file = (*p).energy_cal_file, $
 									events = 0L, $
 									sample = (*p).sample, $
 									grain = (*p).grain, $
@@ -1828,6 +1844,7 @@ start_more:
 ;									charge = charge, $
 ;									cal_a = cal_a, $					; vector in "Multiple detector" mode
 ;									cal_b = cal_b, $					; vector in "Multiple detector" mode
+;									energy_cal_file = (*p).energy_cal_file, $
 ;									events = 0L, $
 ;									throttle = throttle, $
 ;									pileup = pileup, $
@@ -1862,6 +1879,7 @@ start_more:
 									charge = charge, $
 									cal_a = cal_a, $					; vector in "Multiple detector" mode
 									cal_b = cal_b, $					; vector in "Multiple detector" mode
+									energy_cal_file = (*p).energy_cal_file, $
 									events = 0L, $
 									throttle = throttle, $
 									pileup = pileup, $
@@ -1916,6 +1934,7 @@ start_more:
 										'flatten=0', $	
 										'cal_a=' + stringify(cal_a), $	
 										'cal_b=' + stringify(cal_b), $	
+										'energy_cal_file=' + stringify( (*p).energy_cal_file), $	
 										'x_sub_range=' + stringify(x_sub_range), $
 										'y_sub_range=' + stringify(y_sub_range), $
 										'xoffset=' + stringify(xoffset), $
@@ -1995,6 +2014,7 @@ start_more:
 										flatten = (*p).flatten, $
 										cal_a = cal_a, $					; vector in "Multiple detector" mode
 										cal_b = cal_b, $					; vector in "Multiple detector" mode
+										energy_cal_file = (*p).energy_cal_file, $
 										xoffset = xoffset, $
 										yoffset = yoffset, $
 										x_sub_range = x_sub_range, $
@@ -2096,6 +2116,7 @@ start_more:
 										'flatten=0', $	
 										'cal_a=' + stringify(cal_a), $	
 										'cal_b=' + stringify(cal_b), $	
+										'energy_cal_file=' + stringify( (*p).energy_cal_file), $	
 										'x_sub_range=' + stringify(x_sub_range), $
 										'y_sub_range=' + stringify(y_sub_range), $
 										'xoffset=' + stringify(xoffset), $
@@ -2174,6 +2195,7 @@ start_more:
 										flatten = (*p).flatten, $
 										cal_a = cal_a, $					; vector in "Multiple detector" mode
 										cal_b = cal_b, $					; vector in "Multiple detector" mode
+										energy_cal_file = (*p).energy_cal_file, $
 										xoffset = xoffset, $
 										yoffset = yoffset, $
 										x_sub_range = x_sub_range, $
@@ -2306,6 +2328,7 @@ start_more:
 								if ((*pstate).pspec ne pp) and ((*pstate).local_spectra eq 1) then free_spectra, (*pstate).pspec
 							endif
 							(*p).charge = charge
+
 							if notify then begin
 								widget_control, (*pstate).charge, set_value=string((*p).charge)
 

@@ -1809,7 +1809,7 @@ catch_errors_on = 1							; enable error CATCHing
 if debug then catch_errors_on = 0			; disable error CATCHing
 sxy = geopixe_scale()						; scale all if system font changes
 
-wversion = '8.9r'							; wizard version
+wversion = '9.0'							; wizard version
 
 ; Each wizard sav loads routines from GeoPIXE.sav, if GeoPIXE is not already running.
 ; The GeoPIXE routines are NOT to be compiled into each wizard sav file.

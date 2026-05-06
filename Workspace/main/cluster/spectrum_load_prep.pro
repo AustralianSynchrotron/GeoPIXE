@@ -33,6 +33,7 @@ spectrum_preview
 if n_elements(opt) lt 1 then return
 if n_elements(old) lt 1 then old=0
 if n_elements(append) lt 1 then append=0
+if n_elements(F) lt 1 then F=''
 do_pileup = 0
 do_throttle = 0
 linearize = ''
@@ -54,9 +55,9 @@ path = opt.raw ? *(*pstate).dpath : *(*pstate).path
 
 ; Select first data file (or multiply select several to append) ...
 
-F = file_requester(filter = '*'+opt.in_ext, title=opt.request, path=path, $	
+F = file_requester(filter = '*'+opt.in_ext, title=opt.request, file=F, path=path, $	
 		dialog_parent=group, fix_filter=0, /multiple, preview_routine=(opt.preview ? 'spectrum_preview' : ''), $
-		image=opt.preview )
+		image=opt.preview, /skip_if_exists )
 if F[0] eq '' then goto, finish
 
 ; Update paths (so far) ...

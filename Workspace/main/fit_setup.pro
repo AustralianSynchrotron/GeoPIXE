@@ -118,6 +118,25 @@ case tag_names( event,/structure) of
 				endif
 				goto, finish
 				end
+			'fit-setup-load': begin
+				file = *event.pointer
+				path = *(*pstate).path
+				F = file_requester( /read, filter = '*.pcm', path=path, file=file, dialog_parent=event.top, $
+							title='Select the source PCM parameter file', /fix_filter, /skip_if_exists, $
+							preview_routine='file_pcm_preview')
+				if F ne '' then begin
+					F = strip_file_ext(F) + '.pcm'
+					*(*pstate).path = extract_path(F)
+					n = lenchr(F)
+					k = lenchr(strip_path(F))
+					widget_control, (*pstate).pcm_file, set_value=F, set_text_select=[n-k,k]
+					widget_control, (*pstate).pcm_file, set_value=F, set_text_select=[n-1,0]
+					(*p).pcm_file = F
+					load_pcm_parameters, pstate, F
+					(*pstate).da_fresh = 0
+					fit_setup_do_fit, pstate, p, /update_initial, /update_background
+				endif
+				end
 			'results-select': begin
 				if ptr_valid( event.pointer) then begin
 					(*pstate).select = (*event.pointer).top
@@ -2267,6 +2286,9 @@ loop:
 						(*(*pstate).pda).file = F
 						write_DA, (*pstate).pda, F
 						(*pstate).DAM_file = F
+
+						warning, 'fit_setup', ['Remember to save the fit-setup PCM file.', '', $
+								'Use the same name as the DA matrix, ','so they remain associated.'], /info
 					endif
 				endif
 			endif else begin
@@ -4230,6 +4252,7 @@ register_notify, tlb, ['path', $			; new path
 				'results-select', $			; row selected in fit results (pass to fit setup for refit)
 				'time-amp-pileup', $		; pileup table results from time_amp
 				'mark-fit', $				; element select from Identify
+				'fit-setup-load', $			; load PCM file
 				'spectrum-fit'], $			; pointer to new spectrum to fit
 				from=group
 register_notify, tlb, 'new-detectors'		; new detectors (global notify)

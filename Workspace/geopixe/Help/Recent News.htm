@@ -16,6 +16,9 @@
 	{font-family:Calibri;
 	panose-1:2 15 5 2 2 2 4 3 2 4;}
 @font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
 	{font-family:"\@MS Mincho";
 	panose-1:2 2 6 9 4 2 5 8 3 4;}
  /* Style Definitions */
@@ -51,6 +54,18 @@ h3
 	page-break-after:avoid;
 	font-size:13.0pt;
 	font-family:"Arial",sans-serif;}
+h4
+	{mso-style-link:"Heading 4 Char";
+	margin-top:2.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	page-break-after:avoid;
+	font-size:11.0pt;
+	font-family:"Cambria",serif;
+	color:#365F91;
+	font-weight:normal;
+	font-style:italic;}
 span.Heading1Char
 	{mso-style-name:"Heading 1 Char";
 	mso-style-link:"Heading 1";
@@ -67,6 +82,12 @@ span.Heading3Char
 	mso-style-link:"Heading 3";
 	font-family:"Arial",sans-serif;
 	font-weight:bold;}
+span.Heading4Char
+	{mso-style-name:"Heading 4 Char";
+	mso-style-link:"Heading 4";
+	font-family:"Cambria",serif;
+	color:#365F91;
+	font-style:italic;}
 .MsoChpDefault
 	{font-family:"Calibri",sans-serif;}
 .MsoPapDefault
@@ -93,6 +114,52 @@ ul
 <div class=WordSection1>
 
 <h1>GeoPIXE Recent News</h1>
+
+<h2>Version 9.0</h2>
+
+<h3>New versions of files</h3>
+
+<p class=MsoNormal>A few files have new information added (images: .DAI, DA
+matrix: .DAMX). These cannot be read using older versions of GeoPIXE. This is
+largely why we have a fresh break to version 9.0 of GeoPIXE. However, the new
+version of GeoPIXE can still read all previous version files.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h4>Energy cal file name</h4>
+
+<p class=MsoNormal>When an energy cal file is selected, using the “Get” button
+on the “DA/E.Cal” tab of <i>Sort EVT</i>, the filename gets saved in the
+returned image and the new DAI file (now version -58). The energy cal filename
+can be seen in the <i>Image History</i> details and in the preview text in the <i>File
+Requester</i> (see the “Details” tab).</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h4>Fitted spectrum file name</h4>
+
+<p class=MsoNormal>The file name for the spectrum fitted to generate a DA
+matrix is now saved with the DA matrix (DA matrix file, e.g. “.damx”, are now
+version -10). This enables re-fitting this spectrum later to refine some
+aspects of the fit (e.g. add an element) and generate a new DA matrix. The spec
+filename can be seen in the preview text in the <i>File Requester</i> (see the
+“Details” tab) when selecting DA matrix files. The preview also shows the beam
+energy.</p>
+
+<h3>Refit source spectrum to regenerate a new DA matrix</h3>
+
+<p class=MsoNormal>A new menu “Load DA spectrum for refit” under “Process” on
+the main <i>Image</i> window can be used to reload the source spectrum used in
+the fit to generate the DA matrix originally. This will also load the PCM file
+(assumes same name as DA matrix file). Once loaded, you can refine fit
+parameters (e.g. add a missing element), refit the spectrum and generate a new
+DA matrix for refined processing.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This feature makes use of the spec_file saved in new DA
+matrix files. If not present (older DA file), a file requester will pop up for
+you to select the source spec file.</p>
 
 <h2>Version 8.9t</h2>
 
@@ -126,7 +193,8 @@ for 32 bit Apple systems.</p>
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>Display issues remain on stock MAC systems, which require an
-upgrade of the <i>XQuartx</i> display system.</p>
+upgrade of the <i>XQuartx</i> display system. Even this does not solve many MAC
+issues. We have sought help from NV5, the developers of IDL.</p>
 
 <h2>Version 8.9n</h2>
 
@@ -221,7 +289,7 @@ selected pixels constrained within the <i>Traverse</i> rectangle …</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal><img width=649 height=158
+<p class=MsoNormal><img width=650 height=158
 src="Recent%20News_files/image009.gif"></p>
 
 <p class=MsoNormal><i>Fe (green), Cu (violet)</i></p>
@@ -273,7 +341,7 @@ Sensitivity</i> across the array (rGamma) can be normalized out with the
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal><img width=321 height=348
+<p class=MsoNormal><img width=322 height=348
 src="Recent%20News_files/image011.gif"> <img width=321 height=348 id="Picture 1"
 src="Recent%20News_files/image012.gif"></p>
 

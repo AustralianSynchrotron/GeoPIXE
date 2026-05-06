@@ -36,7 +36,7 @@ endif
 ; Remember to check for XANES specific code, or Image only code ...
 ; dump=1 for binary dump code.
 
-version = -57L							; .dai/ .xan version number
+version = -58L							; .dai/ .xan version number
 err = 1
 
 if n_elements(file) lt 1 then goto, bad_file
@@ -402,6 +402,10 @@ if dump eq 0 then begin
 	endif
 
 ;----------------------------------------------------------------
+
+	writeu,1, (*p).energy_cal_file				; energy cals file (v -58)
+
+;	These get skipped in /header read mode ...
 
 	writeu, 1, (*p).has_flux
 	if (*p).has_flux eq 1 then begin

@@ -1396,7 +1396,7 @@ function file_requester, title=title, path=pathi, file=filei, multiple_files=mul
 ; path				initial path (will be tried if path included in file does not work)
 ; title				window title
 ; multiple_files	multiple select active
-; dialog_parent		parent of modal pop-up
+; dialog_parent		parent of modal pop-up (can also use keyword "group")
 ; within_modal		flags being called from a modal widget, which needs forcing /modal
 ; filter			file filter string array (e.g. '*' or ['*.spec','*.trav'] )
 ; /fix_filter		fix the filter

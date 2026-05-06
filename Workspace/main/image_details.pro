@@ -5,7 +5,7 @@ pro add_history_item, detail, itemi, value, json=json
 ;	'value' is any value/data-type
 ;
 ; json=0	'detail' is assumed to be a string array
-; json=1	'detail' is assumed to be a dictionay destined to be converted to
+; json=1	'detail' is assumed to be a dictionary destined to be converted to
 ;			JSON.
 ; if 'value' missing, then skip this in /json case
 
@@ -316,6 +316,10 @@ endif else begin
 	add_history_item, detail, '   Detector', (*p).channel[0] + adc_offset_device(obj) + 1, json=json
 	index = [index, 120]
 endelse
+if strlen((*p).energy_cal_file) gt 0 then begin
+	add_history_item, detail, '   Energy cal file', (*p).energy_cal_file, json=json
+	index = [index, 122]
+endif
 if xanes eq 0 then begin
 	if (*p).energy gt 1. then begin
 		add_history_item, detail, '   Energy', (*p).energy, json=json

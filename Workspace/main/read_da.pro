@@ -118,10 +118,16 @@ if version le -9 then begin
 	readu,lun, e_beam
 endif
 
-; N.B This has to match the form in 'calc_da_matrix2', 'read_da' and 'read_old_da'
+spec_file = ''
+if version le -10 then begin
+	readu,lun, spec_file
+endif
+
+; N.B This has to match the form in 'calc_da_matrix2', 'read_da', 'read_da_matrix' and 'read_old_da'
 
 da = { label:		label, $			; label, name of source data
 		file:		'', $				; local file name
+		spec_file:	spec_file, $		; spec file fitted
 		cal_orig: 	cal_orig, $			; original spectrum cal
 		cal:		cal, $				; cal of DA matrix rows
 		station: 	station, $			; detector stattion number
@@ -153,7 +159,7 @@ end
 
 ;----------------------------------------------------------------------------
 
-function read_da, file, error=error, title=title, e_beam=eb, eDA=e, phases=phase_dai, pcorr=pcorr, mpda=mpda
+function read_da, file, error=error, version=version, title=title, e_beam=eb, eDA=e, phases=phase_dai, pcorr=pcorr, mpda=mpda
 
 ;	Read the DA matrix file 'file'
 ;
@@ -223,10 +229,11 @@ if mpda then begin
 	
 	n_comp = (*mpdam.pcorr).n_comp + 1
 	for i=0,n_comp-2 do begin
-		da = read_da( (*mpdam.pcorr).files[i], title='read_da: multi-phase DA read of component', error=error)
+		da = read_da( (*mpdam.pcorr).files[i], version=version, title='read_da: multi-phase DA read of component', error=error)
 		if error then goto, bad_mpdam
 		if i eq 0 then begin
 			da1 = da
+			version = version[0]
 			mp_matrix = fltarr( da.size, da.n_el, n_comp)
 			mp_yield = fltarr( da.n_el, n_comp)
 			mp_charge = fltarr( n_comp)
@@ -326,10 +333,11 @@ if mpda then begin
 		endfor
 	endif
 		
-; N.B This has to match the form in 'calc_da_matrix2', 'read_da_matrix' and 'read_old_da'
+; N.B This has to match the form in 'calc_da_matrix2', 'read_da', 'read_da_matrix' and 'read_old_da'
 
 	da = { label:	da1.label, $				; label, name of source data
 		file:		filename, $					; local file name
+		spec_file:	da1.spec_file, $			; spec file fitted
 		cal_orig: 	da1.cal_orig, $				; original spectrum cal
 		cal:		da1.cal, $					; cal of DA matrix rows
 		station: 	da1.station, $				; detector stattion number
@@ -356,7 +364,7 @@ endif
 
 ; Normal and array DA read ...
 
-OK_version = [-1,-2,-3,-4,-5,-6,-7,-8,-9]
+OK_version = [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10]
 error = 0
 if n_elements(title) lt 1 then title='Select DA Matrix file to read'
 

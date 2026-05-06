@@ -26,7 +26,7 @@ define_devices
 	preview = 0L
 	if n_elements(file) lt 1 then return
 	
-	p = ptr_new( read_da( file, error=error, mpda=mpda))
+	p = ptr_new( read_da( file, version=version, error=error, mpda=mpda))
 	if error ne 0 then return
 	if ptr_valid(p) eq 0 then return
 
@@ -34,7 +34,10 @@ define_devices
 ; Details string array:
 
 	list = 'File: ' + strip_path(file)
+	list = [list, 'Spec file: ' + (*p).spec_file]
+	list = [list, 'Version: ' + str_tidy(version)]
 
+	List = [list, '', 'E Beam: ' + str_tidy((*p).e_beam) ]
 	List = [list, '# elements: ' + str_tidy((*p).n_el), '' ]
 
 	n = n_elements((*p).el)

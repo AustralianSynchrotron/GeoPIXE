@@ -878,6 +878,10 @@ snap_done:
        endif
        end
 
+	'spectrum-load': begin
+		Spectrum_Load, Event, *event.pointer, opt=list_device_imports(find='generic_geopixe_spec')
+		end
+
     'path': begin
        if ptr_valid( event.pointer) eq 0 then goto, done
        *(*pstate).path = (*event.pointer)
@@ -3192,7 +3196,7 @@ end
 
 ;-----------------------------------------------------------------
 
-pro Spectrum_Load, Event, opt=opt, append=append
+pro Spectrum_Load, Event, F1, opt=opt, append=append
 
 ; The 'opt' struct contains the details of the desired load.
 ; 'obj' is a device object defined in 'prep' and passed to 'do' ...
@@ -3205,7 +3209,7 @@ widget_control, child, get_uvalue=pstate
 
 Spectrum_Load_prep, pstate, F1, F2, device=import_obj, opt=opt, group=event.top, throttle=throttle, $
 		pileup=pileup, linearize=linearize, sensitivity=sensitivity, append=append
-if f1[0] eq '' then return
+if F1[0] eq '' then return
 
 tic
 Spectrum_Load_do, pstate, F1, F2, device=import_obj, opt=opt, group=event.top, throttle=throttle, $

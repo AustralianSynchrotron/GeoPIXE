@@ -77,7 +77,7 @@ image.file = file
 
 valid = [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-25,-26, $
 				-27,-28,-29,-30,-31,-32,-33,-34,-35,-36,-37,-38,-39,-40,-41,-42,-43,-44,-45,-46,-47,-48,-49, $
-				-50,-51,-52,-53,-54,-55,-56,-57]
+				-50,-51,-52,-53,-54,-55,-56,-57,-58]
 version = 0L
 readu,1, version
 q = where( version eq valid)
@@ -396,6 +396,7 @@ clear_x = 0
 clear_y = 0
 energy = 0.0
 n_attributes = 0L
+energy_cal_file = ''
 
 ; version -2 stuff ...
 
@@ -728,6 +729,11 @@ if version le -55 then begin					; new device data place
 	obj->set_versioning, 1
 	obj->read_options, 1, error=err2
 	if err2 then goto, bad_obj_io	
+
+	if (version le -58) then begin				; energy cal filename
+		readu,1, energy_cal_file
+		image.energy_cal_file = energy_cal_file
+	endif
 
 	if header then goto, skip_for_header
 endif

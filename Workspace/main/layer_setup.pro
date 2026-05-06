@@ -804,6 +804,9 @@ case uname of
 
 			*(*pstate).pnew = (*p).output_file
 			notify, 'new-yields', (*pstate).pnew, from=event.top
+
+			warning, 'layer_setup', ['Remember to save the layer-setup LCM file.', '', $
+						'Use the same name as the YIELD file, ','so they remain associated.'], /info
 		endif
 
 		(*pstate).pplot = ptr_new( {p1:(*p).peaks, p2:(*p).peaks2} )

@@ -46,7 +46,7 @@ endif
 		endif
 	endif
 	
-	version = -9L
+	version = -10L
 	on_ioerror, bad_io
 	openw, lun, F, /XDR, /get_lun
 	writeu,lun, version
@@ -83,6 +83,7 @@ loop:
 	endif
 
 	writeu,lun, da.E_beam
+	writeu,lun, da.spec_file
 	
 	j = j+1
 	if j lt nda_extra then begin
