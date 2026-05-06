@@ -1057,6 +1057,7 @@ cont:
 	endif
 	blog = strarr(nb)
 	for i=0,nb-1 do blog[i] = (*p[i]).file
+	good = 0
 	
 	for i=0,nb-1 do begin
 		mp = get_header_info( *(*pstate).pDevObj, blog[i], error=err)	; output=output, silent=silent
@@ -1110,6 +1111,7 @@ cont:
 			pv:pv, gain:gain, el:el, pileup:pileup, throttle:throttle, conv:0.0, mean:0.0, error:0.0, sd:0.0, relsd:0.0}
 		
 		if wizard_standards_test_row( row) eq 0 then row.on=0
+		if wizard_standards_test_row( row) then good=1
 
 		if n_elements(table) lt 1 then begin
 			table = row
@@ -1118,7 +1120,13 @@ cont:
 		endelse		
 	endfor
 	
-	if n_elements(table) ge 1 then error = 0	
+	if n_elements(table) ge 1 then begin
+		error = 0
+		if good eq 0 then begin
+			warning, 'wizard_standards_scan_dir', ['No valid standards rows found.', '', $
+						'This may indicate the incorrect "Resources" dir on tab 1.','try again ...']
+		endif
+	endif
 	return, (error ? 0 : table)
 end
 
@@ -2024,7 +2032,7 @@ catch_errors_on = 1							; enable error CATCHing
 if debug then catch_errors_on = 0			; disable error CATCHing
 sxy = geopixe_scale()
 
-wversion = '8.9r'							; wizard version
+wversion = '9.0'							; wizard version
 
 ; Each wizard sav loads routines from GeoPIXE.sav, if GeoPIXE is not running.
 ; The GeoPIXE routines are NOT to be compiled into each wizard sav file.
