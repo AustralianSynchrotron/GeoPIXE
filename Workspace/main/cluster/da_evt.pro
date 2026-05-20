@@ -231,12 +231,14 @@ if extract_extension( matrix_file) eq 'mpdam' then begin
 	endif
 endif
 
-matrix = read_da( da_string, phases=phase_dai, pcorr=pcorr, mpda=mpda, eDA=eDA, error=err)
+matrix = read_da( da_string, phases=phase_dai, pcorr=pcorr, mpda=mpda, eDA=eDA, cluster_debug=cluster_debug, error=err)
 if err then goto, bad_matrix
 
 if mpda then begin
-	if log then help, output=s, matrix
-	gprint,level=2, output=cluster_debug, 'Matrix: '+s
+	if log then begin
+		help, output=s, matrix
+		gprint,level=2, output=cluster_debug, 'Matrix: '+s
+	endif
 	da_matrix = matrix.matrix
 	n_comp = n_elements( da_matrix[0,0,*])
 

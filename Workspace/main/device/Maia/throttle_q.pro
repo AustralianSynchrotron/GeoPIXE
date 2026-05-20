@@ -59,7 +59,7 @@ q = where(mask eq 1)
 return, q
 
 bad:
-	print,'throttle_q: Error - bad type for argument.'
+	gprint,'throttle_q: Error - bad type for argument.'
 	err = -1L
 	return, err
 end

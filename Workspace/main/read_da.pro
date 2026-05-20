@@ -159,7 +159,8 @@ end
 
 ;----------------------------------------------------------------------------
 
-function read_da, file, error=error, version=version, title=title, e_beam=eb, eDA=e, phases=phase_dai, pcorr=pcorr, mpda=mpda
+function read_da, file, error=error, version=version, title=title, e_beam=eb, eDA=e, phases=phase_dai, $
+		pcorr=pcorr, mpda=mpda, cluster_debug=cluster_debug
 
 ;	Read the DA matrix file 'file'
 ;
@@ -198,6 +199,7 @@ if catch_errors_on then begin
 		goto, bad_io
 	endif
 endif
+if n_elements(cluster_debug) lt 1 then cluster_debug=-1		; stdout (set to -2 to disable prints)
 
 error = 1
 if n_elements(file) eq 0 then goto, bad_file
@@ -246,11 +248,11 @@ if mpda then begin
 			if da.n_pure gt 0 then pure[*,*,i] = da.pure
 			mp_yield[*,i] = da.yield
 			mp_charge[i] = da.charge
-			print,'	First:('+(*mpdam.pcorr).minerals[i]+') ca,cb=',da.cal.a,da.cal.b,' size=',sz1
+			gprint,level=2, output=cluster_debug,'	First:('+(*mpdam.pcorr).minerals[i]+') ca,cb=',da.cal.a,da.cal.b,' size=',sz1
 		endif else begin
 			sz2 = da.size
 			cal2 = {order:1, poly:[da.cal.b,da.cal.a], units:'keV'}
-			print,'	Next:('+(*mpdam.pcorr).minerals[i]+') ca,cb=',da.cal.a,da.cal.b,' size=',sz2
+			gprint,level=2, output=cluster_debug,'	Next:('+(*mpdam.pcorr).minerals[i]+') ca,cb=',da.cal.a,da.cal.b,' size=',sz2
 			for j=0,da.n_el-1 do begin
 				q = where( da.el[j] eq els1, nq)
 				if (nq ge 2) and (j ge 1) then begin
@@ -286,7 +288,7 @@ if mpda then begin
 	sz2 = da.size
 	cal2 = {order:1, poly:[da.cal.b,da.cal.a], units:'keV'}
 ;	if da.n_el ne n1 then goto, bad_mpnum2
-	print,'	Rest: ca,cb=',da.cal.a,da.cal.b,' size=',sz2
+	gprint,level=2, output=cluster_debug,'	Rest: ca,cb=',da.cal.a,da.cal.b,' size=',sz2
 	for j=0,da.n_el-1 do begin
 		q = where( da.el[j] eq els1, nq)
 		if (nq ge 2) and (j ge 1) then begin
@@ -368,7 +370,7 @@ OK_version = [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10]
 error = 0
 if n_elements(title) lt 1 then title='Select DA Matrix file to read'
 
-print,'read_da: file="',file,'"'
+gprint,level=2, output=cluster_debug,'read_da: file="',file,'"'
 if strlen(file) lt 1 then goto, bad_file
 last = file
 
@@ -441,22 +443,22 @@ finish:
 	return, da
 
 bad_io:
-	print,'read_da: I/O error'
+	gprint,level=2, output=cluster_debug,'read_da: I/O error'
 	goto, error
 bad_io2:
-	print,'read_da: Extended DA matrux series I/O error'
+	gprint,level=2, output=cluster_debug,'read_da: Extended DA matrux series I/O error'
 	goto, error
 bad_file:
-	print,'read_da: no file name supplied'
+	gprint,level=2, output=cluster_debug,'read_da: no file name supplied'
 	goto, usage
 bad_version:
-	print,'read_da: bad version number'
+	gprint,level=2, output=cluster_debug,'read_da: bad version number'
 	goto, error
 
 usage:
-	print,'read_da: Usage: da = read_da(file)'
-	print,'		where "da" is the DA matrix struct  returned'
-	print,'		and "file" is the name of the input file'
+	gprint,level=2, output=cluster_debug,'read_da: Usage: da = read_da(file)'
+	gprint,level=2, output=cluster_debug,'		where "da" is the DA matrix struct  returned'
+	gprint,level=2, output=cluster_debug,'		and "file" is the name of the input file'
 	goto, error
 
 bad_mpdam:

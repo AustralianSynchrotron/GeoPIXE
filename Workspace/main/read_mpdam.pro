@@ -52,7 +52,7 @@ valid = [-1]						; valid versions
 	return, { file:F[0], phases:phases, correct:correct}
 
 bad_io:
-	print,'read_old_mpdam: bad old MPDAM I/O'
+	gprint,'read_old_mpdam: bad old MPDAM I/O'
 	return, 0L
 end
 

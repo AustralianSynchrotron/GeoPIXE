@@ -74,7 +74,7 @@ if n_elements(source) lt 1 then source='?'
 		if file_test(geopixe_conf, /read) eq 0 then goto, bad_find
 		
 		on_ioerror, bad_copy
-		print,'Copy "geopixe.conf" to home dir ...'
+		gprint,'Copy "geopixe.conf" to home dir ...'
 		file_copy, geopixe_conf, home_dir, /require_dir
 		goto, cont
 		
