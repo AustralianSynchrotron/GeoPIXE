@@ -92,7 +92,7 @@ good_versions = [-1,-2]
 return, p
 
 bad_io:
-	print,'Read_Cuts: bad CUTs I/O'
+	gprint,'Read_Cuts: bad CUTs I/O'
 	error = 1
 	return, 0
 

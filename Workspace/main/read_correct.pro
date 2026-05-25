@@ -140,7 +140,7 @@ cont:
 	return, p
 
 bad_io:
-	print,'Read_correct: bad region I/O'
+	gprint,'Read_correct: bad region I/O'
 	return, 0L
 end
 

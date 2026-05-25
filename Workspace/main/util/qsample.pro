@@ -24,7 +24,7 @@ if catch_errors_on then begin
 				'Error:  '+strtrim(!error_state.name,2), $
 				!Error_state.msg,'',c], /error
 		MESSAGE, /RESET
-		print,'qsample: ql, qh, nq = ',ql,qh,nq
+		gprint,'qsample: ql, qh, nq = ',ql,qh,nq
 		nq = 0L
 		return, 0L
 	endif

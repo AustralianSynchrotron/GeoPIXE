@@ -85,8 +85,8 @@ endif
 
 		v3 = long2(t3)
 		tick = 1.0e-3 / v3
-		print,'Found sample rate ',v3,', for "tick" = ',tick
+		gprint,'Found sample rate ',v3,', for "tick" = ',tick
 	endif
-	print,'falconx_version: ',v,'  ('+t2+' '+t+')'
+	gprint,'falconx_version: ',v,'  ('+t2+' '+t+')'
 	return, v
 end

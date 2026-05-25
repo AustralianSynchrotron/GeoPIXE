@@ -331,12 +331,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_clear_x: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_clear_x: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_clear_x: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_clear_x: Device Object ref not found.'
 		return
 	endif
 
@@ -372,12 +372,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_clear_y: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_clear_y: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_clear_y: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_clear_y: Device Object ref not found.'
 		return
 	endif
 
@@ -413,12 +413,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_clear_z: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_clear_z: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_clear_z: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_clear_z: Device Object ref not found.'
 		return
 	endif
 
@@ -454,12 +454,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_slow: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_slow: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_slow: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_slow: Device Object ref not found.'
 		return
 	endif
 
@@ -495,12 +495,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_xy_correction: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_xy_correction: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_xy_correction: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_xy_correction: Device Object ref not found.'
 		return
 	endif
 
@@ -536,12 +536,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_x_source: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_x_source: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_x_source: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_x_source: Device Object ref not found.'
 		return
 	endif
 
@@ -577,12 +577,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_y_source: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_y_source: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_y_source: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_y_source: Device Object ref not found.'
 		return
 	endif
 
@@ -618,12 +618,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_z_source: Object base not found.'
+		gprint,'OnRealize_falconx_device_sort_option_z_source: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_falconx_device_sort_option_z_source: Device Object ref not found.'
+		gprint,'OnRealize_falconx_device_sort_option_z_source: Device Object ref not found.'
 		return
 	endif
 
@@ -658,17 +658,17 @@ if catch_errors_on then begin
 endif
 
 	if widget_info( event.handler, /valid) eq 0L then begin
-;		print,'falconx_device_sort_option_event: event.handler not valid.'
+;		gprint,'falconx_device_sort_option_event: event.handler not valid.'
 		return, 0
 	endif
 	uname = widget_info( event.handler, /uname)
 	if uname ne 'obj-ref-here' then begin
-		print,'falconx_device_sort_option_event: Object base not found.'
+		gprint,'falconx_device_sort_option_event: Object base not found.'
 		return, 0
 	endif
 	widget_control, event.handler, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'falconx_device_sort_option_event: Device Object ref not found.'
+		gprint,'falconx_device_sort_option_event: Device Object ref not found.'
 		return, 0
 	endif
 
@@ -1113,7 +1113,7 @@ if catch_errors_on then begin
 	endif
 endif
 
-	;print,'FalconX device:: get_header_info: file=',filei
+	;gprint,'FalconX device:: get_header_info: file=',filei
 
 	if n_elements(silent) lt 1 then silent=0
 	error = 1
@@ -2557,8 +2557,8 @@ common c_sandia_7, adc, tag, k_adc
 
 ;		if max(y1) ge 177 then begin							; stop to debug
 ;			q = where( y1 ge 177, nq)
-;			print,'Y1 = 177, at q=',q[0]
-;			print,'Debug ...'
+;			gprint,'Y1 = 177, at q=',q[0]
+;			gprint,'Debug ...'
 ;		endif
 
 ;		n		high water mark in event vector buffers
@@ -2571,7 +2571,7 @@ common c_sandia_7, adc, tag, k_adc
 ;		qt = where( y1 ge 1, nqt)
 ;		if nqt gt 0 then begin
 ;		if good gt 0 then begin
-;			print,'debug ...'
+;			gprint,'debug ...'
 ;		endif
 
 ;		To select only odd rows, veto even ones, and vica versa).

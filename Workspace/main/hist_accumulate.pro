@@ -89,7 +89,7 @@ err = call_external( geopixe_library(), geolib_name( 'hist_accumulate2'), cdecl=
 return, err
 
 bad:
-	print,' hist_accumulate: Error - bad type for argument.'
+	gprint,' hist_accumulate: Error - bad type for argument.'
 	err = 1L
 	return, err
 end

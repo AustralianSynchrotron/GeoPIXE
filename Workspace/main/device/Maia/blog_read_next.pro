@@ -108,29 +108,29 @@ done:
 	return
 	
 bad_write:
-	print,'blog_read_next',' error writing request, re-open socket'
+	gprint,'blog_read_next',' error writing request, re-open socket'
 	goto, retry
 bad_read:
 	if !error_state.sys_msg eq timeout_msg then return
 	warning,'blog_read_next',[' error reading socket 1, re-open socket', $
 			'!error_state.sys_msg returned "' + !error_state.sys_msg + '"'], /error
-	print,'blog_read_next',' error reading socket, re-open socket'
+	gprint,'blog_read_next',' error reading socket, re-open socket'
 	goto, retry
 bad_read0:
 	if !error_state.sys_msg eq timeout_msg then goto, reread3
-	print,'blog_read_next',' error reading socket 0 (bad "AA BB"), re-open socket'
+	gprint,'blog_read_next',' error reading socket 0 (bad "AA BB"), re-open socket'
 	goto, retry
 bad_read2:
 	if !error_state.sys_msg eq timeout_msg then goto, reread2
-	print,'blog_read_next',' error reading socket 2, re-open socket'
+	gprint,'blog_read_next',' error reading socket 2, re-open socket'
 	goto, retry
 bad_read3:
 	if !error_state.sys_msg eq timeout_msg then goto, reread3
-	print,'blog_read_next',' error reading socket 3, re-open socket'
+	gprint,'blog_read_next',' error reading socket 3, re-open socket'
 	goto, retry
 	
 retry:
-	print,'retry socket open ...'
+	gprint,'retry socket open ...'
 	socket_retry, ps, error=error
 	if error then begin
 		close_file,(*ps).unit					; close socket

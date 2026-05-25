@@ -94,7 +94,7 @@ pro hist_xy, x,y,z, pimage, nx,ny,neli, hist,nhist, clip_zero=clip_zero
 	
 	nel = nel < n_elements((*pimage)[0,0,*])
 	
-	print,'n=',n,' nx,ny,nel=',nx,ny,nel,' nh=',nh
+	gprint,'n=',n,' nx,ny,nel=',nx,ny,nel,' nh=',nh
 
 ;............................................................................
 
@@ -132,7 +132,7 @@ pro hist_xy, x,y,z, pimage, nx,ny,neli, hist,nhist, clip_zero=clip_zero
 ;............................................................................
 
 bad:
-	print,'hist_xy: error - ',serr[err]
+	gprint,'hist_xy: error - ',serr[err]
 	hist = -1
 	nhist = -1
 	return

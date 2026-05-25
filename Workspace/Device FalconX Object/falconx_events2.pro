@@ -82,8 +82,8 @@ err = call_external( geopixe_library(), geolib_name( 'falconx_events2'), cdecl=g
 			value=value )
 
 if err then begin
-	print, 'falconx_events2 Fortran error'
-	print,'		tag, length, ibranch, skip =',tag, length, ibranch, skip
+	gprint, 'falconx_events2 Fortran error'
+	gprint,'		tag, length, ibranch, skip =',tag, length, ibranch, skip
 endif
 return, err
 

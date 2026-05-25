@@ -15,7 +15,7 @@ for i=0L,n_buffers-1 do begin
 	Catch, ErrorNo
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
-		print,'shared_memory_buffers: "shmunmap" error on "'+name
+		gprint,'shared_memory_buffers: "shmunmap" error on "'+name
 		goto, skip1
 	endif
 	name = dat_name[i]
@@ -24,7 +24,7 @@ skip1:
 	Catch, ErrorNo
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
-		print,'shared_memory_buffers: "shmunmap" error on "'+name
+		gprint,'shared_memory_buffers: "shmunmap" error on "'+name
 		goto, skip2
 	endif
 	name = fill_name[i]
@@ -33,7 +33,7 @@ skip2:
 	Catch, ErrorNo
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
-		print,'shared_memory_buffers: "shmunmap" error on "'+name
+		gprint,'shared_memory_buffers: "shmunmap" error on "'+name
 		goto, skip3
 	endif
 	name = valid_name[i]
@@ -42,7 +42,7 @@ skip3:
 	Catch, ErrorNo
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
-		print,'shared_memory_buffers: "shmunmap" error on "'+name
+		gprint,'shared_memory_buffers: "shmunmap" error on "'+name
 		goto, skip4
 	endif
 	name = long_name[i]
@@ -51,7 +51,7 @@ skip4:
 	Catch, ErrorNo
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
-		print,'shared_memory_buffers: "shmunmap" error on "'+name
+		gprint,'shared_memory_buffers: "shmunmap" error on "'+name
 		goto, skip5
 	endif
 	name = float_name[i]
@@ -62,7 +62,7 @@ endfor
 Catch, ErrorNo2
 if (ErrorNo2 ne 0) then begin
 	Catch, /cancel
-	print,'shared_memory_buffers: "shmunmap" error on "'+name
+	gprint,'shared_memory_buffers: "shmunmap" error on "'+name
 	return
 endif
 name = par_name

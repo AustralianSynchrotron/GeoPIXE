@@ -27,7 +27,7 @@ err = call_external( geopixe_library(), geolib_name( 'init_maia_32'), cdecl=geol
 return, err
 
 bad:
-	print,' init_maia_32: Error - bad type for argument.'
+	gprint,' init_maia_32: Error - bad type for argument.'
 	err = 1L
 	return, err
 end

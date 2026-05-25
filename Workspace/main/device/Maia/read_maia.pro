@@ -188,7 +188,7 @@ if select eq -1 then begin
 		goto, done
 	endif
 	if i ne 0 then begin
-;		print,'Skip to AA,BB tags at start of file by =',i
+;		gprint,'Skip to AA,BB tags at start of file by =',i
 		goto, done																;@9-21
 	endif
 endif else begin
@@ -221,7 +221,7 @@ new_block:
     ab_ok = ((ev[i] eq 'AA'xub) and (ev[i+3] eq 'BB'xub))
 
 ;	if ipr ge 23655 then begin
-;		print, 'debug'
+;		gprint, 'debug'
 ;	endif
     if ab_ok then begin
        record.tag = uint(ev,i+1,1)
@@ -257,7 +257,7 @@ new_block:
 	   		use_tag = 0
 	   endif
 ;   		if ipr eq 21 then begin
-;   			print,'debug ...'
+;   			gprint,'debug ...'
 ;   		endif
 	   
 	   n_head = n_header

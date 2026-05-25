@@ -29,15 +29,15 @@ common c_progress, pcancel
 		i = locate('*',spec)
 		if i ge 0 then all=1
 	endif
-;	if debug and show_progress then print,'File_search2: All=',all
-	if debug then print,' '
-	if debug then print,'Entry: '+path+'  '+spec
+;	if debug and show_progress then gprint,'File_search2: All=',all
+	if debug then gprint,' '
+	if debug then gprint,'Entry: '+path+'  '+spec
 
 ;	Now find all sub-dirs to search ...
 
-	if debug then print,'Find subdirs in: '+path
+	if debug then gprint,'Find subdirs in: '+path
 	fd = file_search( path+'*', /test_directory, /mark_directory, /expand_tilde, count=count)
-	if debug then print,'	subdir count: '+str_tidy(count)
+	if debug then gprint,'	subdir count: '+str_tidy(count)
 
 ;	Only pop-up progress bar the first time in, if dirs are found ...
 
@@ -54,7 +54,7 @@ common c_progress, pcancel
 	if var_type(p) eq 8 then begin
 		progress, /update, p.progress_tlb, {unit:0, value:0, current:p.current, size:p.count, file:path}, cancel=cancel, skip=skip
 		if cancel or skip or *pcancel then begin
-			print,'file_search: cancel 1 from progress: '+path
+			gprint,'file_search: cancel 1 from progress: '+path
 			f = '#cancel'
 			goto, done
 		endif
@@ -64,10 +64,10 @@ common c_progress, pcancel
 ;	For each sub-dir, dive deeper ...
 
 	for i=0,count-1 do begin
-		if debug then print,'	Try subdir('+str_tidy(i)+'): '+fd[i]
+		if debug then gprint,'	Try subdir('+str_tidy(i)+'): '+fd[i]
 		g = file_search2( fd[i], spec, debug=debug, ptlb=p, all=all, exclude=exclude, cancel=cancel)
 		if cancel then begin
-			print,'file_search: cancel 2 from file_search: '+fd[i]
+			gprint,'file_search: cancel 2 from file_search: '+fd[i]
 			f = '#cancel'
 			goto, done
 		endif
@@ -78,7 +78,7 @@ common c_progress, pcancel
 			endif
 			progress, /update, p.progress_tlb, {unit:0, value:0, current:p.current, size:p.count, file:fd[i]}, cancel=cancel, skip=skip
 			if cancel or skip or *pcancel then begin
-				print,'file_search: cancel 3 from progress: '+fd[i]
+				gprint,'file_search: cancel 3 from progress: '+fd[i]
 				f = '#cancel'
 				goto, done
 			endif
@@ -98,10 +98,10 @@ common c_progress, pcancel
 
 top:
 	exclude = [exclude,path]
-	if debug then print,'Find files in path: '+path
+	if debug then gprint,'Find files in path: '+path
 	g = file_search( path+spec, count=count)
 	if count ge 1 then begin
-		if debug then print,'	Found '+str_tidy(count)+' file match(es): '+g[0]
+		if debug then gprint,'	Found '+str_tidy(count)+' file match(es): '+g[0]
 		if all then begin
 			f = [f,g]
 		endif else begin
@@ -138,6 +138,6 @@ finish:
 		nq = 0
 	endelse
 	if all eq 0 then f=f[0]
-	if debug then print,'	Return ('+str_tidy(nq)+'): '+f[0]
+	if debug then gprint,'	Return ('+str_tidy(nq)+'): '+f[0]
 	return, f
 end

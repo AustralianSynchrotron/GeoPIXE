@@ -115,6 +115,17 @@ ul
 
 <h1>GeoPIXE Recent News</h1>
 
+<h2>Version 9.0a</h2>
+
+<h3>Cluster mode logging </h3>
+
+<p class=MsoNormal>A side effect of disabling logging in <i>Cluster</i> mode is
+that any ‘print’ statement to <i>stdout</i> that remain will crash the spawned
+processes. While most of GeoPIXE has been fixed in this regard, some Device
+plugins may still be a problem (Maia and FalconX are OK). If you find your
+Cluster mode processing fails, then enable logging in your ‘geopixe.conf’ file
+with the line “cluster  log  1”. This file is in your home .geopixe directory.</p>
+
 <h2>Version 9.0</h2>
 
 <h3>New versions of files</h3>
@@ -163,10 +174,10 @@ you to select the source spec file.</p>
 
 <h3>Probing hotspots in images</h3>
 
-<p class=MsoNormal>A new “Hotspots” menu on the <i>Image Regions</i> table provides
-tools for separating individual hotpots (and their neighbourhood pixels) in
-images and probing these and extracting spectra from them individually. See
-worked example C6 for some details.</p>
+<p class=MsoNormal>A new “Hotspots” menu on the <i>Image Regions</i> table
+provides tools for separating individual hotpots (and their neighbourhood
+pixels) in images and probing these and extracting spectra from them
+individually. See worked example C6 for some details.</p>
 
 <h2>Version 8.9t</h2>
 

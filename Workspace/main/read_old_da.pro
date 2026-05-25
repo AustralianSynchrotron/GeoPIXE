@@ -104,13 +104,13 @@ finish:
 	return, da
 
 bad_file:
-	print,'read_da: error opening file '+file
+	gprint,'read_da: error opening file '+file
 	goto, error
 bad_io:
-	print,'read_da: I/O error'
+	gprint,'read_da: I/O error'
 	goto, error
 bad_version:
-	print,'read_da: bad version number'
+	gprint,'read_da: bad version number'
 	goto, error
 
 error:

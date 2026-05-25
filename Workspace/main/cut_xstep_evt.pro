@@ -97,7 +97,7 @@ if obj_valid(obj) eq 0 then goto, bad_obj
 if n_elements(step_toggle) lt 1 then step_toggle = 0L
 if ((step_toggle eq 1) and (n_params() lt 2)) or $
        ((step_toggle eq 0) and (n_params() lt 3)) then begin
-    print,'cut_xstep_evt: missing arguments'
+    ggprint,'cut_xstep_evt: missing arguments'
     return
 endif
 file = strtrim(filei,2)
@@ -215,11 +215,11 @@ if obj->throttle() then begin
 	throttle_factor = get_throttle(throttle, do_throttle=do_throttle)
 endif
 
-print,' Sort ADC ',channel+1,' using cuts'
+ggprint,' Sort ADC ',channel+1,' using cuts'
 if step_toggle then begin
-    print,'    Advance ',direction,' using toggle bit ',toggle_bit,' in station ',step_station+1
+    gprint,'    Advance ',direction,' using toggle bit ',toggle_bit,' in station ',step_station+1
 endif else begin
-    print,'    Advance ',direction,' after ',xstep_count,' counts in station ',step_station+1
+    gprint,'    Advance ',direction,' after ',xstep_count,' counts in station ',step_station+1
 endelse
 
 image = fltarr(xrange2,yrange2,n_el)
@@ -248,8 +248,8 @@ if channel[0] eq -1 then begin
     if n_det gt 1 then array=1
 endif
 nmax = max([channel,n_det-1])
-print,'max_det=',nmax+1
-print,'channel=',channel
+gprint,'max_det=',nmax+1
+gprint,'channel=',channel
 
 j = 0L
 nj = n_elements(file)
@@ -416,12 +416,12 @@ loop_file:
 					stim_mean, image_count, image_error_count)
 
            if err ne 0 then begin
-             print,'cut_evt: error (',err,') return from cut_accumulate'
+             gprint,'cut_evt: error (',err,') return from cut_accumulate'
           goto, finish
          endif
        endif
        if events gt 0 then if processed gt events then begin
-         print,'cut_xstep_evt: requested event count exceeded; stop.'
+         gprint,'cut_xstep_evt: requested event count exceeded; stop.'
          goto, finish
        endif
 
@@ -434,18 +434,18 @@ next:
     if j lt nj then goto, loop_file
 
 finish:
-    if do_throttle then print,'    Used THROTTLE file ',throttle
-    if do_pileup then print,'  Used PILEUP file ',pileup
-    print, ' processed = ', processed
+    if do_throttle then gprint,'    Used THROTTLE file ',throttle
+    if do_pileup then gprint,'  Used PILEUP file ',pileup
+    gprint, ' processed = ', processed
     t = max([x1])
     if ystep then t=max([y1])
-    print, ' final '+direction+' = ', t
-    print, ' valid events = ', valid
-    print, ' bad event triplets = ', bad_xy
-    print, ' clipped to image bounds, or not station ',channel+1,' = ', clipped
-    print, ' pileup losses = ',pileup_losses
-    if n_elements(flux) gt 1 then print,' found FLUX array'
-    if n_elements(dead_fraction) gt 1 then print,' found DEAD_FRACTION array'
+    gprint, ' final '+direction+' = ', t
+    gprint, ' valid events = ', valid
+    gprint, ' bad event triplets = ', bad_xy
+    gprint, ' clipped to image bounds, or not station ',channel+1,' = ', clipped
+    gprint, ' pileup losses = ',pileup_losses
+    if n_elements(flux) gt 1 then gprint,' found FLUX array'
+    if n_elements(dead_fraction) gt 1 then gprint,' found DEAD_FRACTION array'
     if n_elements(p) gt 0 then begin
        if do_progress then begin
          p.value = [processed,valid,i,bad_xy,t,(do_pileup ? pileup_losses: clipped)]
@@ -466,7 +466,7 @@ endif
 null_image = define(/image)
 img = null_image
 
-print,'cut_xstep_evt: write image file - ',output
+gprint,'cut_xstep_evt: write image file - ',output
 
 ; For STIM mean energy mode, the total number of additions is stored in Error.
 ; Use it now to scale sum of energies back to a mean.

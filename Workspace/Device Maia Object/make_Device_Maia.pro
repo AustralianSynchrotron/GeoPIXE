@@ -16,7 +16,7 @@ pro make_Device_Maia
 ; Assumes current working directory is "GeoPIXE".
 
 	path = '../'+project_name+'/*.pro'
-	print,'Compile all routines: '+file_expand_path(path)
+	gprint,'Compile all routines: '+file_expand_path(path)
 
 	file = file_search(path)
 	if file[0] eq '' then begin

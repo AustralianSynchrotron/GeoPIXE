@@ -177,7 +177,7 @@ done:
 
 	if (info.flux_chan0_coeff ne 0.0) and (info.flux_chan0_unit ne '') then begin
 		info.IC0_sensitivity = charge_sensitivity(info.flux_chan0_coeff, info.flux_chan0_unit)
-		if silent eq 0 then print,'Found metadata IC sensitivity (FC0) = ',info.IC0_sensitivity
+		if silent eq 0 then gprint,'Found metadata IC sensitivity (FC0) = ',info.IC0_sensitivity
 		
 ;		How is this connected to the IC PV selection widget in IC struct?
 		
@@ -191,15 +191,15 @@ done:
 
 	if (info.flux_chan1_coeff ne 0.0) and (info.flux_chan1_unit ne '') then begin
 		info.IC1_sensitivity = charge_sensitivity(info.flux_chan1_coeff, info.flux_chan1_unit)
-		if silent eq 0 then print,'Found metadata IC sensitivity (FC1) = ',info.IC1_sensitivity
+		if silent eq 0 then gprint,'Found metadata IC sensitivity (FC1) = ',info.IC1_sensitivity
 	endif else info.IC1_sensitivity=0.0
 	if (info.flux_chan2_coeff ne 0.0) and (info.flux_chan2_unit ne '') then begin
 		info.IC2_sensitivity = charge_sensitivity(info.flux_chan2_coeff, info.flux_chan2_unit)
-		if silent eq 0 then print,'Found metadata IC sensitivity (FC2) = ',info.IC2_sensitivity
+		if silent eq 0 then gprint,'Found metadata IC sensitivity (FC2) = ',info.IC2_sensitivity
 	endif else info.IC2_sensitivity=0.0
 	if (info.flux_chan3_coeff ne 0.0) and (info.flux_chan3_unit ne '') then begin
 		info.IC3_sensitivity = charge_sensitivity(info.flux_chan3_coeff, info.flux_chan3_unit)
-		if silent eq 0 then print,'Found metadata IC sensitivity (FC3) = ',info.IC3_sensitivity
+		if silent eq 0 then gprint,'Found metadata IC sensitivity (FC3) = ',info.IC3_sensitivity
 	endif else info.IC3_sensitivity=0.0
 
 	info.version = version

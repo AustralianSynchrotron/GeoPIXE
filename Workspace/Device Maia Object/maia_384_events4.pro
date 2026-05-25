@@ -113,8 +113,8 @@ err = call_external( geopixe_library(), geolib_name( 'maia_384_events4'), cdecl=
 			value=value )
 
 if err then begin
-	print, 'maia_384_events4 Fortran error'
-	print,'		tag, length, ibranch, skip =',tag, length, ibranch, skip
+	gprint, 'maia_384_events4 Fortran error'
+	gprint,'		tag, length, ibranch, skip =',tag, length, ibranch, skip
 endif
 return, err
 
