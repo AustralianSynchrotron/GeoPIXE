@@ -524,7 +524,7 @@ fin:													; kill blog client
 ;	mapped again with the same name. Hence, only unmap them if the
 ;	sizes are to change. Then also kill the processes and re-start.
 
-;	print,'Finish: free shared memory ...'
+;	gprint,'Finish: free shared memory ...'
 ;	shared_memory_unmap, prefix=prefix, n_buffers=n_buffers
 	return
 

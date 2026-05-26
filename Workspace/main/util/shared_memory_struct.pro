@@ -42,7 +42,7 @@ if n_elements(template) eq 0 then goto, bad
 if size(template,/tname) ne 'STRUCT' then goto, bad
 
 	prefix = prefixi[0]
-	print,'shared_memory_struct: map buffers for prefix = '+prefix+' (#chars='+strtrim(string(n_elements(byte(prefix))),2)+') ...'
+	gprint,'shared_memory_struct: map buffers for prefix = '+prefix+' (#chars='+strtrim(string(n_elements(byte(prefix))),2)+') ...'
 	n_pars = 16
 	par_name = prefix + 'pars'
 
@@ -50,7 +50,7 @@ if size(template,/tname) ne 'STRUCT' then goto, bad
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
 		if !Error_state.name eq 'IDL_M_SHM_REDEFSEG' then begin
-			print,'shared_memory_struct: "shmmap" IDL_M_SHM_REDEFSEG error on "'+par_name+'" - assume it is already established.'
+			gprint,'shared_memory_struct: "shmmap" IDL_M_SHM_REDEFSEG error on "'+par_name+'" - assume it is already established.'
 			goto, skip1
 		endif
 		
@@ -80,7 +80,7 @@ skip1:
 	if (*ppar)[6] ne 173 then init_par=1					; test if already set-up
 
 	if init_par then begin
-		print,'shared_memory_struct: Memory not set-up, so clear/set ppar ...'
+		gprint,'shared_memory_struct: Memory not set-up, so clear/set ppar ...'
 		(*ppar)[*] = 0
 		(*ppar)[6] = 173
 	endif
@@ -94,7 +94,7 @@ skip1:
 	if (ErrorNo ne 0) then begin
 		Catch, /cancel
 		if !Error_state.name eq 'IDL_M_SHM_REDEFSEG' then begin
-			print,'shared_memory_struct: "shmmap" IDL_M_SHM_REDEFSEG error on "'+name+'" - assume it is already established.'
+			gprint,'shared_memory_struct: "shmmap" IDL_M_SHM_REDEFSEG error on "'+name+'" - assume it is already established.'
 			goto, skip
 		endif
 		

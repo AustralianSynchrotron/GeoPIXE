@@ -1006,8 +1006,9 @@ if catch_errors_on then begin
 	endif
 endif
 
-;	print,'Notify from device:'
-;	help, self	
+;	gprint,'Notify from device:'
+;	help, self, output=s
+;	gprint, s	
 ;	help, self.options.notify, /str
 	if self.options.notify.on eq 0 then return
 	if widget_info(self.options.notify.tlb, /valid) eq 0 then return

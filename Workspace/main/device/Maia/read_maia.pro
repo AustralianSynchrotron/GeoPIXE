@@ -73,7 +73,7 @@ cont:
     n_actual = ((stat.cur_ptr - cur)) < n_buffer		; transfer count from change in CUR_PTR
 
     if n_actual ne n_buffer then begin
-       print,'n_actual =',n_actual,'  n_buffer =',n_buffer
+       gprint,'n_actual =',n_actual,'  n_buffer =',n_buffer
     endif
 
 ;	This list in read_maia, get_maia_details too ... also effects list of tags in main 'blog_browse' routine
@@ -188,7 +188,7 @@ if select eq -1 then begin
 		goto, done
 	endif
 	if i ne 0 then begin
-;		print,'Skip to AA,BB tags at start of file by =',i
+;		gprint,'Skip to AA,BB tags at start of file by =',i
 		goto, done																;@9-21
 	endif
 endif else begin
@@ -209,7 +209,7 @@ new_block:
 		dt = t - time
 		if dt gt 0.2*ft then begin
 			nprog = nprog*2
-			print,'read_maia: Extend progress period to ',nprog
+			gprint,'read_maia: Extend progress period to ',nprog
 		endif
 		ltime = time
 	endif
@@ -221,7 +221,7 @@ new_block:
     ab_ok = ((ev[i] eq 'AA'xub) and (ev[i+3] eq 'BB'xub))
 
 ;	if ipr ge 23655 then begin
-;		print, 'debug'
+;		gprint, 'debug'
 ;	endif
     if ab_ok then begin
        record.tag = uint(ev,i+1,1)
@@ -257,7 +257,7 @@ new_block:
 	   		use_tag = 0
 	   endif
 ;   		if ipr eq 21 then begin
-;   			print,'debug ...'
+;   			gprint,'debug ...'
 ;   		endif
 	   
 	   n_head = n_header
@@ -315,10 +315,10 @@ new_block:
 	   endif
 	   
     endif else begin
-       print, 'tags AA, BB not found ...'
-       print, ev[i-5*16+1>0:i], format= '("Before ",(10(16Z4)))'
-       print, ev[i:i+5*16-1<(n_buffer-1)], format= '("After  ",(10(16Z4)))'
-       goto, done
+      	gprint, 'tags AA, BB not found ...'
+		gprint, ev[i-5*16+1>0:i], format= '("Before ",(10(16Z4)))'
+		gprint, ev[i:i+5*16-1<(n_buffer-1)], format= '("After  ",(10(16Z4)))'
+		goto, done
     endelse
 
     i = i + n_head + ulong(record_length)

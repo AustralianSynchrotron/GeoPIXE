@@ -107,7 +107,7 @@ endif else begin
 	xesize = xsize/2
 	yesize = ysize/2
 endelse
-print,'version 0: xsize=',xsize,' ysize=',ysize,' charge=',image.charge
+gprint,'version 0: xsize=',xsize,' ysize=',ysize,' charge=',image.charge
 
 xsize1 = xsize
 ysize1 = ysize
@@ -131,7 +131,7 @@ if (header eq 0) and (!version.memory_bits eq 32) then begin
 					'Re-compressing images to fit in 32-bit memory ...']
 		endif
 	endif
-	print,'!version.memory_bits = 32: xsize1=',xsize1,' ysize1=',ysize1,' nsq=',nsq
+	gprint,'!version.memory_bits = 32: xsize1=',xsize1,' ysize1=',ysize1,' nsq=',nsq
 endif
 
 image.xsize = xsize1
@@ -218,7 +218,7 @@ if version le -28 then begin
 endif
 if version le -31 then begin
 	readu,1, nxc, nyc
-	print,'version -31: X coords=',nxc,' Y coords=',nyc
+	gprint,'version -31: X coords=',nxc,' Y coords=',nyc
 	if nxc gt 1 then begin
 		x_coords = dblarr(nxc)
 		readu,1, x_coords
@@ -234,11 +234,11 @@ if version le -32 then begin
 	readu,1,sx,sy
 	image.x_coord_units = sx
 	image.y_coord_units = sy
-	print,'version -32: X units=',sx,' Y units=',sy
+	gprint,'version -32: X units=',sx,' Y units=',sy
 endif
 if xanes then begin
 	readu,1, nzc
-	print,'xanes: Z coords=',nzc
+	gprint,'xanes: Z coords=',nzc
 	if nzc gt 1 then begin
 		z_coords = fltarr(nzc)
 		readu,1, z_coords
@@ -246,7 +246,7 @@ if xanes then begin
 	endif
 	readu,1,sz
 	image.z_coord_units = sz
-	print,'xanes: Z units=',sz
+	gprint,'xanes: Z units=',sz
 
 	readu,1, nz2
 	if nz2 gt 1 then begin
@@ -277,7 +277,7 @@ endif
 
 readu,1, s
 image.matrix.label = s
-print,'read_geopixe_image: matrix label=',s
+gprint,'read_geopixe_image: matrix label=',s
 
 n_el = 0L
 el_xanes = ''
@@ -294,12 +294,12 @@ if xanes then begin
 	if version le -49 then begin
 		readu,1, s
 		image.energies_file = s
-		print,'read_geopixe_image: energies_file=',s
+		gprint,'read_geopixe_image: energies_file=',s
 	endif
 	if version le -53 then begin
 		readu,1, stack_type
 		image.stack_type = stack_type
-;		print,'read_geopixe_image: stack_type=',stack_type
+;		gprint,'read_geopixe_image: stack_type=',stack_type
 	endif
 endif else begin
 	image.n_el = n_el
@@ -313,7 +313,7 @@ endif else begin
 		image.energy_proxy_axis = energy_proxy_axis
 		readu,1, s
 		image.energies_file = s
-		print,'read_geopixe_image: energies_file=',s
+		gprint,'read_geopixe_image: energies_file=',s
 	endif
 endelse
 
@@ -414,7 +414,7 @@ if version le -2 then begin
 	image.xcompress = xcompress * nsq
 	image.ycompress = ycompress * nsq
 	image.xstep = xstep
-	print,'version -2: xstep_on=',xstep_on,' xstep=',xstep,' xcompress=',xcompress
+	gprint,'version -2: xstep_on=',xstep_on,' xstep=',xstep,' xcompress=',xcompress
 endif
 
 if xanes eq 0 then begin
@@ -437,7 +437,7 @@ endif
 if version le -3 then begin
 	readu,1,s
 	image.matrix.file = s
-	print,'version -3: matrix.file=',s
+	gprint,'version -3: matrix.file=',s
 endif
 
 ; version -4 stuff ...
@@ -445,7 +445,7 @@ endif
 if version le -4 then begin
 	readu,1,step_events
 	image.step_events = step_events
-	print,'version -4: step_events=',step_events
+	gprint,'version -4: step_events=',step_events
 endif
 
 ; version -5 stuff ...
@@ -453,7 +453,7 @@ endif
 if version le -5 then begin
 	readu,1,events
 	image.events = events
-	print,'version -5: events=',events
+	gprint,'version -5: events=',events
 endif
 
 ; version -6 stuff ...
@@ -463,7 +463,7 @@ if version le -6 then begin
 	image.step_toggle = step_toggle
 	image.toggle_bit = toggle_bit
 	image.toggle_station = toggle_station
-	print,'version -6: step_toggle=',step_toggle, toggle_bit, toggle_station
+	gprint,'version -6: step_toggle=',step_toggle, toggle_bit, toggle_station
 endif
 
 ; version -7 stuff ...
@@ -471,7 +471,7 @@ endif
 if version le -7 then begin
 	readu,1, type
 	image.type = type
-	print,'version -7: type=',type
+	gprint,'version -7: type=',type
 endif
 
 ; version -22 stuff ...
@@ -482,7 +482,7 @@ if strlowcase(ext) eq 'cuts' then mode=1L
 
 if version le -22 then begin
 	readu,1, mode
-	print,'version -22: mode=',mode
+	gprint,'version -22: mode=',mode
 endif
 image.mode = mode
 
@@ -493,7 +493,7 @@ if version le -8 then begin
 	image.channel = channel < (geopixe_max_adcs-1)
 	image.detector = detector
 	if image.detector eq 7 then image.IC.mode=2
-	print,'version -8: channel=',channel, ' detector=',detector
+	gprint,'version -8: channel=',channel, ' detector=',detector
 endif
 
 ; version -9 stuff ...
@@ -501,7 +501,7 @@ endif
 if (xanes eq 0) and (version le -9) then begin
 	readu,1, corrected
 	image.corrected = corrected
-	print,'version -9: corrected=',corrected
+	gprint,'version -9: corrected=',corrected
 endif
 
 ; version -10 - the error image details
@@ -509,7 +509,7 @@ endif
 if version le -10 then begin
 	readu,1, has_errors
 	image.has_errors = has_errors
-	print,'version -10: has_errors=',has_errors
+	gprint,'version -10: has_errors=',has_errors
 	if (silent eq 0) and has_errors and ((xesize le 0) or (yesize le 0)) then begin
 		warning,'read_geopixe_image',['Inconsistency between error array and size.', $
 				'Image file corrupt.','','You will need to re-sort the list-mode data.']
@@ -530,8 +530,8 @@ if version le -11 then begin
 	image.scaled_x = scaled_x
 	image.scaled_y = scaled_y
 	image.show_back = show_back
-	print,'version -10: scaled_x,y=',scaled_x, scaled_y
-	print,'		original xsize, ysize=', original_xsize, original_ysize
+	gprint,'version -10: scaled_x,y=',scaled_x, scaled_y
+	gprint,'		original xsize, ysize=', original_xsize, original_ysize
 endif
 image.original_xsize = original_xsize / nsq
 image.original_ysize = original_ysize / nsq
@@ -553,13 +553,13 @@ endif
 if version le -12 then begin
 	if version le -34 then begin
 		readu,1, device_name
-		print,'version -34: device_name=',device_name
+		gprint,'version -34: device_name=',device_name
 	endif else begin
 		readu,1, device
-		print,'version -12: device=',device
+		gprint,'version -12: device=',device
 		old = device_index_from_old_index( device, name=name, silent=silent, error=err2)
 		if err2 then begin
-			print, '    Error converting old device index.'
+			gprint, '    Error converting old device index.'
 			goto, error
 		endif 
 		device_name = name
@@ -570,14 +570,14 @@ if obj_valid(obj) eq 0 then begin
 	warning,'read_geopixe_image','Failed to create device object for: '+device_name
 endif
 image.DevObj = obj
-print,'all versions: device_name=',device_name
+gprint,'all versions: device_name=',device_name
 
 ; version -13
 
 if version le -13 then begin
 	readu,1, source2
 	image.source2 = source2
-	print,'version -13: source2=',source2
+	gprint,'version -13: source2=',source2
 endif
 
 ; version -20 - throttle factors file, for device 16 (Maia)
@@ -585,7 +585,7 @@ endif
 if version le -20 then begin
 	readu,1, throttle
 	image.throttle = throttle
-	print,'version -20: throttle=',throttle
+	gprint,'version -20: throttle=',throttle
 endif
 
 ; version -21 - pileup factors file, for device 16 (Maia)
@@ -593,7 +593,7 @@ endif
 if version le -21 then begin
 	readu,1, pileup
 	image.pileup = pileup
-	print,'version -21: pileup=',pileup
+	gprint,'version -21: pileup=',pileup
 endif
 
 ; version -24 - bounds of image, for device 21 (UniDAQ, Wakasa)
@@ -601,7 +601,7 @@ endif
 if version le -24 then begin
 	readu,1, bounds
 	image.bounds = bounds
-	print,'version -24: bounds=',bounds
+	gprint,'version -24: bounds=',bounds
 endif
 
 ; version -25 - linearize file-name, for device 16 (Maia)
@@ -609,7 +609,7 @@ endif
 if version le -25 then begin
 	readu,1, linearize
 	image.linearize = linearize
-	print,'version -25: linearize=',linearize
+	gprint,'version -25: linearize=',linearize
 endif
 
 ; version -29 - Y encoder and border pars, for device 16 (Maia)
@@ -619,7 +619,7 @@ endif
 if (version le -29) and (version gt -35) then begin
 	readu,1, encoder_y_correct, x_margin
 	readu,1, clear_x, clear_y
-	print,'version -29: Maia encoder XY correct=',encoder_y_correct,' X margin=',x_margin
+	gprint,'version -29: Maia encoder XY correct=',encoder_y_correct,' X margin=',x_margin
 endif
 
 ; version -18 - array detector stuff
@@ -627,12 +627,12 @@ endif
 if version le -18 then begin
 	readu,1, array
 	image.array = array
-	print,'version -18: array=',array
+	gprint,'version -18: array=',array
 	if array eq 1 then begin
 		readu,1, n_active
 		active = lonarr(n_active)
 		readu,1, active
-		print,'version -18: active=',active
+		gprint,'version -18: active=',active
 		image.pactive = ptr_new( active)
 
 		poly = fltarr(max_image_cal+1)
@@ -675,7 +675,7 @@ if version le -30 then begin
 		readu,1, IC
 		image.IC = IC
 		got_IC = 1
-		print,'version -30: Image IC parameters= PV: ',IC.pv.name,' = ',IC.pv.val*IC.pv.unit
+		gprint,'version -30: Image IC parameters= PV: ',IC.pv.name,' = ',IC.pv.val*IC.pv.unit
 	endif
 	readu,1, np
 	if np gt 0 then begin
@@ -688,7 +688,7 @@ if version le -30 then begin
 	image.dwell = dwell
 	readu,1, flatten
 	image.flatten = flatten
-	print,'version -30: Image dwell = ',dwell.val
+	gprint,'version -30: Image dwell = ',dwell.val
 endif
 
 if version le -38 then begin
@@ -699,12 +699,12 @@ endif
 if (xanes eq 0) and (version le -33) then begin
 	readu,1, energy
 	image.energy = energy
-	print,'version -33: beam energy=',energy
+	gprint,'version -33: beam energy=',energy
 endif
 if (xanes eq 0) and (version le -42) then begin
 	readu,1, n_attributes
 	image.n_attributes = n_attributes
-	print,'version -42: attribute planes added=',n_attributes
+	gprint,'version -42: attribute planes added=',n_attributes
 endif
 
 if version le -27 then begin					; preview image
@@ -746,13 +746,13 @@ if version le -26 then begin					; flux details
 	readu,1, has_flux
 	image.has_flux = has_flux
 	if has_flux then begin
-		print,'version -26: Read flux ...'
+		gprint,'version -26: Read flux ...'
 		if (version le -50) and xanes then begin
 			n_flux = n_el
 			if (version le -52) and xanes then readu,1, n_flux
 			flux = fltarr(xsize1,ysize1,n_flux)
 			for i=0L,n_flux-1 do begin
-				print,i
+				gprint,i
 				readu,1, frame
 				if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 					flux[*,*,i] = frame
@@ -788,20 +788,20 @@ if version le -26 then begin					; flux details
 	if has_flux then begin
 ;		if image.IC.conversion eq 0.0 then image.IC.conversion = 1.0
 		total_flux = total(flux)
-		print,'version -26: total(flux)=',total_flux,', conv=',image.IC.conversion,', flux*conv=',total_flux*image.IC.conversion,', charge=',image.charge
+		gprint,'version -26: total(flux)=',total_flux,', conv=',image.IC.conversion,', flux*conv=',total_flux*image.IC.conversion,', charge=',image.charge
 		if total_flux gt 1.0e-10 then begin
 			if got_IC then begin
 				if image.charge eq 0.0 then begin
 					image.charge = total_flux * image.IC.conversion
-					print,'                 charge zero, set it to flux * conv = ',image.charge
+					gprint,'                 charge zero, set it to flux * conv = ',image.charge
 				endif else begin
 					if (abs(image.IC.conversion - image.charge / total_flux) gt 1.0e-9) then begin
 						image.IC.conversion = image.charge / total_flux
-						print,'                 set IC.conversion = image.charge / total_flux = ',image.IC.conversion
+						gprint,'                 set IC.conversion = image.charge / total_flux = ',image.IC.conversion
 					endif
 				endelse
 			endif
-			print,'             total(flux)=',total_flux,', conv=',image.IC.conversion,', flux*conv=',total_flux*image.IC.conversion,', charge=',image.charge
+			gprint,'             total(flux)=',total_flux,', conv=',image.IC.conversion,', flux*conv=',total_flux*image.IC.conversion,', charge=',image.charge
 		endif
 	endif
 endif
@@ -810,7 +810,7 @@ if version le -39 then begin					; dead_fraction details
 	readu,1, has_dead
 	image.has_dead = has_dead
 	if has_dead then begin
-		print,'version -39: Read dead_fraction ...'
+		gprint,'version -39: Read dead_fraction ...'
 		dead_fraction = fltarr(xsize1,ysize1)
 		if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 			readu,1, dead_fraction
@@ -825,7 +825,7 @@ if version le -40 then begin					; dwell map details
 	readu,1, has_dwell
 	image.has_dwell = has_dwell
 	if has_dwell then begin
-		print,'version -40: Read dwell map ...'
+		gprint,'version -40: Read dwell map ...'
 		dwell_map = fltarr(xsize1,ysize1)
 		if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 			readu,1, dwell_map
@@ -840,7 +840,7 @@ if version le -41 then begin					; pileup map details
 	readu,1, has_pileup
 	image.has_pileup = has_pileup
 	if has_pileup then begin
-		print,'version -41: Read pileup map ...'
+		gprint,'version -41: Read pileup map ...'
 		pileup_map = fltarr(xsize1,ysize1)
 		if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 			readu,1, pileup_map
@@ -856,7 +856,7 @@ if (xanes eq 0) or (version le -50) then begin
 		readu,1, has_rates
 		image.has_rates = has_rates
 		if has_rates then begin
-			print,'version -45: Read count-rate map ...'
+			gprint,'version -45: Read count-rate map ...'
 			count_rate_map = fltarr(xsize1,ysize1)
 			if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 				readu,1, count_rate_map
@@ -911,10 +911,10 @@ if (xanes eq 0) or (version le -50) then begin
 			n_comp = 0L
 			readu,1, n_comp
 			if n_comp gt 0 then begin
-				print,'version -47: Read phase map, n_comp =',n_comp
+				gprint,'version -47: Read phase map, n_comp =',n_comp
 				phase = fltarr(xsize1,ysize1,n_comp)
 				for i=0L,n_comp-1 do begin
-					print,i
+					gprint,i
 					readu,1, frame
 					if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 						phase[*,*,i] = frame
@@ -934,10 +934,10 @@ if (xanes eq 0) or (version le -50) then begin
 			frame2 = fltarr(xesize,yesize)
 			readu,1, n_yield
 			if n_yield gt 0 then begin
-				print,'version -48: Read yield map, n_yield =',n_yield
+				gprint,'version -48: Read yield map, n_yield =',n_yield
 				yield = fltarr(xesize1,yesize1,n_yield)
 				for i=0L,n_yield-1 do begin
-					print,i
+					gprint,i
 					readu,1, frame2
 					if (xesize1 eq xesize) and (yesize1 eq yesize) then begin
 						yield[*,*,i] = frame2
@@ -953,9 +953,9 @@ endif
 ; With version -8 and beyond, image is read after all the header parameters
 
 if (header eq 0) and (version le -8) then begin
-	print,'version -8: Read images ...'
+	gprint,'version -8: Read images ...'
 	for i=0L,n_el-1 do begin
-		print,i
+		gprint,i
 		readu,1, frame
 		if (xsize1 eq xsize) and (ysize1 eq ysize) then begin
 			img[*,*,i] = frame
@@ -978,7 +978,7 @@ if sz[0] eq 3 then begin
 		endif
 	endfor
 endif
-if ninf gt 0 then print,'Killed ',ninf,' non finite pixels.'
+if ninf gt 0 then gprint,'Killed ',ninf,' non finite pixels.'
 
 ; version -10 - the error image (scaled down by 2)
 
@@ -986,7 +986,7 @@ if ninf gt 0 then print,'Killed ',ninf,' non finite pixels.'
 if (header eq 0) and (has_errors eq 1) then begin
 	if n_elements(frame2) eq 0 then frame2 = fltarr(xesize,yesize)
 	for i=0L,n_el-1 do begin
-		print,i
+		gprint,i
 		readu,1, frame2
 		if (xesize1 eq xesize) and (yesize1 eq yesize) then begin
 			error[*,*,i] = frame2
@@ -1046,11 +1046,11 @@ endif
 n = 0L
 for i=0L,n_el-1 do begin
 	readu,1, n
-;	print,' read ',n,' history records for element ',(*image.el)[i]
+;	gprint,' read ',n,' history records for element ',(*image.el)[i]
 	if n gt 0 then begin
 		s = strarr(n)
 		readu,1, s
-;		print,' history = ', s
+;		gprint,' history = ', s
 		history[i] = ptr_new(s, /no_copy)
 	endif
 endfor
@@ -1089,28 +1089,28 @@ finish:
 	return, p
 
 bad_extra:
-	print,'read_geopixe_image: no extra data'
+	gprint,'read_geopixe_image: no extra data'
 	goto, finish
 bad_io:
-	print,'read_geopixe_image: I/O error'
+	gprint,'read_geopixe_image: I/O error'
 	goto, error
 bad_open:
-	print,'read_geopixe_image: file open failed'
+	gprint,'read_geopixe_image: file open failed'
 	goto, error
 bad_obj_io:
-	print,'read_geopixe_image: Object parameters I/O error'
+	gprint,'read_geopixe_image: Object parameters I/O error'
 	goto, error
 bad_file:
-	print,'read_geopixe_image: bad file type or no file name supplied'
+	gprint,'read_geopixe_image: bad file type or no file name supplied'
 	goto, usage
 bad_version:
-	print,'read_geopixe_image: bad version number'
+	gprint,'read_geopixe_image: bad version number'
 	goto, error
 
 usage:
-;	print,'read_geopixe_image: Usage: p = read_geopixe_image(file)'
-;	print,'		where "p" is pointer to image struct'
-;	print,'		and "file" is the name of the input file'
+;	gprint,'read_geopixe_image: Usage: p = read_geopixe_image(file)'
+;	gprint,'		where "p" is pointer to image struct'
+;	gprint,'		and "file" is the name of the input file'
 	goto, error
 
 error:

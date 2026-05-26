@@ -85,7 +85,7 @@ err = call_external( geopixe_library(), geolib_name( 'hist_accumulate4'), cdecl=
 return, err
 
 bad:
-	print,' hist_accumulate4: Error - bad type for argument: '+sb
+	gprint,' hist_accumulate4: Error - bad type for argument: '+sb
 	err = 1L
 	return, err
 end

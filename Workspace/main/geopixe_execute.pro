@@ -146,7 +146,9 @@ pro geopixe_execute, workerParam, olun=olun, progress=progress, error=error, $
 ;	Any "toc" commands in this execution, will continue to print to olun unit.
 
 	status = execute(command)
-	if log then toc, lun=olun else toc
+	if log then begin
+		toc, lun=olun
+	endif else toc
 
 	if status eq 0 then begin
 		if log then gprint,level=2, output=olun,' '

@@ -74,7 +74,7 @@ if n_elements(source) lt 1 then source='?'
 		if file_test(geopixe_conf, /read) eq 0 then goto, bad_find
 		
 		on_ioerror, bad_copy
-		print,'Copy "geopixe.conf" to home dir ...'
+		gprint,'Copy "geopixe.conf" to home dir ...'
 		file_copy, geopixe_conf, home_dir, /require_dir
 		goto, cont
 		
@@ -93,7 +93,7 @@ cont:
 	on_ioerror, bad_read
 	while NOT EOF(unit) do begin
 		readf, unit, line
-;		print,'geopixe_defaults: '+line
+;		gprint,'geopixe_defaults: '+line
 		i = locate('#', line)
 		if i eq -1 then i=strlen(line)
 		if i gt 0 then begin
@@ -102,7 +102,7 @@ cont:
 			ns = n_elements(s)
 			if ns ge 2 then begin
 				if ns ge 3 then srest = strjoin(s0[2:*], ' ')
-;				print,'geopixe_defaults: loop = '+s[0]
+;				gprint,'geopixe_defaults: loop = '+s[0]
 				case s[0] of
 					'path': begin
 						if ns ge 3 then begin
@@ -305,11 +305,11 @@ cont:
 			endif
 		endif
 	endwhile
-;	print, 'geopixe_defaults: CWS tidy ...'
+;	gprint, 'geopixe_defaults: CWS tidy ...'
 	if n_elements( *geopixe.cws.pLocalPath) gt 1 then *geopixe.cws.pLocalPath = (*geopixe.cws.pLocalPath)[1:*]
 	if n_elements( *geopixe.cws.pNodePath) gt 1 then *geopixe.cws.pNodePath = (*geopixe.cws.pNodePath)[1:*]
 	
-;	print, 'geopixe_defaults: Close ...'
+;	gprint, 'geopixe_defaults: Close ...'
 	close_file, unit
 	error = 0
 	

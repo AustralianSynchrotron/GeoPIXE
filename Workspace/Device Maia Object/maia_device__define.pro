@@ -387,12 +387,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_clear_x: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_clear_x: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_clear_x: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_clear_x: Device Object ref not found.'
 		return
 	endif
 
@@ -428,12 +428,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_clear_y: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_clear_y: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_clear_y: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_clear_y: Device Object ref not found.'
 		return
 	endif
 
@@ -469,12 +469,12 @@ pro OnRealize_maia_device_sort_option_skew_x, wWidget
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_skew_x: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_skew_x: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_skew_x: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_skew_x: Device Object ref not found.'
 		return
 	endif
 
@@ -510,12 +510,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_clear_z: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_clear_z: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_clear_z: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_clear_z: Device Object ref not found.'
 		return
 	endif
 
@@ -551,12 +551,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_slow: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_slow: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_slow: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_slow: Device Object ref not found.'
 		return
 	endif
 
@@ -592,12 +592,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_xy_correction: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_xy_correction: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_xy_correction: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_xy_correction: Device Object ref not found.'
 		return
 	endif
 
@@ -633,12 +633,12 @@ end
 ;
 ;	ObjBase = find_id( wWidget, uname='obj-ref-here')
 ;	if widget_info(ObjBase, /valid) eq 0L then begin
-;		print,'OnRealize_maia_device_sort_option_x_margin: Object base not found.'
+;		gprint,'OnRealize_maia_device_sort_option_x_margin: Object base not found.'
 ;		return
 ;	endif
 ;	widget_control, ObjBase, get_uvalue=obj
 ;	if obj_valid(obj) eq 0L then begin
-;		print,'OnRealize_maia_device_sort_option_x_margin: Device Object ref not found.'
+;		gprint,'OnRealize_maia_device_sort_option_x_margin: Device Object ref not found.'
 ;		return
 ;	endif
 ;
@@ -674,12 +674,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_x_source: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_x_source: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_x_source: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_x_source: Device Object ref not found.'
 		return
 	endif
 
@@ -715,12 +715,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_y_source: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_y_source: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_y_source: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_y_source: Device Object ref not found.'
 		return
 	endif
 
@@ -756,12 +756,12 @@ endif
 
 	ObjBase = find_id( wWidget, uname='obj-ref-here')
 	if widget_info(ObjBase, /valid) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_z_source: Object base not found.'
+		gprint,'OnRealize_maia_device_sort_option_z_source: Object base not found.'
 		return
 	endif
 	widget_control, ObjBase, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'OnRealize_maia_device_sort_option_z_source: Device Object ref not found.'
+		gprint,'OnRealize_maia_device_sort_option_z_source: Device Object ref not found.'
 		return
 	endif
 
@@ -796,17 +796,17 @@ if catch_errors_on then begin
 endif
 
 	if widget_info( event.handler, /valid) eq 0L then begin
-;		print,'maia_device_sort_option_event: event.handler not valid.'
+;		gprint,'maia_device_sort_option_event: event.handler not valid.'
 		return, 0
 	endif
 	uname = widget_info( event.handler, /uname)
 	if uname ne 'obj-ref-here' then begin
-		print,'maia_device_sort_option_event: Object base not found.'
+		gprint,'maia_device_sort_option_event: Object base not found.'
 		return, 0
 	endif
 	widget_control, event.handler, get_uvalue=obj
 	if obj_valid(obj) eq 0L then begin
-		print,'maia_device_sort_option_event: Device Object ref not found.'
+		gprint,'maia_device_sort_option_event: Device Object ref not found.'
 		return, 0
 	endif
 
@@ -1577,12 +1577,12 @@ endif
 			if ((strmid((*pmp).facility,0,6) eq 'MM.Mel') and ((*pmp).endstation eq '1')) or $
 						((strmid((*pmp).facility,0,6) eq 'MM.Per') and ((*pmp).endstation eq '2')) then begin
 				self.sort_options.flip.x = 1
-				print,'Maia device: force flip.x ON'
+				gprint,'Maia device: force flip.x ON'
 			endif
 			if ((strmid((*pmp).facility,0,6) eq 'MM.Mel') and ((*pmp).endstation eq '2')) or $
 						((strmid((*pmp).facility,0,6) eq 'MM.Per') and ((*pmp).endstation eq '1')) then begin
 				self.sort_options.flip.x = 0
-				print,'Maia device: force flip.x OFF'
+				gprint,'Maia device: force flip.x OFF'
 			endif
 ;		endif
 	endif
@@ -1771,7 +1771,7 @@ if n_elements(maia_IC_name) lt 1 then maia_IC_name=''
 		if suppress then begin
 
 			deadtime_cal = head.deadtime_cal	; deadtime cal read from blog DA_info (44) record
-			print,'maia_device::flux_scan: deadtime_cal = ',deadtime_cal
+			gprint,'maia_device::flux_scan: deadtime_cal = ',deadtime_cal
 			
 			if (abs(deadtime_cal.a - 0.1) gt 0.1) and (abs(deadtime_cal.a - 0.0) gt 0.1) then begin
 				self->set_options, deadtime_cal=deadtime_cal
@@ -1779,7 +1779,7 @@ if n_elements(maia_IC_name) lt 1 then maia_IC_name=''
 
 			if head.IC_sensitivity ne 0.0 then begin
 				IC_val = charge_gain_units( head.IC_sensitivity, units=IC_vunit)
-				print,'Maia:flux_scan: found sensitivity = ',head.IC_sensitivity
+				gprint,'Maia:flux_scan: found sensitivity = ',head.IC_sensitivity
 			endif
 			if head.IC_name ne '' then begin
 				IC_name = head.IC_name
@@ -1864,7 +1864,7 @@ if n_elements(maia_IC_name) lt 1 then maia_IC_name=''
 					endif
 				endelse
 			endif
-			print,' maia_device::flux_scan: maia_IC_name = ',maia_IC_name,', nsls_flux_scale = ', nsls_flux_scale
+			gprint,' maia_device::flux_scan: maia_IC_name = ',maia_IC_name,', nsls_flux_scale = ', nsls_flux_scale
 		endelse
 	endif
 	error = 0
@@ -2484,7 +2484,7 @@ z_coord_units = ''
 		if first then begin
 			err = init_maia_32()
 			if err then goto, bad_io
-;print,'Setup: first ...'
+;gprint,'Setup: first ...'
 
 			gprint,level=2, 'Maia device: flip.X = ', self.sort_options.flip.x
 			gprint,level=2, 'Maia device: skew.X = ', self.sort_options.skew.x
@@ -2745,7 +2745,7 @@ common c_sandia_7, adc, tag, k_adc
 
 		on_ioerror, bad_io
 		read_event_buffer, unit, self, n_actual, bytes=1
-;		print,'	Buffer: i_buffer = ',i_buffer, ' n_actual=',n_actual
+;		gprint,'	Buffer: i_buffer = ',i_buffer, ' n_actual=',n_actual
 		if n_actual eq 0 then begin
 			gprint,level=2,'maia_device::read_buffer: bad n_actual'
 			goto, bad_io
@@ -2877,7 +2877,7 @@ common c_sandia_7, adc, tag, k_adc
 			1: z1 = maia_1[0:n-1]
 			2: z1 = maia_2[0:n-1]
 		endcase
-;		print,'raw X1,y1=',x1[0],y1[0]
+;		gprint,'raw X1,y1=',x1[0],y1[0]
 
 		if (self.sort_options.skew.x gt 0) then begin					; will this work with Cluster stripes?
 			x1 = x1 - long( y1 / float(self.sort_options.skew.x) )
@@ -2888,7 +2888,7 @@ common c_sandia_7, adc, tag, k_adc
 		if self.sort_options.flip.y then begin					; will this work with Cluster stripes?
 			y1 = height - y1
 		endif
-;		print,'flipped X1,y1=',x1[0],y1[0]
+;		gprint,'flipped X1,y1=',x1[0],y1[0]
 
 		case self.sort_options.slow_axis of						; min value for slow axis for "YLUT"
 			0: maia_y_min = min(maia_0[0:n-1])
@@ -2908,7 +2908,7 @@ common c_sandia_7, adc, tag, k_adc
 ;;		qt1 = where( (x1 gt 32*1024L-1000) , nt1)
 ;		qt2 = where( ((x1 ge 7322) and (x1 le 7324)) and (y1 eq 2000), nt2)
 ;		if nt2 gt 0 then begin
-;			print,'debug ...'
+;			gprint,'debug ...'
 ;;			ttx = 1.
 ;			qt = where( maia_veto[qt2] eq 1,nt4)
 ;			qt4 = qt2[qt]
@@ -2943,7 +2943,7 @@ common c_sandia_7, adc, tag, k_adc
 			endif
 		endif
 		q = where( veto eq 0, good)
-;		print,'		Buffer: n, good, n_veto, X1, Y1, pseudo_veto: ', n, good, n_veto, x1[0],y1[0],maia_pseudo[0]
+;		gprint,'		Buffer: n, good, n_veto, X1, Y1, pseudo_veto: ', n, good, n_veto, x1[0],y1[0],maia_pseudo[0]
 
 ;		Compress all, not just good events, so that pseudo events get corrected too ...
 		
@@ -3044,7 +3044,7 @@ common c_sandia_7, adc, tag, k_adc
 				y1 = uint(y1)		
 				z1 = uint(z1)
 			endelse
-;			print,'offset X1,y1=',x1[0],y1[0]
+;			gprint,'offset X1,y1=',x1[0],y1[0]
 			
 ;			Detectors returned individually, so do not divide by the number active.
 	

@@ -69,7 +69,7 @@ if q[0] eq -1 then nx=0
 q = where(mdl gt dx)
 nm = n_elements(q)
 if q[0] eq -1 then nm=0
-;print,'nx,nm=',nx,nm,'  min([nx,nm])=', min([nx,nm])
+;gprint,'nx,nm=',nx,nm,'  min([nx,nm])=', min([nx,nm])
 
 nx = max([nx,nm])
 m = nx + nne + 3
@@ -80,7 +80,7 @@ endif else begin
 	fs ='(F'+string(m)+'.'+string(nne)+')'
 endelse
 fs = strcompress(fs, /remove_all)
-;print,'fs=',fs
+;gprint,'fs=',fs
 
 if export then begin
 	if (x gt mdl) and (veto eq 0) then begin

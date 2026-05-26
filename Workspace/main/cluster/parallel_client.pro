@@ -394,7 +394,7 @@ common c_parallel_6, c_parallel_obj
 ;					done = -1									; error halted or aborted
 				endif
 
-				if (*ppar)[4] eq 0 then begin
+				if (*ppar)[4] eq 0 then begin					; finished flag
 					if (done eq 1) then done = 0				; check client process shared memory flag for finished
 					still_underway++
 				endif

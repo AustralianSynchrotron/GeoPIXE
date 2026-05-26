@@ -56,7 +56,7 @@ read_conf:
 	if conf_files[0] eq '' then begin
 		if any then begin
 			on_ioerror, do_warn
-			print,'Copy "template.Maia.conf" to home dir ...'
+			gprint,'Copy "template.Maia.conf" to home dir ...'
 			mdef = 'maia' + path_sep() + 'template.Maia.conf'
 			file_copy, mdef, home_dir, /require_dir
 			on_ioerror, null

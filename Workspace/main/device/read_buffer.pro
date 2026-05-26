@@ -100,7 +100,7 @@ endif else begin
     if q[0] ne -1 then begin
        channel_on[channel[q]] = 1
     endif else begin
-    	print,'read_buffer: bad channel values input'
+    	gprint,'read_buffer: bad channel values input'
        goto, bad_io
     endelse
 endelse
@@ -114,7 +114,7 @@ endelse
 		
 	if n eq 0 then return
 	if n_elements(x1) ne n then begin
-		print,'read_buffer: Length of "x1" does not match "n". Return Error.'
+		gprint,'read_buffer: Length of "x1" does not match "n". Return Error.'
 		goto, bad_io
 	endif
 	if n_elements(ste) ne n then ste = uintarr(n)

@@ -31,7 +31,7 @@ if catch_errors_on then begin
 endif
 if n_elements(slow_axis) eq 0 then slow_axis=1
 
-print,'build_maia_ylut: Scan blog files for Y lookup table data ...'
+gprint,'build_maia_ylut: Scan blog files for Y lookup table data ...'
 error = 1
 f = strip_file_ext( file[0]) + '.*'
 fs = find_file2(f)
@@ -51,7 +51,7 @@ first = 1
 on_ioerror, bad
 for i=0,nq-1 do begin
 	j = long(ext[q[i]])
-	if i mod 10 eq 0 then print,'	file = ',fs[q[i]],'  index = ',j
+	if i mod 10 eq 0 then gprint,'	file = ',fs[q[i]],'  index = ',j
 
 	if first then begin
 		openr, lun, fs[q[i]], /get_lun

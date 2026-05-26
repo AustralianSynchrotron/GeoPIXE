@@ -27,7 +27,7 @@ endif else begin
 	f0 = strip_file_ext( file[0])+'.ylut'
 endelse
 ylut = 0L
-print,'get_maia_ylut: try YLUT = ',f0
+gprint,'get_maia_ylut: try YLUT = ',f0
 if file_test(f0) then begin
 	on_ioerror, bad
 	openr, lun, f0, /get_lun
@@ -39,12 +39,12 @@ if file_test(f0) then begin
 	close_file, lun
 	error = 0
 	return, ylut
-endif else print,'get_maia_ylut: YLUT not found = ',f0
+endif else gprint,'get_maia_ylut: YLUT not found = ',f0
 return, 0L
 
 bad:
 	close_file, lun
-	print,'get_maia_ylut: error reading YLUT = ',f0
+	gprint,'get_maia_ylut: error reading YLUT = ',f0
 	return, 0L
 end
 	

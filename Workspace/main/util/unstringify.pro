@@ -293,15 +293,15 @@ error = 0
 return, x
 
 bad_syntax1:
-	print,'unstringify: ','bad syntax, unbalanced container "'+s0+'", Context: '+context
+	gprint,'unstringify: ','bad syntax, unbalanced container "'+s0+'", Context: '+context
 	return, 0
 bad_syntax2:
-	print,'unstringify: ','bad syntax, non-scaler string supplied ["'+s0+'", ...], Context: '+context
+	gprint,'unstringify: ','bad syntax, non-scaler string supplied ["'+s0+'", ...], Context: '+context
 	return, 0
 bad_syntax3:
-	print,'unstringify: ','bad syntax, missing tokens or values, Context: '+context
+	gprint,'unstringify: ','bad syntax, missing tokens or values, Context: '+context
 	return, 0
 bad_string:
-	print,'unstringify: ','bad string supplied, Context: '+context
+	gprint,'unstringify: ','bad string supplied, Context: '+context
 	return, 0
 end

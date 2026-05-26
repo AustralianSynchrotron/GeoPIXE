@@ -142,20 +142,20 @@ err = call_external( geopixe_library(), geolib_name( 'maia_384_events2'), cdecl=
 			long(y_mode), long(xmargin), long(width), value=value )
 
 if err then begin
-	print, 'maia-384 error'
+	gprint, 'maia-384 error'
 endif
 if err eq 0 then begin
 	time = double(time_sec) + double(time_micro)/1000000.
 endif
-if err then print,'Err: tag, length, ibranch, time =',tag, length, ibranch, time_sec[0]
+if err then gprint,'Err: tag, length, ibranch, time =',tag, length, ibranch, time_sec[0]
 ;q = where( (n_record gt 1000L) and (time_sec - 1266481679L gt 100000L), nq)
 ;if nq gt 0 then begin
-;	print, 'debug'
+;	gprint, 'debug'
 ;endif
 return, err
 
 bad:
-	print,' maia_384_events2: Error - bad type for argument.'
+	gprint,' maia_384_events2: Error - bad type for argument.'
 	err = 1L
 	return, err
 end

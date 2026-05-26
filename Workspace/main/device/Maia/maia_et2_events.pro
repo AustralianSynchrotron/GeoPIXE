@@ -56,7 +56,7 @@ err = call_external( geopixe_library(), geolib_name( 'maia_et2_events'), cdecl=g
 return, err
 
 bad:
-	print,' maia_et2_events: Error - bad type for argument.'
+	gprint,' maia_et2_events: Error - bad type for argument.'
 	err = 1L
 	return, err
 end

@@ -43,7 +43,7 @@ more:
     on_ioerror, bad
 	readf, unit, line
 	if line eq 'SiToro_List_Mode' then begin
-		print,'read_falconx_json: found header "SiToro_List_Mode".
+		gprint,'read_falconx_json: found header "SiToro_List_Mode".
 	endif else begin
 		goto, rewindit
 	endelse
@@ -55,7 +55,7 @@ more:
 
 	headerSize = long(s[1])
 	if (headerSize eq 0) then begin
-		print,'???  read_falconx_json: headerSize=0, weird ...'
+		gprint,'???  read_falconx_json: headerSize=0, weird ...'
 	    stat = fstat(unit)
 	    njson = stat.cur_ptr
 		header = ''
@@ -67,12 +67,12 @@ more:
 
     stat = fstat(unit)
     njson = stat.cur_ptr
-	print,'read_falconx_json: read JSON, size=',njson
+	gprint,'read_falconx_json: read JSON, size=',njson
 	error = 0
 	goto, done
 
 rewindit:
-;	print,'???  read_falconx_json: rewind unit.'
+;	gprint,'???  read_falconx_json: rewind unit.'
 	point_lun, unit, 0							; rewind unit
 	njson = 0
 	header = ''

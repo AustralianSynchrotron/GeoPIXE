@@ -89,7 +89,7 @@ cont:
     n_actual = ((stat.cur_ptr - cur)/4) < n_buffer		; transfer count from change in CUR_PTR
 
     if n_actual ne n_buffer then begin
-       print,'n_actual =',n_actual,'  n_buffer =',n_buffer
+       gprint,'n_actual =',n_actual,'  n_buffer =',n_buffer
     endif
 
 ;	This list in read_falconx, get_falconx_details too ... also effects list of tags in main 'fx_browse' routine
@@ -130,7 +130,7 @@ new_block:
 		dt = t - time
 		if dt gt 0.2*ft then begin
 			nprog = nprog*2
-			print,'read_falconx: Extend progress period to ',nprog
+			gprint,'read_falconx: Extend progress period to ',nprog
 		endif
 		ltime = time
 	endif
@@ -140,7 +140,7 @@ new_block:
 	tag = uint( ishft(ev[i] and data_type_mask, data_type_offset))
 	q = where( tag eq data_type, nq)
 	if nq eq 0 then begin
-		print,'read_falconx: unknown data-type at word ',i,' = ',tag
+		gprint,'read_falconx: unknown data-type at word ',i,' = ',tag
 		record_length = 1
 		n_head = 0
 		goto, more
@@ -162,7 +162,7 @@ new_block:
 			use_tag = 0
 		endif
 ;		if i ge 809 then begin
-;			print,'debug ...'
+;			gprint,'debug ...'
 ;		endif
 		n_head = n_header
 		offset = n_head
@@ -202,7 +202,7 @@ new_block:
 			ipr = ipr+1		
 ;			if ipr gt lipr + 10000L then begin
 ;				lipr = ipr
-;				print,'ipr = ',ipr, 'i, n_actual=',i, n_actual-n_head
+;				gprint,'ipr = ',ipr, 'i, n_actual=',i, n_actual-n_head
 ;			endif
 	   endif
 

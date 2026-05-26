@@ -27,7 +27,7 @@ err = call_external( geopixe_library(), geolib_name( 'init_fx'), cdecl=geolib_cd
 return, err
 
 bad:
-	print,' init_fx: Error - bad type for argument.'
+	gprint,' init_fx: Error - bad type for argument.'
 	err = 1L
 	return, err
 end

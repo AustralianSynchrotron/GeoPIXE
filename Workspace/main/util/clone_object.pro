@@ -30,13 +30,13 @@ endif
 			err = 0
 			return, obj_new()
 		endif
-		print,'clone_object: Source Object ref not valid.'
+		gprint,'clone_object: Source Object ref not valid.'
 		return, 0L
 	endif
 
 	name = obj_class( sObj)
 	if strlen(name) eq 0L then begin
-		print,'clone_object: Source Object name not valid.'
+		gprint,'clone_object: Source Object name not valid.'
 		return, 0L
 	endif
 

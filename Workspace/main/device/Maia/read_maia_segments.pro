@@ -62,7 +62,7 @@ endif
 			on_ioerror, bad_open
 			if first then begin
 				openr, lun, segments[i], /get_lun
-;				print,'read_maia_segments: unit=',lun,' segment=',segments[i]
+;				gprint,'read_maia_segments: unit=',lun,' segment=',segments[i]
 			endif else begin
 				openr, lun, segments[i]
 			endelse
@@ -90,12 +90,12 @@ endif
 		for j=0L,ipr-1 do (*pr[j]).index = j
 	endif
 
-;	print, 'Read_Maia_segments: Total bytes read = ',nt
+;	gprint, 'Read_Maia_segments: Total bytes read = ',nt
 	if do_progress then progress, /complete, progress_tlb, 'Read Maia Segments completed.'
 
 done:
 	if by_unit eq 0 then begin
-;		print,'read_maia_segments: close unit=',lun
+;		gprint,'read_maia_segments: close unit=',lun
 		close_file, lun
 	endif else begin
 		point_lun, lun, 0

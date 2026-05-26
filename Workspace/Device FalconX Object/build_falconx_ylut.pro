@@ -35,7 +35,7 @@ if n_elements(embed_detector) eq 0 then embed_detector=0
 
 @falconx_listmode.def
 
-print,'build_falconx_ylut: Scan blog files for Y lookup table data ...'
+gprint,'build_falconx_ylut: Scan blog files for Y lookup table data ...'
 error = 1
 f = strip_file_ext( file[0])
 l = locate_last('_',f)
@@ -74,7 +74,7 @@ version = 999999L
 on_ioerror, bad
 for i=0,nq-1 do begin
 	j = long(ext[q[i]])
-	if i mod 10 eq 0 then print,'	file = ',fs[q[i]],'  index = ',j
+	if i mod 10 eq 0 then gprint,'	file = ',fs[q[i]],'  index = ',j
 
 	if first then begin
 		openr, lun, fs[q[i]], /get_lun
@@ -122,7 +122,7 @@ endfor
 
 q1 = where( foundY eq 1, nq1)
 if nq1 eq 0 then begin
-	print,'build_falconx_ylut: No Y found in all files.'
+	gprint,'build_falconx_ylut: No Y found in all files.'
 	error = 1
 	return, 0L
 endif

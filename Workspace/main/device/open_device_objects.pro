@@ -31,7 +31,7 @@ now = ''
 if n_elements(geopixe_root) lt 1 then startupp
 
 f = find_device_objects( error=error, files=files, generic_file=gfile)
-;print, files
+;gprint, files
 if error then return, 0L
 n = n_elements(f)
 if (n eq 1) and (f[0] eq '') then return, 0L

@@ -49,7 +49,7 @@ common c_working_dir, geopixe_root
 common c_worker_1, c_worker_olun, c_worker_psh
 common c_worker_2, c_worker_log
 
-	if c_worker_log then printf, c_worker_olun, s
+	if c_worker_log then gprintf, c_worker_olun, s
 	return
 end
 
@@ -62,7 +62,7 @@ common c_working_dir, geopixe_root
 common c_worker_1, c_worker_olun, c_worker_psh
 common c_worker_2, c_worker_log
 
-	if c_worker_log then printf, c_worker_olun, s
+	if c_worker_log then gprintf, c_worker_olun, s
 	return
 end
 

@@ -29,7 +29,7 @@ function hash_To_Struct, h
 			endif else begin
 				s = create_struct( s, name, d)
 			endelse
-		endif else print, 'hash_to_struct:  bad key ="' + key[i] + '"'
+		endif else gprint, 'hash_to_struct:  bad key ="' + key[i] + '"'
 	endfor
 	return, s
 end
