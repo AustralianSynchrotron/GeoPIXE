@@ -26,7 +26,7 @@ define_devices
 	preview = 0L
 	if n_elements(file) lt 1 then return
 	
-	p = ptr_new( read_da( file, version=version, error=error, mpda=mpda))
+	p = ptr_new( read_da( file, version=version, error=error, mpda=mpda, /silent))
 	if error ne 0 then return
 	if ptr_valid(p) eq 0 then return
 

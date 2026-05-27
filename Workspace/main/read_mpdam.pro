@@ -134,7 +134,7 @@ cont:
 	error = 0
 	return, { file:F[0], phases:phases, correct:correct, pcorr:pcorr}
 
-	bad_io:
+bad_io:
 	gprint,'read_mpdam: bad MPDAM I/O'
 	return, 0L
 end
