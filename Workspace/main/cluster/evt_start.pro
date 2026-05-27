@@ -192,12 +192,12 @@ cont:
 ;	This way all file-names passed to 'da_evt' are good, but passed in 'mpdam_string' argument to 'da_evt',
 ;	which will work in a cluster mode sub-process where files must be found.
 
+	active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file1, /alert)
+
 	mpda = check_mpdam( file, DevObj, raw=raw, stringed=mpdam_string, phase_good=phase_good, original=original, $
 								verify=verify, error=err)
 	if err then goto, finish
 	
-		active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file, /alert)
-
 		if (mode eq 3) and (mpda eq 0) then goto, bad_sort_mode
 		if (mode eq 3) then mode=0											; make MPDA mode (mode=3) use DA routines.
 

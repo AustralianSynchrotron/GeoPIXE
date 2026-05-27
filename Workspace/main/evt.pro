@@ -832,9 +832,7 @@ case uname of
 
 				active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
 
-				T = strip_file_ext((*img).file)
-				if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-				if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+				T = evt_fix_output( p, (*img).file, mode)
 				(*p).output_file = T + '.'+ (*pstate).outputs[(*p).sort_mode]
 				set_widget_text, (*pstate).output_file, (*p).output_file
 
@@ -1195,9 +1193,7 @@ case uname of
 
 				active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
 				
-				T = strip_file_ext((*img).file)
-				if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-				if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+				T = evt_fix_output( p, (*img).file, mode)
 				(*p).output_file = T + '.'+ (*pstate).outputs[(*p).sort_mode]
 				set_widget_text, (*pstate).output_file, (*p).output_file
 
@@ -1753,9 +1749,8 @@ case uname of
 	;				notify, 'path', (*pstate).path, from=event.top
 	
 					active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
-					T = strip_file_ext((*p).evt_file)
-					if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-					if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+
+					T = evt_fix_output( p, (*p).evt_file, mode)
 					(*p).output_file = *(*pstate).path + strip_path(T,/keep) + '.'+ (*pstate).outputs[(*p).sort_mode]
 					set_widget_text, (*pstate).output_file, (*p).output_file
 				endif
@@ -1960,18 +1955,17 @@ finish:
 	widget_control, (*pstate).enable, set_value=(*p).enable[(*p).station]
 
 	if (strlen((*p).output_file) gt 0) and (strlen((*p).evt_file) gt 0) then begin
-		if strlowcase(strip_path(strip_file_ext(strip_file_m((*p).output_file, ending='-cuts'), double=((*p).sort_mode eq 1)))) ne  $
-							strlowcase(strip_path(strip_file_ext((*p).evt_file),/keep)) or  $
-							((mode eq 1) and (locate('-cuts',(*p).output_file) eq -1)) or  $
-							((mode eq 0) and (locate('-cuts',(*p).output_file) ne -1)) then begin
-			T = strip_file_ext(strip_file_m((*p).output_file, ending='-cuts'), double=((*p).sort_mode eq 1))
-			if ((mode eq 1) and (locate('-cuts',T) eq -1)) then T = T + '-cuts'
-			if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+;		if strlowcase(strip_path(strip_file_ext(strip_file_m((*p).output_file, ending='-cuts'), double=((*p).sort_mode eq 1)))) ne  $
+;							strlowcase(strip_path(strip_file_ext((*p).evt_file),/keep)) or  $
+;							((mode eq 1) and (locate('-cuts',(*p).output_file) eq -1)) or  $
+;							((mode eq 0) and (locate('-cuts',(*p).output_file) ne -1)) then begin
+			T = evt_fix_output( p, (*p).output_file, mode)
+
 			pt = extract_path((*p).output_file)
 			if lenchr(pt) lt 1 then pt = *(*pstate).path
 			(*p).output_file = pt + strip_path(T) + '.'+ (*pstate).outputs[(*p).sort_mode]
 			set_widget_text, (*pstate).output_file, (*p).output_file
-		endif
+;		endif
 	endif
 
 	close_file, lun
@@ -2303,6 +2297,22 @@ function get_active, p, enable, type, mode, cal_a, cal_b, ecompress, file, alert
 
 	return, active
 	end
+
+;------------------------------------------------------------------------------------------
+
+function evt_fix_output, p, file, mode
+
+;	return a 'fixed' (manage endings), extension stripped file name
+
+COMPILE_OPT STRICTARR
+	if ptr_valid(p) eq 0 then return, ''
+
+	T0 = strip_file_ext( file, double=((*p).sort_mode eq 1))
+	T = strip_file_m( T0, ending=['-cuts','-MPDA'])
+	if (mode eq 1) then T = T + '-cuts'
+	if (mode eq 3) then T = T + '-MPDA'
+	return, T
+end
 
 ;------------------------------------------------------------------------------------------
 
@@ -2775,9 +2785,8 @@ endif
 		*(*pstate).path = build_output_path( (*p).evt_file, (*p).output_file, (*p).root)
 
 		active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
-		T = strip_file_ext((*p).evt_file)
-		if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-		if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+
+		T = evt_fix_output( p, (*p).evt_file, mode)
 		if DevObj->multi_files() and (DevObj->multi_char() ne '.') then begin
 			T = strip_file_m( T, ending=DevObj->multi_char() + ((adc_offset_device(DevObj) eq -1) ? '0' : '1'))
 		endif
@@ -3263,9 +3272,7 @@ endif
 
 	active = get_active( p, enable, type, mode, cal_a, cal_b, ecompress, file)
 
-	T = strip_file_ext(F, double=((*p).sort_mode eq 1))
-	if (mode eq 1) then T = strip_file_m( T, ending='-cuts') + '-cuts'
-	if (mode eq 3) then T = strip_file_m( T, ending='-MPDA') + '-MPDA'
+	T = evt_fix_output( p, F, mode)
 	F2 = T + '.'+ (*pstate).outputs[(*p).sort_mode]
 	set_widget_text, (*pstate).output_file, F2
 
