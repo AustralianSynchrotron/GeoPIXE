@@ -160,7 +160,7 @@ end
 ;----------------------------------------------------------------------------
 
 function read_da, file, error=error, version=version, title=title, e_beam=eb, eDA=e, phases=phase_dai, $
-		pcorr=pcorr, mpda=mpda, cluster_debug=cluster_debug
+		pcorr=pcorr, mpda=mpda, cluster_debug=cluster_debug, silent=silent
 
 ;	Read the DA matrix file 'file'
 ;
@@ -200,6 +200,7 @@ if catch_errors_on then begin
 	endif
 endif
 if n_elements(cluster_debug) lt 1 then cluster_debug=-1		; stdout (set to -2 to disable prints)
+if n_elements(silent) eq 0 then silent=0
 
 error = 1
 if n_elements(file) eq 0 then goto, bad_file
@@ -217,7 +218,7 @@ if strmid( file,0,1) eq '{' then begin
 	filename = mpdam.file
 	mpda = 1
 endif else if extract_extension( file) eq 'mpdam' then begin
-	mpdam = read_mpdam( file, error=error)
+	mpdam = read_mpdam( file, silent=silent, error=error)
 	if error then goto, bad_io
 	filename = file
 	mpda = 1
@@ -231,7 +232,8 @@ if mpda then begin
 	
 	n_comp = (*mpdam.pcorr).n_comp + 1
 	for i=0,n_comp-2 do begin
-		da = read_da( (*mpdam.pcorr).files[i], version=version, title='read_da: multi-phase DA read of component', error=error)
+		da = read_da( (*mpdam.pcorr).files[i], version=version, title='read_da: multi-phase DA read of component', $
+				silent=silent, error=error)
 		if error then goto, bad_mpdam
 		if i eq 0 then begin
 			da1 = da
@@ -283,7 +285,8 @@ if mpda then begin
 		endelse
 	endfor
 
-	da = read_da( (*mpdam.pcorr).rest, title='read_da: multi-phase DA read of Rest', error=error)
+	da = read_da( (*mpdam.pcorr).rest, title='read_da: multi-phase DA read of Rest', $
+			silent=silent, error=error)
 	if error then goto, bad_mpdam
 	sz2 = da.size
 	cal2 = {order:1, poly:[da.cal.b,da.cal.a], units:'keV'}
