@@ -88,8 +88,6 @@ span.Heading4Char
 	font-family:"Cambria",serif;
 	color:#365F91;
 	font-style:italic;}
-.MsoChpDefault
-	{font-family:"Calibri",sans-serif;}
 .MsoPapDefault
 	{margin-bottom:10.0pt;
 	line-height:115%;}
@@ -377,6 +375,31 @@ window. Access using the tabs on the right side.</p>
 
 <p class=MsoNormal>A new Wizard has been added as a more extendable replacement
 to <i>Batch Sort</i>.</p>
+
+<h2>Version 8.8y</h2>
+
+<h3>Two phase fit to spectra</h3>
+
+<p class=MsoNormal>A common problem with fitting monochromatic SXRF spectra is
+the effect of the strong scatter peaks. The elastic peak may not be accurate
+(some beamlines have errors in known beam energy). The Compton peak may be
+poorly fitted initially until parameters are adjusted. These both skew the fit
+to the energy Cal parameters (effecting all element peaks) and often the Width
+parameters too (if enabled). </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The traditional approach has been to fit twice. In the first
+fit, you would enable the Cal and FWHM parameters and limit the fitting range
+to exclude the scatter peaks. Then in the second fit, you would fix the Cal and
+FWHM parameters and use the full energy range. But this was tedious.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Now, in the case of monochromatic SXRF beam, the fit will be
+done in two passes automatically. Simply enable the Cal and FWHM parameters to
+be free and set the full energy range, including the scatter peaks and pileup
+peaks beyond that, and press “Fit”. </p>
 
 <p class=MsoNormal>&nbsp;</p>
 
