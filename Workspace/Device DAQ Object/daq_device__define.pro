@@ -1497,6 +1497,75 @@ end
 
 ;-------------------------------------------------------------------
 
+function daq_device::get_dead_weight, error=error		; @6-26
+
+; Return the internal dead-time weight array, which is just dwell in this device.
+; If none found (zero), then return error to not use weights.
+
+COMPILE_OPT STRICTARR
+common c_errors_1, catch_errors_on
+if n_elements(catch_errors_on) lt 1 then catch_errors_on=1
+if catch_errors_on then begin
+	Catch, ErrorNo
+	if (ErrorNo ne 0) then begin
+		Catch, /cancel
+		on_error, 1
+		help, calls = s
+		n = n_elements(s)
+		c = 'Call stack: '
+		if n gt 2 then c = [c, s[1:n-2]]
+		warning,'daq_device::get_dead_weight',['IDL run-time error caught.', '', $
+				'Error:  '+strtrim(!error_state.name,2), $
+				!error_state.msg,'',c], /error
+		MESSAGE, /RESET
+		error = 1
+		return, 0L
+	endif
+endif
+common c_daq_13, daq_dwell
+
+	error = 0
+	if total(daq_dwell) lt 0.1 then error=1		; no real dwell found
+
+	return, daq_dwell
+end
+
+;-------------------------------------------------------------------
+
+function daq_device::get_dead_weight_mode, error=error		; @6-26
+
+; Return the internal dead-time weight mode
+;		0	weight is dwell
+
+COMPILE_OPT STRICTARR
+common c_errors_1, catch_errors_on
+if n_elements(catch_errors_on) lt 1 then catch_errors_on=1
+if catch_errors_on then begin
+	Catch, ErrorNo
+	if (ErrorNo ne 0) then begin
+		Catch, /cancel
+		on_error, 1
+		help, calls = s
+		n = n_elements(s)
+		c = 'Call stack: '
+		if n gt 2 then c = [c, s[1:n-2]]
+		warning,'daq_device::get_dead_weight_mode',['IDL run-time error caught.', '', $
+				'Error:  '+strtrim(!error_state.name,2), $
+				!error_state.msg,'',c], /error
+		MESSAGE, /RESET
+		error = 1
+		return, 0L
+	endif
+endif
+
+	mode = 0
+
+	error = 0
+	return, mode
+end
+
+;-------------------------------------------------------------------
+
 function daq_device::get_dwell, error=error
 
 ; Return the internal dwell (ms) image array
@@ -1530,9 +1599,6 @@ common c_daq_13, daq_dwell
 ;		error = 0
 ;		return, *self.dwell
 ;	endif
-	
-	error = 1
-	return, 0.0
 end
 
 ;-------------------------------------------------------------------
