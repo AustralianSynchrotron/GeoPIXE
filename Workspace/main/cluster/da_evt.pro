@@ -1093,6 +1093,10 @@ if (err_weight eq 0) and (n_elements(weight) gt 2) then begin
 		if nq1 gt 0 then begin
 			gprint,level=2, output=cluster_debug,'da_evt: normalize dead-fraction to weight'
 	
+;			For devices that accumulate dead-time into 'dead_fraction' they must be divided by 'dwell' map.
+;			These devices should implement 'get_dead_weight_mode' to return mode=0 and
+;			implement 'get_dead_weight' to return weight=dwell map, which gets divided here ...
+
 			dead_fraction[q1] = dead_fraction[q1] / weight[q1]
 			if mode eq 1 then begin
 				gprint,level=2, output=cluster_debug,'da_evt: Correct from OCR to ICR weights (mode=1).'
@@ -1115,10 +1119,13 @@ if (err_dwell eq 0) and (n_elements(dwell) gt 2) then begin
 		mean_dwell = mean(dwell[q])
 		gprint,level=2, output=cluster_debug,'da_evt: Dwell-time, ave: = ', mean_dwell, ' ms'
 
-		if mode le -1 then begin
-			dead_fraction[q] = dead_fraction[q] / dwell[q]
-		endif
-		gprint,level=2, output=cluster_debug,'da_evt: dead-fraction, ave: = ', mean(dead_fraction[q])
+;		For devices that accumulate dead-time into 'dead_fraction' they must be divided by 'dwell' map.
+;		These devices should implement 'get_dead_weight_mode' to return mode=0 and
+;		implement 'get_dead_weight' to return weight=dwell map, which gets divided in the block above, not here ...
+
+;		if mode le -1 then begin
+;			dead_fraction[q] = dead_fraction[q] / dwell[q]				; @6-26
+;		endif
 
 		count_rate_map[q] = 1000. * float(nn[q]) / dwell[q]
 		gprint,level=2, output=cluster_debug,'da_evt: count-rate, ave: = ', mean(count_rate_map[q])
@@ -1131,6 +1138,7 @@ if (err_dwell eq 0) and (n_elements(dwell) gt 2) then begin
 		gprint,level=2, output=cluster_debug,'da_evt: Dwell-time, zero !'
 	endelse
 endif
+gprint,level=2, output=cluster_debug,'da_evt: dead-fraction, ave: = ', mean(dead_fraction)
 
 ; Test dead_fraction for magnitude.
 

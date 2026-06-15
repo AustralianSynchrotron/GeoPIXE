@@ -25,24 +25,26 @@ if catch_errors_on then begin
 		return, 0
 	endif
 endif
-if n_elements(multiplicity) lt 1 then multiplicity=1
-if multiplicity lt 1 then multiplicity=1
-matrix = pmatrix
-if ptr_good( pmatrix) then matrix = *pmatrix
-good_array = 1
-if size(pactive, /tname) eq 'POINTER' then begin
-	if ptr_good( pactive) then active = *pactive else good_array=0
-endif else begin
-	active = pactive
-endelse
-if n_elements(select) eq 0 then begin
-	select=indgen(matrix.n_el)
-	rG = fltarr(matrix.n_el)
-	rGdef = replicate(float(multiplicity > 1), matrix.n_el)
-endif else begin
-	rG = 0.
-	rGdef = float(multiplicity > 1)
-endelse
+
+	if n_elements(multiplicity) lt 1 then multiplicity=n_elements(pactive)		; @6-26
+	if multiplicity lt 1 then multiplicity=1
+	matrix = pmatrix
+	if ptr_good( pmatrix) then matrix = *pmatrix
+	good_array = 1
+	if size(pactive, /tname) eq 'POINTER' then begin
+		if ptr_good( pactive) then active = *pactive else good_array=0
+	endif else begin
+		active = pactive
+	endelse
+
+	if n_elements(select) eq 0 then begin
+		select=indgen(matrix.n_el)
+		rG = fltarr(matrix.n_el)
+		rGdef = replicate(float(multiplicity > 1), matrix.n_el)
+	endif else begin
+		rG = 0.
+		rGdef = float(multiplicity > 1)
+	endelse
 
 	if matrix.array.on and good_array then begin
 		q = where(active lt matrix.array.n_det, nd)
